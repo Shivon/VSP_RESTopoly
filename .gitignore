@@ -24,3 +24,4 @@ VSP_RESTopoly.iml
 /build
 /*.iml
 /*/*/*.iml
+/*/target
