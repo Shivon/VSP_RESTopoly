@@ -20,3 +20,4 @@ VSP_RESTopoly.iml
 /out
 /build
 /*.iml
+/*/*/*.iml
