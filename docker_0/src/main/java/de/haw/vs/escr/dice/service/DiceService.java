@@ -28,7 +28,9 @@ public class DiceService {
 
             dice = new Dice();
             dice.rollDice();
+            response.status(200);
+            response.type("application/json");
             return gson.toJson(dice);
         });
-}
+      }
 }
