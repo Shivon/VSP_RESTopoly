@@ -18,10 +18,9 @@ hs_err_pid*
 # IntelliJ related stuff
 /.idea
 /*/.idea
-VSP_RESTopoly.iml
-/*/VSP_RESTopoly.iml
 /out
 /build
 /*.iml
+/*/*.iml
 /*/*/*.iml
 /*/target
