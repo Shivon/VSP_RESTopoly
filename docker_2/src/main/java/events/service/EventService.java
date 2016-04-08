@@ -5,8 +5,9 @@ import events.model.Event;
 import events.repo.EventRepo;
 
 import java.net.URI;
+import java.util.UUID;
 
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 /**
  * Created by marjan on 07.04.16.
@@ -24,6 +25,20 @@ public class EventService {
         // "reason": { "type": "string", "required": true, "description":"a description why this event occured"  },
         // "resource": {"type": "string", "description": "the uri of the resource related to this event where more information may be found (e.g. an uri to a transfer or similar)" },
         // "player": { "type": "string", "description": "The uri of the player having triggered the event" }
+
+        get("/events/:eventId", (request, response) -> {
+            try {
+                UUID eventUuid = UUID.fromString(request.params(":eventId"));
+                event = eventRepo.findEvent(eventUuid);
+                response.status(200);
+                response.type("application/json");
+                return gson.toJson(event);
+            } catch (Exception e) {
+                response.status(500);
+                response.type("application/json");
+                return "";
+            }
+        });
 
         post("/events", (request, response) -> {
             // Required params
@@ -64,5 +79,9 @@ public class EventService {
             response.type("application/json");
             return gson.toJson(event);
         });
+
+//        delete("/events", (request, response) -> {
+//
+//        });
     }
 }
