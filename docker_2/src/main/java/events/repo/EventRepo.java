@@ -30,7 +30,7 @@ public class EventRepo {
         }
     }
 
-    public Event findEvent(UUID id) {
+    public Event findEvent(String id) {
         try {
             entityManager.getTransaction().begin();
             Event event = entityManager.find(Event.class, id);
