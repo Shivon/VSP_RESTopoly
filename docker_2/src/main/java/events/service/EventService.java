@@ -25,7 +25,7 @@ public class EventService {
         // "resource": {"type": "string", "description": "the uri of the resource related to this event where more information may be found (e.g. an uri to a transfer or similar)" },
         // "player": { "type": "string", "description": "The uri of the player having triggered the event" }
 
-        post("/event", (request, response) -> {
+        post("/events", (request, response) -> {
             // Required params
             String[] requiredParams = {"game", "type", "name", "reason"};
             for (int i = 0; i < requiredParams.length; i++) {
