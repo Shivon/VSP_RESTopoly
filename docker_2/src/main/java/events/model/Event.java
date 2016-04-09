@@ -6,16 +6,39 @@ import java.util.UUID;
 /**
  * Created by marjan on 07.04.16.
  */
-
+@Entity
+@Table(name = "Event")
 public class Event {
+    @Id
+    @Column(name = "id")
+    // @Expose on a field you're telling Gson to include that property into your JSON String
+    @Expose(serialize = false)
     private String id;
+
     // required params
+    @Column(name = "game")
+    @Expose
     private URI game;
+
+    @Column(name = "type")
+    @Expose
     private String type;
+
+    @Column(name = "name")
+    @Expose
     private String name;
+
+    @Column(name = "reason")
+    @Expose
     private String reason;
+
     // optional params, can be null
+    @Column(name = "resource")
+    @Expose
     private URI resource;
+
+    @Column(name = "player")
+    @Expose
     private URI player;
 
     public Event(URI game, String type, String name, String reason, URI resource, URI player) {
