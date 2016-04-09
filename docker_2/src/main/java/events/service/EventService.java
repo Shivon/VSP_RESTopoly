@@ -15,6 +15,7 @@ public class EventService {
     private Gson gson = new Gson();
     private EventRepo eventRepo = new EventRepo();
     private Event event;
+    private List<Event> eventList;
 
     public EventService() {
         // "id": { "type":"string", "required":true, "description":"the url to the event on the event server"},
@@ -40,8 +41,17 @@ public class EventService {
         });
 
         get("/events", (request, response) -> {
-            // TODO: implement
-            return null;
+            eventList = eventRepo.findEventsByAttributes();
+
+            if(eventList.isEmpty()){
+                response.status(500);
+                response.type("application/json");
+                return "";
+            }
+            response.status(200);
+            response.type("application/json");
+            //KANN ICH HIER NE LISTE REINGEBEN?????????????
+            return gson.toJson(eventList);
         });
 
         post("/events", (request, response) -> {
@@ -85,8 +95,12 @@ public class EventService {
         });
 
         delete("/events", (request, response) -> {
-            // TODO: implement
-            return null;
+            eventList = eventRepo.findEventsByAttributes();
+            for (Event e : eventList) {
+                eventRepo.deleteEvent(e);
+            }
+            res.status(200);
+            return "";
         });
     }
 }

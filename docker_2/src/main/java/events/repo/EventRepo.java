@@ -42,6 +42,18 @@ public class EventRepo {
         }
     }
 
+    public List<Event> findEventByAttributes(String game, String type, String name, String reason, String resource, String player){
+        List<Event> eventsWithRequestedAttributes= new ArrayList();
+
+        for (Event e : this.allEvents()) {
+              if(e.getGame.equals(game) and e.getType.equals(type) and e.getName.equals(name) and e.getReason.equals(reason)
+              and e.getResource.equals(resource) and e.getPlayer.equals(player)){
+                    eventsWithRequestedAttributes.add(e);
+            }
+        }
+        return eventsWithRequestedAttributes;
+    }
+
     public Event saveEvent(Event event) {
         try {
             entityManager.getTransaction().begin();

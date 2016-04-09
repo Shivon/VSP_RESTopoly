@@ -27,4 +27,28 @@ public class Event {
         this.resource = resource;
         this.player = player;
     }
+
+    public URI getGame() {
+        return game;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public URI getResource() {
+        return resource;
+    }
+
+    public URI getPlayer() {
+        return player;
+    }
 }
