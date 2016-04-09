@@ -20,14 +20,19 @@ public class DiceService {
             //return req.queryParams("game") + ", " + req.queryParams("player");
             String game = req.queryParams("game");
             String player = req.queryParams("player");
+            String resource = req.queryParams("resource");
             URI gameUri = null;
             URI playerUri = null;
+            URI resourceUri = null;
 
             if (game != null && Util.validateURI(game)) gameUri = Util.uriFromString(game);
             if (player != null && Util.validateURI(player)) playerUri = Util.uriFromString(player);
+            if (resource != null && Util.validateURI(resource)) resourceUri = Util.uriFromString(resource);
 
             dice = new Dice();
             dice.rollDice();
+            Event diceEvent = new Event(gameUri, "roll dice", "roll dice", "it was palyers turn to roll the dice",
+                    resourceUri, playerUri);
             response.status(200);
             response.type("application/json");
             return gson.toJson(dice);
