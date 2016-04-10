@@ -45,11 +45,13 @@ public class EventRepo {
     public List<Event> findEventByAttributes(String game, String type, String name, String reason, String resource, String player){
         List<Event> eventsWithRequestedAttributes= new ArrayList();
         try {
+            entityManager.getTransaction().begin();
             for (Event e : this.allEvents()) {
                 if(e.getGame().equals(game) && e.getType().equals(type) && e.getName().equals(name) && e.getReason().equals(reason)
                         && e.getResource().equals(resource) && e.getPlayer().equals(player)){
                     eventsWithRequestedAttributes.add(e);
                 }
+                entityManager.getTransaction().commit();
             }
             return eventsWithRequestedAttributes;
         }catch (Exception e) {

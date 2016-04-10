@@ -5,6 +5,7 @@ import events.model.Event;
 import events.repo.EventRepo;
 
 import java.net.URI;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -41,7 +42,14 @@ public class EventService {
         });
 
         get("/events", (request, response) -> {
-            eventList = eventRepo.findEventsByAttributes();
+            String[] requiredParams = {"game", "type", "name", "reason", "resource", "player"};
+            String game = request.queryParams("game");
+            String type = request.queryParams("type");
+            String name = request.queryParams("name");
+            String reason = request.queryParams("reason");
+            String resource = request.queryParams("resource");
+            String player = request.queryParams("player");
+            eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
 
             if(eventList.isEmpty()){
                 response.status(500);
@@ -50,7 +58,6 @@ public class EventService {
             }
             response.status(200);
             response.type("application/json");
-            //KANN ICH HIER NE LISTE REINGEBEN?????????????
             return gson.toJson(eventList);
         });
 
@@ -95,11 +102,18 @@ public class EventService {
         });
 
         delete("/events", (request, response) -> {
-            eventList = eventRepo.findEventsByAttributes();
+            String[] requiredParams = {"game", "type", "name", "reason", "resource", "player"};
+            String game = request.queryParams("game");
+            String type = request.queryParams("type");
+            String name = request.queryParams("name");
+            String reason = request.queryParams("reason");
+            String resource = request.queryParams("resource");
+            String player = request.queryParams("player");
+            eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
             for (Event e : eventList) {
                 eventRepo.deleteEvent(e);
             }
-            res.status(200);
+            response.status(200);
             return "";
         });
     }
