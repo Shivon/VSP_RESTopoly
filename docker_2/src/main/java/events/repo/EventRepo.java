@@ -46,8 +46,8 @@ public class EventRepo {
         List<Event> eventsWithRequestedAttributes= new ArrayList();
         try {
             for (Event e : this.allEvents()) {
-                if(e.getGame.equals(game) and e.getType.equals(type) and e.getName.equals(name) and e.getReason.equals(reason)
-                and e.getResource.equals(resource) and e.getPlayer.equals(player)){
+                if(e.getGame().equals(game) && e.getType().equals(type) && e.getName().equals(name) && e.getReason().equals(reason)
+                        && e.getResource().equals(resource) && e.getPlayer().equals(player)){
                     eventsWithRequestedAttributes.add(e);
                 }
             }
