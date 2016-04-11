@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 
 import javax.persistence.*;
 import java.net.URI;
+import java.util.UUID;
 
 /**
  * Created by Christian on 05.04.2016.
@@ -12,11 +13,15 @@ import java.net.URI;
 @Table(name = "User")
 public class User {
     @Id
-    @Column(name = "id")
+    @Column(name = "uuid")
+    @Expose(serialize = false)
+    private String uuid;
+
+    @Column(name = "nameId", unique = true, nullable = false)
     @Expose(serialize = false)
     private String nameId;
 
-    @Column(name = "userid")
+    @Column(name = "userId")
     @Expose
     private String id;
 
@@ -29,9 +34,11 @@ public class User {
     private String uri;
 
     public User() {
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public User(String nameId, String id, String name, String uri) {
+        this.uuid = UUID.randomUUID().toString();
         this.nameId = nameId;
         this.id = id;
         this.name = name;
