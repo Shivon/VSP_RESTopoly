@@ -33,19 +33,19 @@ public class UsersBusinesslogic {
         return userRepo.saveUser(user);
     }
 
-    public User getUser(String userid) {
-        return userRepo.findUser(userid);
+    public User getUser(String nameId) {
+        return userRepo.findUserByNameId(nameId);
     }
 
-    public void deleteUser(String userid) {
-        User user = userRepo.findUser(userid);
+    public void deleteUser(String nameId) {
+        User user = userRepo.findUserByNameId(nameId);
         if (user != null) userRepo.deleteUser(user);
     }
 
-    public void putUser(String userid, String name, String uri) {
-        User u = userRepo.findUser(userid);
+    public User putUser(String nameId, String name, String uri) {
+        User u = userRepo.findUserByNameId(nameId);
         if (name != null) u.setName(name);
         if (uri != null) u.setUri(uri);
-        userRepo.saveUser(u);
+        return userRepo.saveUser(u);
     }
 }
