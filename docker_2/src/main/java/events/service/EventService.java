@@ -62,6 +62,7 @@ public class EventService {
         });
 
         post("/events", (request, response) -> {
+            System.out.println("post");
             // Required params
             String[] requiredParams = {"game", "type", "name", "reason"};
             for (int i = 0; i < requiredParams.length; i++) {
@@ -88,6 +89,7 @@ public class EventService {
             if (player != null) { playerUri = new URI(player); }
 
             event = new Event(gameUri, type, name, reason, resourceUri, playerUri);
+            System.out.println(gson.toJson(event).toString());
             event = eventRepo.saveEvent(event);
 
             if (event == null) {

@@ -43,9 +43,9 @@ public class EventRepo {
     }
 
     public List<Event> findEventByAttributes(String game, String type, String name, String reason, String resource, String player){
-        List<Event> eventsWithRequestedAttributes= new ArrayList();
         try {
             entityManager.getTransaction().begin();
+            List<Event> eventsWithRequestedAttributes= new ArrayList();
             for (Event e : this.allEvents()) {
                 if(e.getGame().equals(game) && e.getType().equals(type) && e.getName().equals(name) && e.getReason().equals(reason)
                         && e.getResource().equals(resource) && e.getPlayer().equals(player)){
@@ -65,9 +65,11 @@ public class EventRepo {
             entityManager.getTransaction().begin();
             event = entityManager.merge(event);
             entityManager.getTransaction().commit();
+            System.out.println("Event wurde gespeichert");
             return event;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+            System.out.println("Event konnte nicht gespeichert werden");
             return null;
         }
     }
