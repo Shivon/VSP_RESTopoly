@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import java.util.*;
 
+import static events.repo.EventMatcher.*;
 /**
  * Created by marjan on 07.04.16.
  */
@@ -42,17 +43,20 @@ public class EventRepo {
         }
     }
 
-    public List<Event> findEventByAttributes(String game, String type, String name, String reason, String resource, String player){
+    public List<Event> findEventByAttributes(String gameRegex, String type, String name, String reason, String resource, String player){
         try {
             entityManager.getTransaction().begin();
             List<Event> eventsWithRequestedAttributes= new ArrayList();
             for (Event e : this.allEvents()) {
-                if(e.getGame().equals(game) && e.getType().equals(type) && e.getName().equals(name) && e.getReason().equals(reason)
-                        && e.getResource().equals(resource) && e.getPlayer().equals(player)){
+                if(matchesGame(e, gameRegex)
+                        && matchesType(e, type)
+                        && matchesName(e, name)
+                        && matchesReason(e, reason)
+                        && matchesResourceOrIsNull(e, resource)
+                        && matchesPlayerOrIsNull(e, player))
                     eventsWithRequestedAttributes.add(e);
                 }
-                entityManager.getTransaction().commit();
-            }
+            entityManager.getTransaction().commit();
             return eventsWithRequestedAttributes;
         }catch (Exception e) {
             entityManager.getTransaction().rollback();

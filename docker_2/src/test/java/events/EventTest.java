@@ -43,7 +43,7 @@ public class EventTest {
 //        Assert.notNull(event.getId());
 //        System.out.println(body);
 //    }
-
+//
     @Test
     public void test_getEvents() throws URISyntaxException{
         String body = given().param("game", "hund").param("type", "katze")
@@ -68,7 +68,7 @@ public class EventTest {
 
         ArrayList<Event> eventList = gson.fromJson(body2, ArrayList.class);
 
-        for (Event e :eventList) {
+        for (Event e : eventList) {
             assertEquals(event.getPlayer(), e.getPlayer());
             assertEquals(event.getType(), e.getType());
             assertEquals(event.getResource(), e.getResource());
@@ -120,5 +120,17 @@ public class EventTest {
 //                .extract().body().toString();
 //
 //        Event event = gson.fromJson(body, Event.class);
+//
+//    String body2 = given().param("game", "hund").param("type", "katze")
+//            .param("name", "bello").param("reason", "deswegen")
+//            .param("resource", "bla").param("player", "blubb")
+//            .when()
+//            .delete("http://localhost:4567/events/")
+//            .then().statusCode(200)
+//            .and()
+//            .extract().body().asString();
+//
+//
+//             ArrayList<Event> eventList = gson.fromJson(body2, ArrayList.class);
 //    }
 }

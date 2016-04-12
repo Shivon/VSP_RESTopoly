@@ -50,6 +50,8 @@ public class EventService {
             String resource = request.queryParams("resource");
             String player = request.queryParams("player");
             eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
+            // list = repo.findEventsByGame(game);
+            //
 
             if(eventList.isEmpty()){
                 response.status(500);
