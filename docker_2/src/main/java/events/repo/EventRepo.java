@@ -51,7 +51,6 @@ public class EventRepo {
         System.out.println("findEventsBy.. " + this.allEvents().get(0).getReason());
 //        List<Event> allEvents = this.allEvents();
         try {
-//            entityManager.getTransaction().begin();
             List<Event> allEvents = this.allEvents();
             List<Event> eventsWithRequestedAttributes= new ArrayList();
             System.out.println("events bei findEventList" + allEvents.get(0).getReason());
@@ -65,10 +64,8 @@ public class EventRepo {
 //                        && EventMatcher.matchesPlayerOrIsNull(e, playerRegex))
                     eventsWithRequestedAttributes.add(e);
                 }
-//            entityManager.getTransaction().commit();
             return eventsWithRequestedAttributes;
         }catch (Exception e) {
-//            entityManager.getTransaction().rollback();
             return null;
         }
     }
@@ -90,7 +87,9 @@ public class EventRepo {
     public void deleteEvent(Event event) {
         try {
             entityManager.getTransaction().begin();
+            System.out.println("vor dem Löschen: " + event);
             entityManager.remove(event);
+            System.out.println("repo: event wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();

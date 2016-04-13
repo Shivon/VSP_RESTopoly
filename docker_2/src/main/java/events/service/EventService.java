@@ -112,21 +112,22 @@ public class EventService {
         });
 
         delete("/events", (request, response) -> {
-            String[] requiredParams = {"game", "type", "name", "reason", "resource", "player"};
+//            String[] requiredParams = {"game", "type", "name", "reason", "resource", "player"};
             String game = request.queryParams("game");
             String type = request.queryParams("type");
             String name = request.queryParams("name");
             String reason = request.queryParams("reason");
-            String resource = request.queryParams("resource");
-            String player = request.queryParams("player");
+//            String resource = request.queryParams("resource");
+//            String player = request.queryParams("player");
             eventList = eventRepo.findEventByAttributes(game, type, name, reason
             );
 //            , resource, player);
             for (Event e : eventList) {
+                System.out.println("bei delete: " +e);
                 eventRepo.deleteEvent(e);
             }
             response.status(200);
-            return "";
+            return gson.toJson("wurde gelöscht");
         });
     }
 }
