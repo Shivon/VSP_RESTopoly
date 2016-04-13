@@ -131,7 +131,7 @@ public class EventTest {
 
         Event event = gson.fromJson(body, Event.class);
 
-        System.out.println("event erzeugt" +  event.getReason());
+        System.out.println("event erzeugt" +  event);
 
         String body2 =
                 given().param("game", "hund").param("type", "katze")
@@ -143,8 +143,22 @@ public class EventTest {
                         .and()
                         .extract().body().asString();
 
+        System.out.println("gelöschtes Event immer noch da: " + event);
         System.out.println("Body: " + body2);
 
-   
+        String body3 =
+                         given().param("game", "hund").param("type", "katze")
+                        .param("name", "bello").param("reason", "deswegen")
+                        //                .param("resource", "bla").param("player", "blubb")
+                        .when()
+                        .get("http://localhost:4567/events")
+                        .then().statusCode(500)
+                        .and()
+                        .extract().body().asString();
+
+        System.out.println("body3: " + body3);
+//        assertEquals(null, body3);
+
+
     }
 }
