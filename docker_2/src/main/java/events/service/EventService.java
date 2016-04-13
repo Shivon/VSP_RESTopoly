@@ -49,7 +49,11 @@ public class EventService {
             String reason = request.queryParams("reason");
             String resource = request.queryParams("resource");
             String player = request.queryParams("player");
+            System.out.println(request.queryParams());
+            System.out.println(reason);
             eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
+            System.out.println("event beu get ............." + eventList.get(0).getReason());
+            System.out.println("events bei get" + eventList);
             // list = repo.findEventsByGame(game);
             //
 
@@ -60,7 +64,7 @@ public class EventService {
             }
             response.status(200);
             response.type("application/json");
-            return gson.toJson(eventList);
+            return "";
         });
 
         post("/events", (request, response) -> {

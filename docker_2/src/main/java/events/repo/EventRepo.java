@@ -12,7 +12,7 @@ import static events.repo.EventMatcher.*;
  */
 
 public class EventRepo {
-    private EntityManager entityManager = Persistence.createEntityManagerFactory("event").createEntityManager();
+   private EntityManager entityManager = Persistence.createEntityManagerFactory("event").createEntityManager();
 
     // get /events => find by attribute
     // get /event/:id => find by id
@@ -22,8 +22,10 @@ public class EventRepo {
     public List<Event> allEvents() {
         try {
             entityManager.getTransaction().begin();
-            List<Event> events = entityManager.createQuery("Select e from Event e").getResultList();
+            @SuppressWarnings("unchecked")
+            List<Event> events = entityManager.createQuery("select e from Event e").getResultList();
             entityManager.getTransaction().commit();
+            System.out.println("events bei allEvents"+events.get(0).getReason());
             return events;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -43,23 +45,29 @@ public class EventRepo {
         }
     }
 
-    public List<Event> findEventByAttributes(String gameRegex, String type, String name, String reason, String resource, String player){
+    public List<Event> findEventByAttributes(String gameRegex, String typeRegex, String nameRegex,
+                                             String reasonRegex, String resourceRegex, String playerRegex){
+        System.out.println("findEventsBy.. " + this.allEvents().get(0).getReason());
+//        List<Event> allEvents = this.allEvents();
         try {
-            entityManager.getTransaction().begin();
+//            entityManager.getTransaction().begin();
+            List<Event> allEvents = this.allEvents();
             List<Event> eventsWithRequestedAttributes= new ArrayList();
-            for (Event e : this.allEvents()) {
-                if(matchesGame(e, gameRegex)
-                        && matchesType(e, type)
-                        && matchesName(e, name)
-                        && matchesReason(e, reason)
-                        && matchesResourceOrIsNull(e, resource)
-                        && matchesPlayerOrIsNull(e, player))
+            System.out.println("events bei findEventList" + allEvents.get(0).getReason());
+            for (Event e : allEvents) {
+                System.out.println("in der for.." + e.getReason());
+                if(EventMatcher.matchesGame(e, gameRegex)
+                        && EventMatcher.matchesType(e, typeRegex)
+                        && EventMatcher.matchesName(e, nameRegex)
+                        && EventMatcher.matchesReason(e, reasonRegex)
+                        && EventMatcher.matchesResourceOrIsNull(e, resourceRegex)
+                        && EventMatcher.matchesPlayerOrIsNull(e, playerRegex))
                     eventsWithRequestedAttributes.add(e);
                 }
-            entityManager.getTransaction().commit();
+//            entityManager.getTransaction().commit();
             return eventsWithRequestedAttributes;
         }catch (Exception e) {
-            entityManager.getTransaction().rollback();
+//            entityManager.getTransaction().rollback();
             return null;
         }
     }

@@ -23,7 +23,7 @@ public class EventTest {
     List<Event> eventList = new ArrayList<>();
 
 //    @Test
-//    public void test_postEvent1() throws URISyntaxException {
+//    public void test_postEvent() throws URISyntaxException {
 //        String body = given().param("game", "hund").param("type", "katze")
 //                .param("name", "bello").param("reason", "deswegen")
 ////                .param("resource", "bla").param("player", "blubb")
@@ -56,15 +56,19 @@ public class EventTest {
 
         Event event = gson.fromJson(body, Event.class);
 
-        String body2 = given().param("game", "hund").param("type", "katze")
+        System.out.println("event erzeugt" +  event.getReason());
+
+        String body2 =
+                given().param("game", "hund").param("type", "katze")
                 .param("name", "bello").param("reason", "deswegen")
                 .param("resource", "bla").param("player", "blubb")
                 .when()
-                .get("http://localhost:4567/events/")
+                .get("http://localhost:4567/events")
                 .then().statusCode(200)
                 .and()
                 .extract().body().asString();
 
+        System.out.println(body2);
 
         ArrayList<Event> eventList = gson.fromJson(body2, ArrayList.class);
 
@@ -108,7 +112,7 @@ public class EventTest {
 //        assertEquals(event.getResource(), event2.getResource());
 //        assertEquals(event.getPlayer(), event2.getPlayer());
 //    }
-//
+
 //    @Test
 //    public void test_deleteEvents() throws URISyntaxException{
 //        String body = given().param("game", "hund").param("type", "katze")
