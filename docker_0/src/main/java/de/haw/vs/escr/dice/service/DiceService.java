@@ -1,9 +1,12 @@
 package de.haw.vs.escr.dice.service;
 
+import static com.jayway.restassured.RestAssured.given;
 import static spark.Spark.*;
 
 import com.google.gson.Gson;
+import com.jayway.restassured.response.Response;
 import de.haw.vs.escr.dice.model.Dice;
+import de.haw.vs.escr.dice.dto.Event;
 import de.haw.vs.escr.dice.util.Util;
 
 import java.net.URI;
@@ -17,7 +20,6 @@ public class DiceService {
 
     public DiceService() {
         get("/dice", (req, res) -> {
-            //return req.queryParams("game") + ", " + req.queryParams("player");
             String game = req.queryParams("game");
             String player = req.queryParams("player");
             String resource = req.queryParams("resource");
@@ -31,11 +33,20 @@ public class DiceService {
 
             dice = new Dice();
             dice.rollDice();
-            Event diceEvent = new Event(gameUri, "roll dice", "roll dice", "it was palyers turn to roll the dice",
+
+            Event diceEvent = new Event("/game/1", gameUri, "roll dice", "roll dice", "it was players turn to roll the dice",
                     resourceUri, playerUri);
-            response.status(200);
-            response.type("application/json");
+            Response response = this.sendEventToGame(diceEvent);
+
+            if (response.getStatusCode() == 201) res.status(200);
+            else res.status(500);
+
+            res.type("application/json");
             return gson.toJson(dice);
         });
       }
+
+    private Response sendEventToGame(Event diceEvent) {
+        return given().queryParam("game", diceEvent.getGame()).queryParam("type", diceEvent.getType()).queryParam("name", diceEvent.getName()).queryParam("reason", diceEvent.getReason()).queryParam("player", diceEvent.getPlayer()).post("http://172.18.0.XXX/events");
+    }
 }
