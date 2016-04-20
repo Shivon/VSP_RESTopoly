@@ -46,8 +46,7 @@ public class EventRepo {
     }
 
     public List<Event> findEventByAttributes(String gameRegex, String typeRegex, String nameRegex,
-                                             String reasonRegex){
-//            , String resourceRegex, String playerRegex){
+                                             String reasonRegex, String resourceRegex, String playerRegex){
         System.out.println("findEventsBy.. " + this.allEvents().get(0).getReason());
 //        List<Event> allEvents = this.allEvents();
         try {
@@ -59,9 +58,9 @@ public class EventRepo {
                 if(EventMatcher.matchesGame(e, gameRegex)
                         && EventMatcher.matchesType(e, typeRegex)
                         && EventMatcher.matchesName(e, nameRegex)
-                        && EventMatcher.matchesReason(e, reasonRegex))
-//                        && EventMatcher.matchesResourceOrIsNull(e, resourceRegex)
-//                        && EventMatcher.matchesPlayerOrIsNull(e, playerRegex))
+                        && EventMatcher.matchesReason(e, reasonRegex)
+                        && EventMatcher.matchesResourceOrIsNull(e, resourceRegex)
+                        && EventMatcher.matchesPlayerOrIsNull(e, playerRegex))
                     eventsWithRequestedAttributes.add(e);
                 }
             return eventsWithRequestedAttributes;

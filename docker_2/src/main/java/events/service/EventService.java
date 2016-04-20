@@ -42,18 +42,16 @@ public class EventService {
         });
 
         get("/events", (request, response) -> {
-//            String[] requiredParams = {"game", "type", "name", "reason"};
-//                    , "resource", "player"};
             String game = request.queryParams("game");
             String type = request.queryParams("type");
             String name = request.queryParams("name");
             String reason = request.queryParams("reason");
-//            String resource = request.queryParams("resource");
-//            String player = request.queryParams("player");
+            String resource = request.queryParams("resource");
+            String player = request.queryParams("player");
             System.out.println(request.queryParams());
             System.out.println(reason);
-            eventList = eventRepo.findEventByAttributes(game, type, name, reason);
-//                    , resource, player);
+            eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
+
             System.out.println("event beu get ............." + eventList.get(0).getGame());
             System.out.println("events bei get" + eventList);
             // list = repo.findEventsByGame(game);
@@ -112,16 +110,14 @@ public class EventService {
         });
 
         delete("/events", (request, response) -> {
-//            String[] requiredParams = {"game", "type", "name", "reason", "resource", "player"};
             String game = request.queryParams("game");
             String type = request.queryParams("type");
             String name = request.queryParams("name");
             String reason = request.queryParams("reason");
-//            String resource = request.queryParams("resource");
-//            String player = request.queryParams("player");
+            String resource = request.queryParams("resource");
+            String player = request.queryParams("player");
             eventList = eventRepo.findEventByAttributes(game, type, name, reason
-            );
-//            , resource, player);
+            , resource, player);
             for (Event e : eventList) {
                 System.out.println("bei delete: " +e);
                 eventRepo.deleteEvent(e);

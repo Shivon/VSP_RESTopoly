@@ -9,21 +9,21 @@ public class EventMatcher {
 
     public static boolean matchesType(Event event, String regex) {
 
-        return event.getType().matches(regex);
+        return event.getType().matches(regex) || regex == null;
     }
 
     public static boolean matchesGame(Event event, String regex) {
 
-        return event.getGame().toString().matches(regex);
+        return event.getGame().toString().matches(regex) || regex == null;
     }
 
     public static boolean matchesName(Event event, String regex) {
 
-        return event.getName().toString().matches(regex);
+        return event.getName().toString().matches(regex) || regex == null;
     }
 
     public static boolean matchesReason(Event event, String regex) {
-        return event.getReason().toString().matches(regex);
+        return event.getReason().toString().matches(regex) || regex == null;
     }
 
     public static boolean matchesPlayerOrIsNull(Event event, String regex) {
