@@ -1,0 +1,33 @@
+#%RAML 1.0
+titel: RESTopoly
+baseUri: http://localhost:4567
+schemas:
+-game: |
+	{
+	  "type": "object",
+	  "$schema": "hattp://json-schema.org/draft-03/schema",
+	  "id": "game",
+	  "properties": {
+		"id": {"type": "string", "required": true, "description":
+			"uri of the game"},
+		"status": {"type": "string", "required": true, "description":
+			"the present status of the game"},
+		"player":{"type": "string", "required": true, "description":
+			"players who take part in the game"}
+	 }
+/games:
+	  type: { collection: { schema: "game", "getexample":"", 
+	"postexample":"" } }   
+ 	post:      
+		description: adds a new game to the collection of games
+    	get:     
+		description:  returns all matching games according              
+		to query parameters (regex) 
+		queryParameters:   
+			player: {"description":"a regex matching for 
+				the player uri issuing the event"}
+			status: {"description":"a regex matching for 
+				the player uri issuing the status"}
+ 	/{gameid}:
+		get:
+			description:  gets the game details by GameId
