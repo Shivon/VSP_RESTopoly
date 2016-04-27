@@ -1,4 +1,4 @@
-package main.client;
+package client;
 
 import sun.misc.IOUtils;
 
@@ -12,7 +12,7 @@ import java.net.URL;
 /**
  * Created by Jana Mareike on 26.04.2016.
  */
-public class client {
+public class Client {
 
     public static Response createClient() throws IOException {
         // Create an URL and a HTTP connection
