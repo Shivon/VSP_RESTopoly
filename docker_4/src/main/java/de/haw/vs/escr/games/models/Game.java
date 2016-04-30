@@ -9,18 +9,19 @@ import java.util.UUID;
  * Created by Christian on 29.04.2016.
  */
 @Entity
-@Table(name = "Games")
-public class Games {
+@Table(name = "Game")
+public class Game {
     @Id
-    @Column(name = "uuid")
-    private String uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "gameId")
+    private int gameId;
 
-    @Column(name = "uri")
+    @Column(name = "uri", unique = true)
     @Expose
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Expose
     private String name;
 
@@ -28,25 +29,28 @@ public class Games {
     @Expose
     private String players;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "Games", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths services;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "Games", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths components;
 
-    public Games() {
-        this.uuid = UUID.randomUUID().toString();
+    public Game() {
+
     }
 
-    public Games(String uri, String name, String players, Paths services, Paths components) {
-        this.uuid = UUID.randomUUID().toString();
+    public Game(String uri, String name, String players, Paths services, Paths components) {
         this.uri = uri;
         this.name = name;
         this.players = players;
         this.services = services;
         this.components = components;
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 
     public String getUri() {

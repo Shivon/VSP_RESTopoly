@@ -4,26 +4,51 @@ import static spark.Spark.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.org.apache.xml.internal.security.algorithms.implementations.IntegrityHmac;
+import de.haw.vs.escr.games.businesslogic.GameBusinessLogic;
+import de.haw.vs.escr.games.models.Game;
+import de.haw.vs.escr.games.repos.GameRepo;
 
 /**
  * Created by Christian on 29.04.2016.
  */
 public class GameService {
     private Gson gson;
+    private GameRepo gameRepo;
+    private GameBusinessLogic gameBL;
 
     public GameService() {
         this.initializeGson();
+        this.gameRepo = new GameRepo();
+        this.gameBL = new GameBusinessLogic(gameRepo);
 
         get("/games", (req, res) -> {
             return "GET /games";
         });
 
         post("/games", (req, res) -> {
-            return "POST /games";
+            Game game = gson.fromJson(req.body(), Game.class);
+
+            Game g = this.gameBL.createGame(game);
+
+            return gson.toJson(g);
+            //return "POST /games";
         });
 
         get("/games/:gameid", (req, res) -> {
-            return "GET /games/" + req.params(":gameid");
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (NumberFormatException e) {
+                res.status(401);
+                return null;
+            }
+
+            Game game = this.gameBL.findGame(gameId);
+
+            return gson.toJson(game);
+            //return "GET /games/" + req.params(":gameid");
         });
 
         get("/games/:gameid/status", (req, res) -> {
