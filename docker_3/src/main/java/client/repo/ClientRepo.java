@@ -11,21 +11,7 @@ import java.util.*;
  */
 
 public class ClientRepo {
-   private EntityManager entityManager = Persistence.createEntityManagerFactory("event").createEntityManager();
-
-    public List<Event> allEvents() {
-        try {
-            entityManager.getTransaction().begin();
-            @SuppressWarnings("unchecked")
-            List<Event> events = entityManager.createQuery("select e from Event e").getResultList();
-            entityManager.getTransaction().commit();
-            System.out.println("events bei allEvents"+events.get(0).getReason());
-            return events;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            return null;
-        }
-    }
+   private EntityManager entityManager = Persistence.createEntityManagerFactory("client").createEntityManager();
 
     public Client findClient(String id) {
         try {
@@ -39,37 +25,14 @@ public class ClientRepo {
         }
     }
 
-    public List<Event> findEventByAttributes(String gameRegex, String typeRegex, String nameRegex,
-                                             String reasonRegex, String resourceRegex, String playerRegex){
-        System.out.println("findEventsBy.. " + this.allEvents().get(0).getReason());
-//        List<Event> allEvents = this.allEvents();
-        try {
-            List<Event> allEvents = this.allEvents();
-            List<Event> eventsWithRequestedAttributes= new ArrayList();
-            System.out.println("events bei findEventList" + allEvents.get(0).getReason());
-            for (Event e : allEvents) {
-                System.out.println("in der for.." + e.getReason());
-                if(EventMatcher.matchesGame(e, gameRegex)
-                        && EventMatcher.matchesType(e, typeRegex)
-                        && EventMatcher.matchesName(e, nameRegex)
-                        && EventMatcher.matchesReason(e, reasonRegex)
-                        && EventMatcher.matchesResourceOrIsNull(e, resourceRegex)
-                        && EventMatcher.matchesPlayerOrIsNull(e, playerRegex))
-                    eventsWithRequestedAttributes.add(e);
-                }
-            return eventsWithRequestedAttributes;
-        }catch (Exception e) {
-            return null;
-        }
-    }
 
-    public Event saveEvent(Event event) {
+    public Client saveClient(Client client) {
         try {
             entityManager.getTransaction().begin();
-            event = entityManager.merge(event);
+            client = entityManager.merge(client);
             entityManager.getTransaction().commit();
-            System.out.println("Event wurde gespeichert");
-            return event;
+            System.out.println("Client wurde gespeichert");
+            return client;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             System.out.println("Event konnte nicht gespeichert werden");
@@ -77,11 +40,11 @@ public class ClientRepo {
         }
     }
 
-    public void deleteEvent(Event event) {
+    public void deleteClient(Client client) {
         try {
             entityManager.getTransaction().begin();
-            System.out.println("vor dem Löschen: " + event);
-            entityManager.remove(event);
+            System.out.println("vor dem Löschen: " + client);
+            entityManager.remove(client);
             System.out.println("repo: event wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {

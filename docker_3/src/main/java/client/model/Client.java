@@ -1,5 +1,6 @@
 package client;
 
+import com.google.gson.annotations.Expose;
 import sun.misc.IOUtils;
 
 import javax.xml.ws.Response;
@@ -7,13 +8,16 @@ import java.io.IOException;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import com.google.gson.annotations.Expose;
+
+import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * Created by Jana Mareike on 26.04.2016.
  */
-public class Client {
-
     @Entity
     @Table(name = "Client")
     public class Client {
@@ -90,9 +94,15 @@ public class Client {
             return result;
         }
 
-        public static Response createClient() throws IOException {
+
+
+
+
+
+
+        public static Response createClientConnection() throws IOException {
         // Create an URL and a HTTP connection
-        URL url = new URL("http://localhost:4567/user");
+        URL url = new URL("http://localhost:4567/player");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setDoOutput(true);

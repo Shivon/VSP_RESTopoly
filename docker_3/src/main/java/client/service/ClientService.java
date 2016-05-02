@@ -47,7 +47,7 @@ public class ClientService {
 
         });
 
-       post("/client/evnet", (request, response) -> {
+       post("/client/event", (request, response) -> {
 //           inform a player about a new event
 
        });
