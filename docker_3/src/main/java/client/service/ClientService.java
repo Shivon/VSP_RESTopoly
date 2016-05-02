@@ -1,8 +1,8 @@
-package events.service;
+package client.service;
 
 import com.google.gson.Gson;
-import events.model.Event;
-import events.repo.EventRepo;
+import client.model.Client;
+import client.repo.ClientRepo;
 
 import java.net.URI;
 import java.util.List;
@@ -26,8 +26,6 @@ public class ClientService {
 //            and the full uri must be submitted when registering a player
 //            gets the details about the player
             String id = request.queryParams("id");
-            String name = request.queryParams("name");
-            String uri = request.queryParams("uri");
 
             client = clientRepo.findClient(id);
 
@@ -44,12 +42,12 @@ public class ClientService {
 
         post("/client/turn", (request, response) -> {
 //            Informs the player, that it is his turn
-
+        return null;
         });
 
        post("/client/event", (request, response) -> {
 //           inform a player about a new event
-
+        return null;
        });
     }
 }
