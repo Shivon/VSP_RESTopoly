@@ -2,7 +2,13 @@ package de.haw.vs.escr.games.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import de.haw.vs.escr.games.dtos.GameDTO;
+import de.haw.vs.escr.games.dtos.PlayerURI;
+import de.haw.vs.escr.games.dtos.StatusDTO;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -25,9 +31,9 @@ public class Game {
     @Expose
     private String name;
 
-    @Column(name = "players")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
-    private String players;
+    private List<Player> players;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
@@ -37,20 +43,29 @@ public class Game {
     @Expose
     private Paths components;
 
-    public Game() {
+    @Enumerated(EnumType.STRING)
+    private GameStatus status;
 
+    public Game() {
+        this.status = GameStatus.registration;
+        this.players = new ArrayList<>();
     }
 
-    public Game(String uri, String name, String players, Paths services, Paths components) {
+    public Game(String uri, String name, List<Player> players, Paths services, Paths components) {
         this.uri = uri;
         this.name = name;
         this.players = players;
         this.services = services;
         this.components = components;
+        this.status = GameStatus.registration;
     }
 
     public int getGameId() {
         return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     public String getUri() {
@@ -69,11 +84,11 @@ public class Game {
         this.name = name;
     }
 
-    public String getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(String players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
@@ -91,5 +106,33 @@ public class Game {
 
     public void setComponents(Paths components) {
         this.components = components;
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GameStatus status) {
+        this.status = status;
+    }
+
+    public GameDTO toDTO() {
+        String serviceURI = this.getUri() + "/services";
+        String componentURI = this.getUri() + "/components";
+        String playerURI = this.getUri() + "/players";
+        GameDTO gDto = new GameDTO(this.getGameId(), this.getUri(), this.getName(), playerURI, serviceURI, componentURI);
+        return gDto;
+    }
+
+    public StatusDTO toStatus() {
+        return new StatusDTO(this.getStatus());
+    }
+
+    public PlayerURI getPlayerURIs() {
+        PlayerURI pu = new PlayerURI();
+        for (Player p : this.players) {
+            pu.addURIToPlayers(p.getUri());
+        }
+        return pu;
     }
 }

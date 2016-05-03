@@ -4,6 +4,8 @@
     <persistence-unit name="games" transaction-type="RESOURCE_LOCAL">
         <class>de.haw.vs.escr.games.models.Game</class>
         <class>de.haw.vs.escr.games.models.Paths</class>
+        <class>de.haw.vs.escr.games.models.Player</class>
+        <class>de.haw.vs.escr.games.models.Ready</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
             <property name="javax.persistence.jdbc.url"    value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />

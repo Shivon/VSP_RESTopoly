@@ -4,6 +4,7 @@ import de.haw.vs.escr.games.models.Game;
 import de.haw.vs.escr.games.util.PersistenceService;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * Created by Christian on 30.04.2016.
@@ -39,6 +40,18 @@ public class GameRepo {
             Game game = em.find(Game.class, gameid);
             em.getTransaction().commit();
             return game;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+        }
+        return null;
+    }
+
+    public List<Game> findAllGames() {
+        try {
+            em.getTransaction().begin();
+            List<Game> games = em.createQuery("select ga from Game ga").getResultList();
+            em.getTransaction().commit();
+            return games;
         } catch (Exception e) {
             em.getTransaction().rollback();
         }
