@@ -3,6 +3,7 @@ package client.view;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 /**
@@ -19,7 +20,7 @@ public class ClientView {
 
     private JFrame _mainFrame;
     private JPanel _allGamesPanel;
-    private JTextArea _allGamesArea;
+    private JTable _allGamesTable;
     private JPanel _takePartButtonPanel;
     private JButton _takePartButton;
 
@@ -69,7 +70,7 @@ public class ClientView {
 //        Games
         _mainFrame = new JFrame("Available Games");
         _allGamesPanel = new JPanel();
-        _allGamesArea = new JTextArea();
+        _allGamesTable = new JTable(new DefaultTableModel(new Object[]{"Column1", "Column2"}));
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
 
@@ -80,14 +81,14 @@ public class ClientView {
         _allGamesPanel.setBorder(new EmptyBorder(2,3,2,3));
         _allGamesPanel.setPreferredSize(new Dimension(300,450));
 
-        _allGamesArea.setBackground(Color.DARK_GRAY);
-        _allGamesArea.setForeground(Color.ORANGE);
-        _allGamesArea.setWrapStyleWord(true);
-        _allGamesArea.setLineWrap(true);
-        _allGamesArea.setPreferredSize(new Dimension(400,10000));
-        _allGamesArea.setEnabled(false);
+        _allGamesTable.setBackground(Color.DARK_GRAY);
+        _allGamesTable.setForeground(Color.ORANGE);
+        _allGamesTable.setRowSelectionAllowed(true);
+//        _allGamesTable.getSelectedRow();
+        _allGamesTable.setPreferredSize(new Dimension(400,10000));
+        _allGamesTable.setEnabled(false);
 
-        _allGamesPanel.add(_allGamesArea, BorderLayout.CENTER );
+        _allGamesPanel.add(_allGamesTable, BorderLayout.CENTER );
 
         _mainFrame.setSize(450, 550);
         _mainFrame.add(_allGamesPanel, BorderLayout.NORTH);
@@ -97,11 +98,35 @@ public class ClientView {
         _mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 // Player
-        _playerNameFrame = new JFrame();
+        _playerNameFrame = new JFrame("Enter your Player Name: ");
         _playerNamePanel = new JPanel();
         _playerNameArea = new JTextArea();
         _submitButtonPanel = new JPanel();
         _submitButton = new JButton("Submit");
+
+        _playerNamePanel.setBorder(new EmptyBorder(2,3,2,3));
+        _playerNamePanel.setPreferredSize(new Dimension(300,30));
+
+        _playerNameArea.setBackground(Color.DARK_GRAY);
+        _playerNameArea.setForeground(Color.ORANGE);
+        _playerNameArea.setWrapStyleWord(true);
+        _playerNameArea.setLineWrap(true);
+        _playerNameArea.setCaretPosition(0);
+        _playerNameArea.setPreferredSize(new Dimension(300, 30));
+        _playerNameArea.setEnabled(true);
+
+        _playerNamePanel.add(_playerNameArea, BorderLayout.CENTER);
+
+        _submitButtonPanel.setBorder(new EmptyBorder(2,3,2,3));
+        _submitButtonPanel.setPreferredSize(new Dimension(300, 30));
+
+        _submitButtonPanel.add(_submitButton, BorderLayout.CENTER);
+
+        _playerNameFrame.setSize(350, 130);
+        _playerNameFrame.add(_playerNamePanel, BorderLayout.CENTER);
+        _playerNameFrame.add(_submitButtonPanel, BorderLayout.SOUTH);
+        _playerNameFrame.setVisible(false);
+        _playerNameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public JButton getLogInSubmit(){
@@ -120,7 +145,15 @@ public class ClientView {
         return _logInArea;
     }
 
-    public JTextArea getAllGamesArea(){
-        return _allGamesArea;
+    public JTable getAllGameTable(){
+        return _allGamesTable;
+    }
+
+    public JButton getTakePartButton(){
+        return _takePartButton;
+    }
+
+    public JFrame getPlayerNameFrame(){
+        return _playerNameFrame;
     }
 }
