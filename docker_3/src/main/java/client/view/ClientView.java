@@ -66,11 +66,11 @@ public class ClientView {
         _logInFrame.add(_logInButtonPanel, BorderLayout.SOUTH);
         _logInFrame.setVisible(true);
         _logInFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+// TODO change _allGamesTable to JTextArea and add a Textarea to enter the GAmename to make it easier
 //        Games
         _mainFrame = new JFrame("Available Games");
         _allGamesPanel = new JPanel();
-        _allGamesTable = new JTable(new DefaultTableModel(new Object[]{"Column1", "Column2"}));
+        _allGamesTable = new JTable(new DefaultTableModel(new Object[]));
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
 

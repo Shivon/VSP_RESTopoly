@@ -1,6 +1,8 @@
 package client.view;
 
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 
 import com.google.gson.Gson;
@@ -11,6 +13,8 @@ import org.omg.CORBA.Object;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -54,10 +58,12 @@ private void registerSubmitJoinTheGame() {
                     System.out.println("Name in der GUI: " + _name);
                     //                TODO prüfen, ob name vergeben?
                     try {
-                      String userNameListString =  Unirest.get("http://localhost:4567/users").asJson().toString();
-                        String[] userNameList = gson.fromJson(userNameListString,?????????????);
-                        for ( String name : userNameList) {
-                            if(name.equals(_name)){
+//                         TODO user IP and Port
+                      HttpResponse<ArrayList> userNameListResponse =  Unirest.get("http://localhost:4567/users")
+                              .asObject(ArrayList.class);
+                        ArrayList<String> userNameList = userNameListResponse.getBody();
+                        for (String name : userNameList) {
+                            if(name.substring(7).equals(_name)){
                                 JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
                             }
@@ -78,8 +84,9 @@ private void registerSubmitJoinTheGame() {
                     _view.getLogInFrame().setVisible(false);
 //                    TODO alle Games holen und im Tabel auflisten
                     try {
-                        List<String> gamesList = (List<String>) Unirest.get("http://localhost:4567/games")
-                                .asJson();
+                        HttpResponse<ArrayList> gamesList =  Unirest.get("http://localhost:4567/games")
+                                .asObject(ArrayList.class);
+                        ArrayList<String>
                         for (String game : gamesList) {
 //
                         }
