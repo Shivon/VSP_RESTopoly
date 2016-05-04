@@ -4,7 +4,9 @@ import de.haw.vs.escr.games.dtos.GameDTO;
 import de.haw.vs.escr.games.dtos.StatusDTO;
 import de.haw.vs.escr.games.models.Game;
 import de.haw.vs.escr.games.models.Paths;
+import de.haw.vs.escr.games.models.Player;
 import de.haw.vs.escr.games.repos.GameRepo;
+import de.haw.vs.escr.games.repos.PlayerRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +16,11 @@ import java.util.List;
  */
 public class GameBusinessLogic {
     private GameRepo gameRepo = null;
+    private PlayerRepo playerRepo = null;
 
-    public GameBusinessLogic(GameRepo gameRepo) {
+    public GameBusinessLogic(GameRepo gameRepo, PlayerRepo playerRepo) {
         this.gameRepo = gameRepo;
+        this.playerRepo = playerRepo;
     }
 
     public Game createGame(Game game) {
@@ -67,5 +71,20 @@ public class GameBusinessLogic {
         g.setStatus(statusDTO.getStatus());
         Game updatedGame = this.updateGame(g);
         return updatedGame.toStatus();
+    }
+
+    public Player createPlayer(int gameId, Player player) {
+        Player savedPlayer = this.playerRepo.saveGame(player);
+        savedPlayer.setUri("/games/" + gameId + "/players/" + savedPlayer.getPlayerId());
+        Player updatedPlayer = this.playerRepo.saveGame(savedPlayer);
+        return updatedPlayer;
+    }
+
+    public Player createPlayerAndAddToGame(int gameId, Player player) {
+        Game g = this.findGame(gameId);
+        Player savedPlayer = this.createPlayer(gameId, player);
+        g.addPlayer(savedPlayer);
+        this.updateGame(g);
+        return savedPlayer;
     }
 }

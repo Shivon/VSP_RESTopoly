@@ -11,8 +11,11 @@ import de.haw.vs.escr.games.dtos.PlayerURI;
 import de.haw.vs.escr.games.dtos.StatusDTO;
 import de.haw.vs.escr.games.models.Game;
 import de.haw.vs.escr.games.models.Paths;
+import de.haw.vs.escr.games.models.Player;
 import de.haw.vs.escr.games.repos.GameRepo;
+import de.haw.vs.escr.games.repos.PlayerRepo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,16 +24,22 @@ import java.util.List;
 public class GameService {
     private Gson gson;
     private GameRepo gameRepo;
+    private PlayerRepo playerRepo;
     private GameBusinessLogic gameBL;
 
     public GameService() {
         this.initializeGson();
         this.gameRepo = new GameRepo();
-        this.gameBL = new GameBusinessLogic(gameRepo);
+        this.playerRepo = new PlayerRepo();
+        this.gameBL = new GameBusinessLogic(gameRepo, playerRepo);
 
         get("/games", (req, res) -> {
             List<Game> games = this.gameBL.findAllGames();
-            return gson.toJson(games);
+            List<GameDTO> gDTO = new ArrayList<GameDTO>();
+            for (Game g : games) {
+                gDTO.add(g.toDTO());
+            }
+            return gson.toJson(gDTO);
             //return "GET /games";
         });
 
@@ -193,7 +202,20 @@ public class GameService {
         });
 
         post("/games/:gameid/players", (req, res) -> {
-            return "POST /games/" + req.params(":gameid") + "/players";
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (NumberFormatException e) {
+                res.status(401);
+                return null;
+            }
+
+            Player reqPlayer = gson.fromJson(req.body(), Player.class);
+            Player player = this.gameBL.createPlayerAndAddToGame(gameId, reqPlayer);
+
+            return gson.toJson(player);
+            //return "POST /games/" + req.params(":gameid") + "/players";
         });
 
         get("/games/:gameid/players/:playerid", (req, res) -> {

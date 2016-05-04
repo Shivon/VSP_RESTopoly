@@ -23,7 +23,7 @@ public class Game {
     private int gameId;
 
     @Column(name = "uri", unique = true)
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
@@ -114,6 +114,10 @@ public class Game {
 
     public void setStatus(GameStatus status) {
         this.status = status;
+    }
+
+    public void addPlayer(Player p) {
+        this.players.add(p);
     }
 
     public GameDTO toDTO() {

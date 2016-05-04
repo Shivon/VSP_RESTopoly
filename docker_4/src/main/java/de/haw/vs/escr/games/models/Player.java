@@ -18,11 +18,11 @@ public class Player {
     private int playerId;
 
     @Column(name = "uri", unique = true)
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "user")
+    @Column(name = "user", unique = true, nullable = false)
     @Expose
     private String user;
 
