@@ -1,17 +1,18 @@
 package events.repo;
 
 import events.model.Event;
-import events.util.PersistenceService;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Persistence;
+import java.util.*;
+
+import static events.repo.EventMatcher.*;
 /**
  * Created by marjan on 07.04.16.
  */
 
 public class EventRepo {
-   private EntityManager entityManager = PersistenceService.getEntityManager();
+   private EntityManager entityManager = Persistence.createEntityManagerFactory("event").createEntityManager();
 
     // get /events => find by attribute
     // get /event/:id => find by id

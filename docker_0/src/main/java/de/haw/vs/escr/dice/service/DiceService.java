@@ -38,8 +38,8 @@ public class DiceService {
                     resourceUri, playerUri);
             Response response = this.sendEventToGame(diceEvent);
 
-            //if (response.getStatusCode() == 201) res.status(200);
-            //else res.status(500);
+            if (response.getStatusCode() == 201) res.status(200);
+            else res.status(500);
 
             res.type("application/json");
             return gson.toJson(dice);
