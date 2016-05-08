@@ -52,6 +52,14 @@ public class DiceService {
       }
 
     private Response sendEventToGame(Event diceEvent) {
-        return given().queryParam("game", diceEvent.getGame()).queryParam("type", diceEvent.getType()).queryParam("name", diceEvent.getName()).queryParam("reason", diceEvent.getReason()).queryParam("player", diceEvent.getPlayer()).post("http://172.18.0.75:4567/events");
+        return
+                given().
+                        queryParam("game", diceEvent.getGame().toString()).
+                        queryParam("type", diceEvent.getType().toString()).
+                        queryParam("name", diceEvent.getName().toString()).
+                        queryParam("reason", diceEvent.getReason().toString()).
+                        queryParam("player", diceEvent.getPlayer().toString()).
+                when().
+                        post("http://172.18.0.75:4567/events");
     }
 }
