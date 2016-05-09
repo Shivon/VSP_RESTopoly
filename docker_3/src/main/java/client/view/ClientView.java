@@ -1,9 +1,11 @@
 package client.view;
 
+import javax.persistence.Column;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 
 /**
@@ -21,6 +23,8 @@ public class ClientView {
     private JFrame _mainFrame;
     private JPanel _allGamesPanel;
     private JTable _allGamesTable;
+    private DefaultTableModel _tableModel;
+    private TableColumn _gamesColumn;
     private JPanel _takePartButtonPanel;
     private JButton _takePartButton;
 
@@ -70,7 +74,7 @@ public class ClientView {
 //        Games
         _mainFrame = new JFrame("Available Games");
         _allGamesPanel = new JPanel();
-        _allGamesTable = new JTable(new DefaultTableModel(new Object[]));
+        _allGamesTable =  new JTable(_tableModel);
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
 
@@ -83,6 +87,7 @@ public class ClientView {
 
         _allGamesTable.setBackground(Color.DARK_GRAY);
         _allGamesTable.setForeground(Color.ORANGE);
+        _tableModel.addColumn(_gamesColumn);
         _allGamesTable.setRowSelectionAllowed(true);
 //        _allGamesTable.getSelectedRow();
         _allGamesTable.setPreferredSize(new Dimension(400,10000));
@@ -133,6 +138,8 @@ public class ClientView {
         return _logInButton;
     }
 
+    public DefaultTableModel getTableModel(){ return _tableModel;}
+
     public JFrame getLogInFrame(){
         return _logInFrame;
     }
@@ -153,7 +160,7 @@ public class ClientView {
         return _takePartButton;
     }
 
-    public JFrame getPlayerNameFrame(){
-        return _playerNameFrame;
-    }
+    public JFrame getPlayerNameFrame(){ return _playerNameFrame;}
+
+    public JTextArea getPlayerNameArea(){ return _playerNameArea;}
 }
