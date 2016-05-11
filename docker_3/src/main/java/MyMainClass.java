@@ -1,5 +1,7 @@
 
+import client.service.MainThread;
 import client.view.ClientUIController;
+import client.view.UserWindow;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -13,8 +15,7 @@ public class MyMainClass {
 
     public static void main(String[] args) throws UnirestException {
 
-//        /*GUI starten*/
-        new ClientUIController();
+        new MainThread();
 
     }
 

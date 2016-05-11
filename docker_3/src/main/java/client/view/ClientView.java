@@ -140,9 +140,7 @@ public class ClientView {
 
     public DefaultTableModel getTableModel(){ return _tableModel;}
 
-    public JFrame getLogInFrame(){
-        return _logInFrame;
-    }
+    public JFrame getLogInFrame(){return _logInFrame;}
 
     public JFrame getMainFrame(){
         return _mainFrame;
