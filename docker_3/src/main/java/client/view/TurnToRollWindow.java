@@ -1,5 +1,6 @@
 package client.view;
 
+import client.adapter.DiceAdapter;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -26,8 +27,7 @@ public class TurnToRollWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    HttpResponse<Integer> number =  Unirest.get("http://172.18.0.67:4567/dice")
-                            .asObject(Integer.class);
+                    HttpResponse<Integer> number = DiceAdapter.getDiceRollNumber();
                     _turnToRollWindowUI.getDiceNumber().setText("" + number);
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
