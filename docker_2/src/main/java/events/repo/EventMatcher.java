@@ -3,7 +3,7 @@ package events.repo;
 import events.model.Event;
 
 /**
- * Created by Jana Mareike on 11.04.2016.
+ * Created by Jana on 11.04.2016.
  */
 public class EventMatcher {
 

@@ -17,7 +17,7 @@ public class TurnToRollWindow {
 
     public TurnToRollWindow(){
         _turnToRollWindowUI = new TurnToRollWindowUI();
-
+        _turnToRollWindowUI.getDiceFrame().setVisible(true);
         registerRoll();
     }
 

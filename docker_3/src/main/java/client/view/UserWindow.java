@@ -1,5 +1,7 @@
 package client.view;
 
+import client.adapter.GamesAdapter;
+import client.adapter.UserAdapter;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -40,8 +42,7 @@ public class UserWindow {
                     //                Semaphore?
                     try {
 //                         TODO user IP and Port
-                        HttpResponse<ArrayList> userNameListResponse =  Unirest.get("http://localhost:4567/users")
-                                .asObject(ArrayList.class);
+                        HttpResponse<ArrayList> userNameListResponse = UserAdapter.getUsers();
                         ArrayList<HashMap> userNameList = userNameListResponse.getBody();
                         for (HashMap user : userNameList) {
                             String name = user.get("name").toString();
@@ -57,9 +58,7 @@ public class UserWindow {
 //                    TODO weiß nicht, ob richtig so?????
 
                     try {
-                        Unirest.put("http://localhost:4567/users")
-                                .field("name", _userName)
-                                .asJson();
+                        UserAdapter.putUser(_userName);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -68,8 +67,7 @@ public class UserWindow {
 //                    TODO alle Games holen und im Tabel auflisten
                     //Semaphore, weil max Anzahl Spieler
                     try {
-                        HttpResponse<ArrayList> gamesListResponse =  Unirest.get("http://localhost:4567/games")
-                                .asObject(ArrayList.class);
+                        HttpResponse<ArrayList> gamesListResponse = GamesAdapter.getGames();
                         ArrayList<HashMap> gamesList = gamesListResponse.getBody();
                         gamesTableModel =  new VstTableModel(gamesList);
 

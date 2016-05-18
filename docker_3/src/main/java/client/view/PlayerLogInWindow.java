@@ -1,5 +1,6 @@
 package client.view;
 
+import client.adapter.PlayerAdapter;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -35,9 +36,7 @@ public class PlayerLogInWindow {
                     //Semaphore
                     try {
 //                         TODO player IP and Port
-                        HttpResponse<ArrayList> playerNameListResponse =  Unirest.get("http://localhost:4567/games/"
-                                + gamesTableModel.getValueAt(_gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
-                                .asObject(ArrayList.class);
+                        HttpResponse<ArrayList> playerNameListResponse = PlayerAdapter.getPlayers(gamesTableModel, _gamesWindowUI);
                         ArrayList<HashMap> playerNameList = playerNameListResponse.getBody();
                         for (HashMap player : playerNameList) {
                             String name = player.get("name").toString();
@@ -50,10 +49,7 @@ public class PlayerLogInWindow {
                         e1.printStackTrace();
                     }
                     try {
-                        Unirest.post("http://localhost:4567/games/"
-                                + gamesTableModel.getValueAt(_gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
-                                .field("name", _playerName)
-                                .asJson();
+                      PlayerAdapter.postPlayer(gamesTableModel, _gamesWindowUI, _playerName);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

@@ -1,6 +1,7 @@
 
 import client.service.MainThread;
 import client.view.ClientUIController;
+import client.view.TurnToRollWindow;
 import client.view.UserWindow;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
