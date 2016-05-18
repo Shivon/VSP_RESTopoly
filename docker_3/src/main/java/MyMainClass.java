@@ -16,8 +16,8 @@ public class MyMainClass {
 
     public static void main(String[] args) throws UnirestException {
 
-        new MainThread();
-
+//        new MainThread();
+// new TurnToRollWindow();
     }
 
 }

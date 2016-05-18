@@ -26,7 +26,8 @@ public class TurnToRollWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    HttpResponse<Integer> number =  Unirest.get("http://172.18.0.67:4567/dice").asObject(Integer.class);
+                    HttpResponse<Integer> number =  Unirest.get("http://172.18.0.67:4567/dice")
+                            .asObject(Integer.class);
                     _turnToRollWindowUI.getDiceNumber().setText("" + number);
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
