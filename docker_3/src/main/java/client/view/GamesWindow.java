@@ -62,7 +62,7 @@ public class GamesWindow {
             public void actionPerformed(ActionEvent e) {
 //                wenn game markiert, dann
                 if (selectRow() != null){
-                    _playerWindow = new PlayerLogInWindow(_gamesWindowUI);
+                    _playerWindow = new PlayerLogInWindow(_gamesTableModel, _gamesWindowUI);
 
                 } else {
                     JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",

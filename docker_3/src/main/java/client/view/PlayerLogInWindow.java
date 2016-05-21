@@ -1,6 +1,7 @@
 package client.view;
 
 import client.adapter.PlayerAdapter;
+import client.model.gameModels.Player;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -19,15 +20,18 @@ public class PlayerLogInWindow {
     private String _playerName;
     private PlayerLoginWindowUI _playerWindowUI;
     private GamesWindowUI _gamesWindowUI;
-    private VstTableModel gamesTableModel;
+    private VstTableModel _gamesTableModel;
+    private PlayerAdapter _playerAdapter;
 
-    public PlayerLogInWindow(GamesWindowUI gameswindow){
+    public PlayerLogInWindow(VstTableModel tableModel, GamesWindowUI gameswindow){
         this._gamesWindowUI = gameswindow;
         _playerWindowUI = new PlayerLoginWindowUI();
+        _gamesTableModel = tableModel;
         _playerWindowUI.getPlayerNameFrame().setVisible(true);
+        _playerAdapter = new PlayerAdapter();
         registerSubmitPlayerName();
     }
-
+// gibt es gar keinen playerName?????????????????????
     private void registerSubmitPlayerName() {
         _playerWindowUI.getSubmitButton().addActionListener(new ActionListener() {
             @Override
@@ -37,12 +41,9 @@ public class PlayerLogInWindow {
                     System.out.println(_playerName);
                     //Semaphore
                     try {
-//                         TODO player IP and Port
-                        HttpResponse<ArrayList> playerNameListResponse = PlayerAdapter.getPlayers(gamesTableModel, _gamesWindowUI);
-                        ArrayList<HashMap> playerNameList = playerNameListResponse.getBody();
-                        System.out.println(""+playerNameList);
-                        for (HashMap player : playerNameList) {
-                            String name = player.get("name").toString();
+                        Player[] playerList  = _playerAdapter.getPlayers(_gamesTableModel, _gamesWindowUI);
+                        for (int i = 0 ; i <= playerList.length; i++) {
+                            playerList[i].
                             if(name.equals(_playerName)){
                                 JOptionPane.showMessageDialog(null, "player name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
