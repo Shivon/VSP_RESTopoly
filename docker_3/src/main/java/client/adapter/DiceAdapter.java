@@ -12,7 +12,7 @@ public class DiceAdapter {
     public DiceAdapter(){}
 
     public static HttpResponse<Integer> getDiceRollNumber() throws UnirestException {
-       return  Unirest.get("http://172.18.0.67:4567/dice").asObject(Integer.class);
+       return  Unirest.get("http://172.18.0.83:4567/dice").asObject(Integer.class);
 
     }
 }

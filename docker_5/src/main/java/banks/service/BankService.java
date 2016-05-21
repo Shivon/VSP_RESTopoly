@@ -1,6 +1,7 @@
 package banks.service;
 
 import banks.model.Accounts;
+import banks.model.Transaction;
 import banks.model.Transfers;
 import com.google.gson.Gson;
 import banks.model.Bank;
@@ -255,18 +256,61 @@ public class BankService {
             return gson.toJson("");
 
         });
-//
-//        get("/banks/:bankid/transaction/:tid", (request, response) -> {
-//// returns the state of the transaction
-//        });
+// TODO ???
+        get("/banks/:bankid/transaction/:tid", (request, response) -> {
+// returns the state of the transaction
+            bank = bankRepo.findBank(request.params(":bankId"));
+
+            if (bank == null) {
+                response.status(404);
+                response.type("application/json");
+                return "";
+            }
+
+            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
+
+            if (transaction == null) {
+                response.status(404);
+                response.type("application/json");
+                return "";
+            }
+
+            bankRepo.transactionBegin();
+
+            response.status(201);
+            response.type("application/json");
+            return gson.toJson("");
+        });
 //
 //        put("/banks/:bankid/transaction/:tid", (request, response) -> {
 //// commits/readies the transaction
 //        });
 //
-//        delete("/banks/:bankid/transaction/:tid", (request, response) -> {
-//// abort/rollback an transaction
-//        });
+//        TODO???
+        delete("/banks/:bankid/transaction/:tid", (request, response) -> {
+// abort/rollback an transaction
+            bank = bankRepo.findBank(request.params(":bankId"));
+
+            if (bank == null) {
+                response.status(404);
+                response.type("application/json");
+                return "";
+            }
+
+            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
+
+            if (transaction == null) {
+                response.status(404);
+                response.type("application/json");
+                return "";
+            }
+
+            bankRepo.deleteTransaction(transaction);
+
+            response.status(201);
+            response.type("application/json");
+            return gson.toJson("");
+        });
 
         get("/banks/:bankid/accounts", (request, response) -> {
 // List of available account
@@ -327,5 +371,6 @@ public class BankService {
             response.type("application/json");
             return gson.toJson(saldo);
         });
+
     }
 }

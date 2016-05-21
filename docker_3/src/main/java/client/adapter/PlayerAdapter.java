@@ -24,14 +24,14 @@ public class PlayerAdapter {
 //       this._gamesWindowUI = gamesWindowUI;
 //        this._player = playerName;
 
-        Unirest.post("http://localhost:4567/games/"
+        Unirest.post("http://172.18.0.86:4567/games/"
                 + gamesTableModel.getValueAt(gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
                 .field("name", playerName)
                 .asJson();
     }
 
     public static HttpResponse<ArrayList> getPlayers(VstTableModel gamesTableModel, GamesWindowUI _gamesWindowUI) throws UnirestException {
-       return  Unirest.get("http://localhost:4567/games/"
+       return  Unirest.get("http://172.18.0.86:4567/games/"
                 + gamesTableModel.getValueAt(_gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
                 .asObject(ArrayList.class);
     }

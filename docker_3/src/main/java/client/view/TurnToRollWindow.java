@@ -2,7 +2,7 @@ package client.view;
 
 import client.adapter.DiceAdapter;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
+//import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.awt.event.ActionEvent;
@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class TurnToRollWindow {
 
+//    soll aufgehen, wenn man an der Reihe ist
     private TurnToRollWindowUI _turnToRollWindowUI;
 
     public TurnToRollWindow(){

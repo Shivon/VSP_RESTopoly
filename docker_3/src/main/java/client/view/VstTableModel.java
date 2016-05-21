@@ -1,5 +1,7 @@
 package client.view;
 
+import client.adapter.GamesAdapter;
+import client.model.gameModels.Game;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -14,19 +16,18 @@ import java.util.HashMap;
  */
 public class VstTableModel  extends AbstractTableModel {
 
-    private HttpResponse<ArrayList> gamesListResponse =  Unirest.get("http://localhost:4567/games")
-            .asObject(ArrayList.class);
-    ArrayList<HashMap> gamesList = gamesListResponse.getBody();
+    private GamesAdapter gamesAdapter;
+    private Game[] _gamesList;
 
-    public VstTableModel(ArrayList<HashMap> gamesList) throws UnirestException {
 
-        this.gamesList = new ArrayList<HashMap>(gamesList);
-
+    public VstTableModel(Game[] gamesList) throws UnirestException {
+        this.gamesAdapter = new GamesAdapter();
+        this._gamesList = gamesList;
     }
 
     @Override
     public int getRowCount() {
-        return gamesList.size();
+        return _gamesList.length;
     }
 
     @Override
@@ -38,19 +39,20 @@ public class VstTableModel  extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         Object value = "??";
-         HashMap game = gamesList.get(rowIndex);
+
+         Game game = _gamesList[rowIndex];
         switch (columnIndex) {
             case 0:
-                value = game.get("id").toString();
+                value = game.getGameId();
                 break;
             case 1:
-                value = game.get("name").toString();
+                value = game.getName();
                 break;
             case 2:
-                value = game.get("players").toString();
+                value = game.getPlayers();
                 break;
             case 3:
-                value = game.get("services").toString();
+                value = game.getServices();
                 break;
         }
 
@@ -58,6 +60,9 @@ public class VstTableModel  extends AbstractTableModel {
 
     }
 
+    public Game getGameAt(int row) {
+        return _gamesList[row];
+    }
 //    @Override
 //    public Class<?> getColumnClass(int columnIndex) {
 //        return // Return the class that best represents the column...
@@ -75,9 +80,7 @@ public class VstTableModel  extends AbstractTableModel {
      * @param row
      * @return
      */
-    public HashMap getGameAt(int row) {
-        return gamesList.get(row);
-    }
+
 
 }
 

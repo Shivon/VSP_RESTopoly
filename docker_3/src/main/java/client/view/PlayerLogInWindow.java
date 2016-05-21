@@ -24,6 +24,7 @@ public class PlayerLogInWindow {
     public PlayerLogInWindow(GamesWindowUI gameswindow){
         this._gamesWindowUI = gameswindow;
         _playerWindowUI = new PlayerLoginWindowUI();
+        _playerWindowUI.getPlayerNameFrame().setVisible(true);
         registerSubmitPlayerName();
     }
 
@@ -33,11 +34,13 @@ public class PlayerLogInWindow {
             public void actionPerformed(ActionEvent e) {
                 if(!_playerWindowUI.getPlayerNameArea().getText().isEmpty()) {
                     _playerName = _playerWindowUI.getPlayerNameArea().getText();
+                    System.out.println(_playerName);
                     //Semaphore
                     try {
 //                         TODO player IP and Port
                         HttpResponse<ArrayList> playerNameListResponse = PlayerAdapter.getPlayers(gamesTableModel, _gamesWindowUI);
                         ArrayList<HashMap> playerNameList = playerNameListResponse.getBody();
+                        System.out.println(""+playerNameList);
                         for (HashMap player : playerNameList) {
                             String name = player.get("name").toString();
                             if(name.equals(_playerName)){

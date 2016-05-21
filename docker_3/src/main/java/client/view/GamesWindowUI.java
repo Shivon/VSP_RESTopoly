@@ -2,6 +2,9 @@ package client.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -17,11 +20,15 @@ public class GamesWindowUI {
     private TableColumn _gamesColumn;
     private JPanel _takePartButtonPanel;
     private JButton _takePartButton;
+//    private ListSelectionListener _selectionModel;
 
 
     public GamesWindowUI(){
         _mainFrame = new JFrame("Available Games");
         _allGamesPanel = new JPanel();
+        _tableModel = new DefaultTableModel();
+        _gamesColumn = new TableColumn();
+//        _allGamesTable = new JTable();
         _allGamesTable =  new JTable(_tableModel);
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
@@ -35,7 +42,11 @@ public class GamesWindowUI {
 
         _allGamesTable.setBackground(Color.DARK_GRAY);
         _allGamesTable.setForeground(Color.ORANGE);
+        _allGamesTable.setSelectionBackground(Color.BLUE);
+        _allGamesTable.setSelectionForeground(Color.CYAN);
         _tableModel.addColumn(_gamesColumn);
+//        _allGamesTable.addColumn(new TableColumn());
+        _allGamesTable.setSelectionMode(0);
         _allGamesTable.setRowSelectionAllowed(true);
 //        _allGamesTable.getSelectedRow();
         _allGamesTable.setPreferredSize(new Dimension(400,10000));

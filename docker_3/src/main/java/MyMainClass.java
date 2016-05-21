@@ -1,6 +1,7 @@
 
 import client.service.MainThread;
-import client.view.ClientUIController;
+//import client.view.ClientUIController;
+import client.view.GamesWindow;
 import client.view.TurnToRollWindow;
 import client.view.UserWindow;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -18,6 +19,8 @@ public class MyMainClass {
 
 //        new MainThread();
 // new TurnToRollWindow();
+        new UserWindow();
+//        new GamesWindow();
     }
 
 }

@@ -41,7 +41,7 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <finalName>vsp_abq355</finalName>
+                            <finalName>vsp_abq202</finalName>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
