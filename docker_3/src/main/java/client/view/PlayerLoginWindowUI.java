@@ -57,7 +57,7 @@ public class PlayerLoginWindowUI {
 
         _submitButtonPanel.add(_submitButton, BorderLayout.CENTER);
 
-        _playerFrame.setSize(500, 300);
+        _playerFrame.setSize(500, 400);
         _playerFrame.add(_availablePawnsPanel, BorderLayout.NORTH);
         _playerFrame.add(_playerPawnPanel, BorderLayout.CENTER);
         _playerFrame.add(_submitButtonPanel, BorderLayout.SOUTH);

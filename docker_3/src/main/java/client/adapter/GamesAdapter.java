@@ -1,6 +1,7 @@
 package client.adapter;
 
 import client.model.gameModels.Game;
+import client.adapter.IPAdresses;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -15,16 +16,21 @@ import java.util.List;
 public class GamesAdapter {
 
     Gson gson = new Gson();
+    private IPAdresses _ipAdresses;
 
     public GamesAdapter(){
-
+        _ipAdresses = new IPAdresses();
     }
 
     public Game[] getGames() throws UnirestException {
-        String games = Unirest.get("http://172.18.0.87:4567/games")
+        String games = Unirest.get(_ipAdresses.gamesIP())
                 .asString().getBody();
         Game[] gamesList = gson.fromJson(games, Game[].class);
-
+        System.out.println(gamesList);
+        System.out.println(gamesList[0].getName());
+        System.out.println(gamesList[0].getUri());
+        System.out.println("id first game: " +
+                gamesList[0].getGameId() + ", id second game: " + gamesList[1].getGameId()+ ", Länge GamesList: " + gamesList.length);
         return gamesList;
     }
 

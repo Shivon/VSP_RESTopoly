@@ -20,27 +20,26 @@ import java.util.Queue;
 public class UserAdapter {
 
     Gson gson = new Gson();
-    String userService;
+    private IPAdresses _ipAdresses;
 
-    public UserAdapter(String userService){
-        this.userService = userService;
+    public UserAdapter(){
+        _ipAdresses = new IPAdresses();
     }
 
     public void putUser(String _userName) throws UnirestException {
         System.out.println(_userName);
 
-        Unirest.put("http://" + userService + "/users/" + _userName.toLowerCase()
-                + "?name=" + _userName + "&uri=http://" + userService + "/client/" +
+        Unirest.put(_ipAdresses.usersIP() + _userName.toLowerCase()
+                + "?name=" + _userName + "&uri=" + "http://"+_ipAdresses.usersIP()+"/client/" +
                 _userName.toLowerCase());
     }
 // Only String, JsonNode and InputStream are supported, or an ObjectMapper implementation is required.
     public List<User> getUsers() throws UnirestException {
         System.out.println("get useres");
-        String users = Unirest.get("http://" + userService + "/users").asString().getBody();
+        String users = Unirest.get("http://"+_ipAdresses.usersIP()+"/users").asString().getBody();
         System.out.println(users);
         Users usersObj = gson.fromJson(users, Users.class);
         return usersObj.getUsers();
     }
-
 
 }

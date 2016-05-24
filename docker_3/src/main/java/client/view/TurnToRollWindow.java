@@ -16,6 +16,7 @@ public class TurnToRollWindow {
 
 //    soll aufgehen, wenn man an der Reihe ist
     private TurnToRollWindowUI _turnToRollWindowUI;
+    private DiceAdapter _diceAdapter;
 
     public TurnToRollWindow(){
         _turnToRollWindowUI = new TurnToRollWindowUI();
@@ -28,7 +29,7 @@ public class TurnToRollWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    HttpResponse<Integer> number = DiceAdapter.getDiceRollNumber();
+                    int number = _diceAdapter.getDiceRollNumber();
                     _turnToRollWindowUI.getDiceNumber().setText("" + number);
                 } catch (UnirestException e1) {
                     e1.printStackTrace();

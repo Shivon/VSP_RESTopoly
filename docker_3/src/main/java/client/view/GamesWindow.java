@@ -1,5 +1,6 @@
 package client.view;
 
+import client.adapter.PlayerAdapter;
 import client.model.gameModels.Game;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -23,6 +24,7 @@ public class GamesWindow {
 
     private GamesWindowUI _gamesWindowUI;
     private PlayerLogInWindow _playerWindow;
+    private PlayerAdapter _playerAdapter;
     private VstTableModel _gamesTableModel;
     private Gson gson = new Gson();
     private Game _selectedGame;
@@ -30,6 +32,7 @@ public class GamesWindow {
     public GamesWindow(VstTableModel gamesTableModel) throws UnirestException {
         this._gamesTableModel = gamesTableModel;
         _gamesWindowUI = new GamesWindowUI();
+        _playerAdapter = new PlayerAdapter();
 //        _playerWindowUI = new PlayerLoginWindowUI();
 //        _gamesTableModel.addTableModelListener();
         registerSubmitJoinTheGame();
@@ -52,7 +55,7 @@ public class GamesWindow {
                 }
             }
         });
-        System.out.println(""+ _selectedGame);
+        System.out.println("selected Game"+ _selectedGame);
         return _selectedGame;
     }
 
@@ -62,7 +65,12 @@ public class GamesWindow {
             public void actionPerformed(ActionEvent e) {
 //                wenn game markiert, dann
                 if (selectRow() != null){
-                    _playerWindow = new PlayerLogInWindow(_gamesTableModel, _gamesWindowUI);
+                    try {
+                        System.out.println("selected Game submit " + _selectedGame);
+                        _playerWindow = new PlayerLogInWindow(_gamesTableModel, _gamesWindowUI, _selectedGame);
+                    } catch (UnirestException e1) {
+                        e1.printStackTrace();
+                    }
 
                 } else {
                     JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",

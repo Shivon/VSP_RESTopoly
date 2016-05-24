@@ -1,5 +1,6 @@
 package client.adapter;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -9,10 +10,17 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  */
 public class DiceAdapter {
 
-    public DiceAdapter(){}
+    Gson gson = new Gson();
+    private IPAdresses _ipAdresses;
 
-    public static HttpResponse<Integer> getDiceRollNumber() throws UnirestException {
-       return  Unirest.get("http://172.18.0.83:4567/dice").asObject(Integer.class);
+    public DiceAdapter(){
+        _ipAdresses = new IPAdresses();
+    }
 
+    public int getDiceRollNumber() throws UnirestException {
+        String diceNumber = Unirest.get(_ipAdresses.diceIP()).asString().getBody();
+        int number = gson.fromJson(diceNumber, Integer.class);
+        System.out.println("" + number);
+        return  number;
     }
 }

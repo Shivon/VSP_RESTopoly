@@ -20,29 +20,60 @@ public class PlayerAdapter {
     Gson gson = new Gson();
     private VstTableModel _gamesTableModel;
     private GamesWindowUI _gamesWindowUI;
-    private String _player;
+    private String _playerPawn;
+    private Game _game;
+    private Player _player;
+    private IPAdresses _ipAdresses;
 
-    public PlayerAdapter(){}
+    public PlayerAdapter(){
+        _ipAdresses = new IPAdresses();
+    }
 
-    public void postPlayer(VstTableModel gamesTableModel, GamesWindowUI gamesWindowUI, String playerPawn) throws UnirestException {
-       this._gamesTableModel = gamesTableModel;
-       this._gamesWindowUI = gamesWindowUI;
-        this._player = playerPawn;
+    public void postPlayer(VstTableModel gamesTableModel, GamesWindowUI gamesWindowUI, String playerPawn, Game game) throws UnirestException {
+        this._gamesTableModel = gamesTableModel;
+        this._gamesWindowUI = gamesWindowUI;
+//        this._player = playerPawn;
 
-        Unirest.post("http://172.18.0.87:4567/games/"
-                + gamesTableModel.getValueAt(gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
+        Unirest.post(_ipAdresses.gamesIP()
+                + this._game.getGameId() + "/players")
                 .field("pawn", playerPawn)
                 .asJson();
     }
 
-    public Player[] getPlayers(VstTableModel gamesTableModel, GamesWindowUI _gamesWindowUI) throws UnirestException {
-        this._gamesWindowUI = _gamesWindowUI;
+    public void putPlayer(VstTableModel gamesTableModel, GamesWindowUI gamesWindowUI, String playerPawn, Game game) throws UnirestException {
         this._gamesTableModel = gamesTableModel;
-        String players = Unirest.get("http://172.18.0.87:4567/games/"
-                + gamesTableModel.getValueAt(_gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
+        this._gamesWindowUI = gamesWindowUI;
+        this._playerPawn = playerPawn;
+        this._game = game;
+
+        Unirest.post(_ipAdresses.gamesIP()
+                + _game.getGameId() + "/players")
+                .field("pawn", playerPawn)
+                .asJson();
+    }
+
+    public Player[] getPlayers(Game game) throws UnirestException {
+//        this._gamesWindowUI = _gamesWindowUI;
+//        this._gamesTableModel = gamesTableModel;
+        System.out.println("getplayer");
+        this._game = game;
+        System.out.println("game " + _game + ", id: " + _game.getGameId());
+        String players = Unirest.get(_ipAdresses.gamesIP()
+                + _game.getGameId() + "/players")
                 .asString().getBody();
+        System.out.println(players);
         Player[] playerList = gson.fromJson(players, Player[].class);
+        System.out.println(playerList);
        return  playerList;
+    }
+
+    public void putPlayerReady(Game game, Player player) throws UnirestException {
+        this._game = game;
+        this._player = player;
+// /games/{gameid}/players/{playerid}/ready
+        Unirest.put(_ipAdresses.gamesIP()
+                + _game.getGameId() + "/players/" + _player.getPlayerId() + "/ready")
+                .asString().getBody();
     }
 
 }

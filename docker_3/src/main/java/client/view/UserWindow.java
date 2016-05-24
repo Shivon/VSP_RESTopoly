@@ -1,6 +1,7 @@
 package client.view;
 
 import client.adapter.GamesAdapter;
+import client.adapter.IPAdresses;
 import client.adapter.UserAdapter;
 import client.model.User;
 import client.model.gameModels.Game;
@@ -26,11 +27,12 @@ public class UserWindow {
     private String _userName;
     private UserAdapter _userAdapter;
     private GamesAdapter _gamesAdapter;
+    private IPAdresses _ipAdresses;
     private Gson gson = new Gson();
 
     public UserWindow() throws UnirestException{
         _userWindowUI = new UserWindowUI();
-        _userAdapter = new UserAdapter("172.18.0.41:4567");
+        _userAdapter = new UserAdapter();
 //        _gamesWindow = new GamesWindow(VstTableModel gamesTableModel );
         _gamesAdapter = new GamesAdapter();
         registerSubmitUserName();
@@ -71,6 +73,7 @@ public class UserWindow {
                     //Semaphore, weil max Anzahl Spieler?
                     try {
                         Game[] gamesList = _gamesAdapter.getGames();
+                        System.out.println(gamesList);
                         _gamesTableModel =  new VstTableModel(gamesList);
                         _gamesWindow = new GamesWindow(_gamesTableModel);
                         for (int i = 0; i < gamesList.length; i++ ) {
