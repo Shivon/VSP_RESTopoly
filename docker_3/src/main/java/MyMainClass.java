@@ -1,9 +1,8 @@
 
+import client.adapter.PlayerAdapter;
 import client.service.MainThread;
 //import client.view.ClientUIController;
-import client.view.GamesWindow;
-import client.view.TurnToRollWindow;
-import client.view.UserWindow;
+import client.view.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**

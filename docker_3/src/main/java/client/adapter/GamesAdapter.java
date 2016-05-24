@@ -21,7 +21,7 @@ public class GamesAdapter {
     }
 
     public Game[] getGames() throws UnirestException {
-        String games = Unirest.get("http://172.18.0.86:4567/games")
+        String games = Unirest.get("http://172.18.0.87:4567/games")
                 .asString().getBody();
         Game[] gamesList = gson.fromJson(games, Game[].class);
 

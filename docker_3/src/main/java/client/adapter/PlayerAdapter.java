@@ -24,21 +24,21 @@ public class PlayerAdapter {
 
     public PlayerAdapter(){}
 
-    public void postPlayer(VstTableModel gamesTableModel, GamesWindowUI gamesWindowUI, String playerName) throws UnirestException {
+    public void postPlayer(VstTableModel gamesTableModel, GamesWindowUI gamesWindowUI, String playerPawn) throws UnirestException {
        this._gamesTableModel = gamesTableModel;
        this._gamesWindowUI = gamesWindowUI;
-        this._player = playerName;
+        this._player = playerPawn;
 
-        Unirest.post("http://172.18.0.86:4567/games/"
+        Unirest.post("http://172.18.0.87:4567/games/"
                 + gamesTableModel.getValueAt(gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
-                .field("name", playerName)
+                .field("pawn", playerPawn)
                 .asJson();
     }
 
     public Player[] getPlayers(VstTableModel gamesTableModel, GamesWindowUI _gamesWindowUI) throws UnirestException {
         this._gamesWindowUI = _gamesWindowUI;
         this._gamesTableModel = gamesTableModel;
-        String players = Unirest.get("http://172.18.0.86:4567/games/"
+        String players = Unirest.get("http://172.18.0.87:4567/games/"
                 + gamesTableModel.getValueAt(_gamesWindowUI.getAllGameTable().getSelectedRow(),0) + "/players")
                 .asString().getBody();
         Player[] playerList = gson.fromJson(players, Player[].class);

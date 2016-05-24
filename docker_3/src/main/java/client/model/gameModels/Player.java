@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Christian on 03.05.2016.
