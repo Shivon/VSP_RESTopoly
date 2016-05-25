@@ -28,6 +28,7 @@ public class UserWindow {
     private UserAdapter _userAdapter;
     private GamesAdapter _gamesAdapter;
     private IPAdresses _ipAdresses;
+    private User _user;
     private Gson gson = new Gson();
 
     public UserWindow() throws UnirestException{
@@ -64,6 +65,8 @@ public class UserWindow {
 
                     try {
                         _userAdapter.putUser(_userName);
+                        System.out.println("username after put"+_userName);
+                        System.out.println("users after put" +_userAdapter.getUsers());
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -75,7 +78,9 @@ public class UserWindow {
                         Game[] gamesList = _gamesAdapter.getGames();
                         System.out.println(gamesList);
                         _gamesTableModel =  new VstTableModel(gamesList);
-                        _gamesWindow = new GamesWindow(_gamesTableModel);
+                        _user =  _userAdapter.getUser(_userName);
+                        System.out.println("user im Userwindow: " + _user);
+                        _gamesWindow = new GamesWindow(_gamesTableModel, _user);
                         for (int i = 0; i < gamesList.length; i++ ) {
                             _gamesWindow.getGamesWindowUI().getTableModel() // ui defaulttablemoodel
                                     .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});

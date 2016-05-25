@@ -16,10 +16,10 @@ import java.util.List;
 @Entity
 @Table(name = "Game")
 public class Game {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gameId")
-    @Expose
+//    @Expose
     private int gameId;
 
     @Column(name = "uri", unique = true)
@@ -51,8 +51,8 @@ public class Game {
         this.players = new ArrayList<>();
     }
 
-    public Game( int id, String uri, String name, List<Player> players, Paths services, Paths components) {
-        this.gameId = id;
+    public Game(String uri, String name, List<Player> players, Paths services, Paths components) {
+//        this.gameId = id;
         this.uri = uri;
         this.name = name;
         this.players = players;

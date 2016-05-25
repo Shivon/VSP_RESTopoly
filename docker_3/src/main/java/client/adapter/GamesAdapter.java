@@ -23,10 +23,10 @@ public class GamesAdapter {
     }
 
     public Game[] getGames() throws UnirestException {
-        String games = Unirest.get(_ipAdresses.gamesIP())
+        String games = Unirest.get(_ipAdresses.gamesIP() + "/games")
                 .asString().getBody();
         Game[] gamesList = gson.fromJson(games, Game[].class);
-        System.out.println(gamesList);
+        System.out.println("games list " +gamesList);
         System.out.println(gamesList[0].getName());
         System.out.println(gamesList[0].getUri());
         System.out.println("id first game: " +

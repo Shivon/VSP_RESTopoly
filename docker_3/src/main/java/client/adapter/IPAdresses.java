@@ -8,15 +8,15 @@ public class IPAdresses {
     public IPAdresses(){}
 
     public String gamesIP(){
-        return "http://172.18.0.41:4567/games";
+        return "http://172.18.0.96:4567";
     }
 
     public String diceIP(){
-        return "http://172.18.0.83:4567/dice";
+        return "http://172.18.0.92:4567/dice";
     }
 
     public String usersIP(){
-        return "172.18.0.11:4567";
+        return "172.18.0.93:4567";
     }
 
     public String eventsIP(){

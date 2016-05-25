@@ -45,6 +45,7 @@ public class PlayerLoginWindowUI {
         _availablePawns.setWrapStyleWord(true);
         _availablePawns.setLineWrap(true);
         _availablePawns.setPreferredSize(new Dimension(300,300));
+        _availablePawns.setEnabled(false);
 
         _playerPawnArea.setEnabled(true);
 

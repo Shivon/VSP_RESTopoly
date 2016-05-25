@@ -1,6 +1,7 @@
 package client.view;
 
 import client.adapter.PlayerAdapter;
+import client.model.User;
 import client.model.gameModels.Game;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -28,11 +29,14 @@ public class GamesWindow {
     private VstTableModel _gamesTableModel;
     private Gson gson = new Gson();
     private Game _selectedGame;
+    private String _userName;
+    private User _user;
 
-    public GamesWindow(VstTableModel gamesTableModel) throws UnirestException {
+    public GamesWindow(VstTableModel gamesTableModel, User user) throws UnirestException {
         this._gamesTableModel = gamesTableModel;
         _gamesWindowUI = new GamesWindowUI();
         _playerAdapter = new PlayerAdapter();
+        this._user = user;
 //        _playerWindowUI = new PlayerLoginWindowUI();
 //        _gamesTableModel.addTableModelListener();
         registerSubmitJoinTheGame();
@@ -67,7 +71,7 @@ public class GamesWindow {
                 if (selectRow() != null){
                     try {
                         System.out.println("selected Game submit " + _selectedGame);
-                        _playerWindow = new PlayerLogInWindow(_gamesTableModel, _gamesWindowUI, _selectedGame);
+                        _playerWindow = new PlayerLogInWindow(_selectedGame, _user);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
