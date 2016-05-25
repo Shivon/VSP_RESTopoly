@@ -14,7 +14,7 @@ public class PlayerRepo {
     public PlayerRepo() {
     }
 
-    public Player saveGame(Player player) {
+    public Player savePlayer(Player player) {
         Player savedPlayer = null;
         try {
             em.getTransaction().begin();
@@ -26,7 +26,7 @@ public class PlayerRepo {
         return savedPlayer;
     }
 
-    public void deleteGame(Player player) {
+    public void deletePlayer(Player player) {
         try {
             em.getTransaction().begin();
             em.remove(player);
@@ -36,7 +36,7 @@ public class PlayerRepo {
         }
     }
 
-    public Player findGame(int playerId) {
+    public Player findPlayer(int playerId) {
         try {
             em.getTransaction().begin();
             Player player = em.find(Player.class, playerId);
