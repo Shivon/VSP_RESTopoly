@@ -29,7 +29,10 @@ public class DiceService {
 
             if (game == null || player == null || resource == null || !Util.validateURI(game) || !Util.validateURI(player) || !Util.validateURI(resource)) {
                 res.status(200);
-                return "QueryParam Error";
+                dice = new Dice();
+                dice.rollDice();
+                res.type("application/json");
+                return gson.toJson(dice);
             }
 
             gameUri = Util.uriFromString(game);
@@ -60,6 +63,6 @@ public class DiceService {
                         queryParam("reason", diceEvent.getReason().toString()).
                         queryParam("player", diceEvent.getPlayer().toString()).
                 when().
-                        post("http://172.18.0.75:4567/events");
+                        post("http://172.18.0.85:4567/events");
     }
 }

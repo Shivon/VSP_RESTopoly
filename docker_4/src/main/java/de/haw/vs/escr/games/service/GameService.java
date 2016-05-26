@@ -4,8 +4,6 @@ import static spark.Spark.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.org.apache.xml.internal.security.algorithms.implementations.IntegrityHmac;
-import com.sun.org.apache.xpath.internal.operations.String;
 import de.haw.vs.escr.games.businesslogic.GameBusinessLogic;
 import de.haw.vs.escr.games.dtos.GameDTO;
 import de.haw.vs.escr.games.dtos.PlayerDetailDTO;
@@ -17,6 +15,8 @@ import de.haw.vs.escr.games.models.Player;
 import de.haw.vs.escr.games.models.Ready;
 import de.haw.vs.escr.games.repos.GameRepo;
 import de.haw.vs.escr.games.repos.PlayerRepo;
+import spark.Request;
+import spark.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -222,6 +222,8 @@ public class GameService {
         });
 
         get("/games/:gameid/players/:playerid", (req, res) -> {
+            if (req.params("playerid").equals("turn")) return this.getTurn(req, res);
+
             int gameId;
             try {
                 gameId = Integer.parseInt(req.params(":gameid"));
@@ -425,29 +427,6 @@ public class GameService {
             //return "GET /games/" + req.params(":gameid") + "/players/current";
         });
 
-        get("/games/:gameid/players/turn", (req, res) -> {
-            int gameId;
-            try {
-                gameId = Integer.parseInt(req.params(":gameid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
-
-            Game g = this.gameBL.findGame(gameId);
-
-            Player p = this.gameBL.findPlayerHoldingTurn(g.getPlayers());
-
-            if (p == null) {
-                res.status(404);
-                return null;
-            }
-
-            return this.gson.toJson(p);
-            //return "GET /games/" + req.params(":gameid") + "/players/turn";
-        });
-
         put("/games/:gameid/players/turn", (req, res) -> {
             int gameId;
             try {
@@ -512,6 +491,28 @@ public class GameService {
             return "Successful";
             //return "DELETE /games/" + req.params(":gameid") + "/players/turn";
         });
+    }
+
+    private java.lang.String getTurn(Request req, Response res) {
+        int gameId;
+        try {
+            gameId = Integer.parseInt(req.params(":gameid"));
+        }
+        catch (NumberFormatException e) {
+            res.status(401);
+            return null;
+        }
+
+        Game g = this.gameBL.findGame(gameId);
+
+        Player p = this.gameBL.findPlayerHoldingTurn(g.getPlayers());
+
+        if (p == null) {
+            res.status(404);
+            return null;
+        }
+
+        return this.gson.toJson(p);
     }
 
     private void initializeGson() {
