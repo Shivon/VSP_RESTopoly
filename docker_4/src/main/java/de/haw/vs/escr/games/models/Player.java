@@ -15,14 +15,15 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "playerId")
+    @Expose(deserialize = false)
     private int playerId;
 
     @Column(name = "uri", unique = true)
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "user")
+    @Column(name = "user", unique = true, nullable = false)
     @Expose
     private String user;
 
@@ -34,11 +35,15 @@ public class Player {
     @Expose
     private String account;
 
+    @Column(name = "turn")
+    private boolean turn;
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Ready ready;
 
     public Player() {
+        this.turn = false;
     }
 
     public Player(String uri, String user, String pawn, String account, Ready ready) {
@@ -47,6 +52,7 @@ public class Player {
         this.pawn = pawn;
         this.account = account;
         this.ready = ready;
+        this.turn = false;
     }
 
     public int getPlayerId() {
@@ -95,6 +101,14 @@ public class Player {
 
     public void setReady(Ready ready) {
         this.ready = ready;
+    }
+
+    public boolean isTurn() {
+        return turn;
+    }
+
+    public void setTurn(boolean turn) {
+        this.turn = turn;
     }
 
     public PlayerDTO toDTO() {

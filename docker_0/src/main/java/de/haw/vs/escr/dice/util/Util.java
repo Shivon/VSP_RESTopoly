@@ -19,7 +19,7 @@ public class Util {
 
     public static boolean validateURI(String uri) {
         try {
-            new URL(uri);
+            new URI(uri);
         } catch (Exception e1) {
             return false;
         }

@@ -27,9 +27,17 @@ public class DiceService {
             URI playerUri = null;
             URI resourceUri = null;
 
-            if (game != null && Util.validateURI(game)) gameUri = Util.uriFromString(game);
-            if (player != null && Util.validateURI(player)) playerUri = Util.uriFromString(player);
-            if (resource != null && Util.validateURI(resource)) resourceUri = Util.uriFromString(resource);
+            if (game == null || player == null || resource == null || !Util.validateURI(game) || !Util.validateURI(player) || !Util.validateURI(resource)) {
+                res.status(200);
+                dice = new Dice();
+                dice.rollDice();
+                res.type("application/json");
+                return gson.toJson(dice);
+            }
+
+            gameUri = Util.uriFromString(game);
+            playerUri = Util.uriFromString(player);
+            resourceUri = Util.uriFromString(resource);
 
             dice = new Dice();
             dice.rollDice();
@@ -47,6 +55,14 @@ public class DiceService {
       }
 
     private Response sendEventToGame(Event diceEvent) {
-        return given().queryParam("game", diceEvent.getGame()).queryParam("type", diceEvent.getType()).queryParam("name", diceEvent.getName()).queryParam("reason", diceEvent.getReason()).queryParam("player", diceEvent.getPlayer()).post("http://172.18.0.XXX/events");
+        return
+                given().
+                        queryParam("game", diceEvent.getGame().toString()).
+                        queryParam("type", diceEvent.getType().toString()).
+                        queryParam("name", diceEvent.getName().toString()).
+                        queryParam("reason", diceEvent.getReason().toString()).
+                        queryParam("player", diceEvent.getPlayer().toString()).
+                when().
+                        post("http://172.18.0.85:4567/events");
     }
 }
