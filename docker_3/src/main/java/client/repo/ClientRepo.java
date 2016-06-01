@@ -35,7 +35,7 @@ public class ClientRepo {
             return client;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            System.out.println("Event konnte nicht gespeichert werden");
+            System.out.println("Client konnte nicht gespeichert werden");
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class ClientRepo {
             entityManager.getTransaction().begin();
             System.out.println("vor dem Löschen: " + client);
             entityManager.remove(client);
-            System.out.println("repo: event wurde gelöscht");
+            System.out.println("repo: client wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();

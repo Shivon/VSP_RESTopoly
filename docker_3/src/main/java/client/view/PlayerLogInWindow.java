@@ -1,10 +1,12 @@
 package client.view;
 
+import client.adapter.BanksAdapter;
 import client.adapter.PlayerAdapter;
-import client.model.Players;
+import client.model.Accounts;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
+import clientUI.PlayerLoginWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
@@ -23,9 +25,12 @@ public class PlayerLogInWindow {
 //    private GamesWindowUI _gamesWindowUI;
 //    private VstTableModel _gamesTableModel;
     private PlayerAdapter _playerAdapter;
+    private BanksAdapter _banksAdapter;
+    private Accounts _account;
     private List<String> _pawnList;
     private Game _game;
     private User _user;
+    private TurnToRollWindow _turnToRollWindow;
 
     public PlayerLogInWindow(Game selectedGame, User user) throws UnirestException {
 //        this._gamesWindowUI = gamesWindow;
@@ -37,6 +42,7 @@ public class PlayerLogInWindow {
         this._game = selectedGame;
 //        this._gamesTableModel = tableModel;
         _playerAdapter = new PlayerAdapter();
+        _banksAdapter = new BanksAdapter();
         System.out.println("constructor playerloginwindow - before showavailablepawns");
         _playerWindowUI.getAvailablePawnsArea().setText(showAvailablePawns().toString());
         System.out.println("constructor playerloginwindow - after showavailablepawns");
@@ -58,7 +64,7 @@ public class PlayerLogInWindow {
                 }
             }
         }
-        System.out.println(""+ _pawnList);
+        System.out.println("PAWNLIST"+ _pawnList);
         return _pawnList;
     }
 
@@ -82,8 +88,12 @@ public class PlayerLogInWindow {
                     try {
                         System.out.println("before post");
                       _playerAdapter.postPlayer( _playerPawn, _game, _user);
-                        System.out.println("after post");
-                        System.out.println( _playerAdapter.getPlayers(_game));
+                        System.out.println("after post im Submit");
+                        System.out.println("get Player: " +  _playerAdapter.getPlayer(_game, _user));
+                      _banksAdapter.postAccount(_playerAdapter.getPlayer(_game, _user), _game);
+                      _account = _banksAdapter.getAccount(_user, _game);
+                      _playerAdapter.putPlayer(_user, _game, _account, true);
+                        playersTurnToRoll(_user, _game);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -94,6 +104,18 @@ public class PlayerLogInWindow {
                 }
             }
         });
+    }
+
+    private void playersTurnToRoll(User user, Game game) throws UnirestException {
+        this._user = user;
+        this._game = game;
+        _account = _banksAdapter.getAccount(_user, _game);
+        Player player = _playerAdapter.getPlayer(_game, _user);
+        while(! _playerAdapter.getPlayerIsReady(_game, player)){
+            _playerAdapter.putPlayerTurn(_game, player);
+        }
+        _playerAdapter.putPlayer(_user, _game, _account, false);
+        _turnToRollWindow = new TurnToRollWindow();
     }
 
 }

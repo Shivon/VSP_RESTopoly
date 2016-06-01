@@ -62,7 +62,8 @@ public class UserRepo {
     public User findUserByNameId(String nameId) {
         try {
             entityManager.getTransaction().begin();
-            User user = entityManager.createQuery("from User where nameId = :val", User.class).setParameter("val", nameId).getSingleResult();
+            User user = entityManager.createQuery("from User where nameId = :val", User.class)
+                    .setParameter("val", nameId).getSingleResult();
             entityManager.getTransaction().commit();
             return user;
         } catch (Exception e) {

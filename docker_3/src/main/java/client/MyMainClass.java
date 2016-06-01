@@ -1,4 +1,4 @@
-
+package client;
 import client.adapter.PlayerAdapter;
 import client.service.MainThread;
 //import client.view.ClientUIController;

@@ -7,16 +7,14 @@ public class IPAdresses {
 
     public IPAdresses(){}
 
-    public String gamesIP(){
-        return "http://172.18.0.96:4567";
-    }
+    public String gamesIP(){ return "http://172.18.0.77:4567"; }
 
     public String diceIP(){
         return "http://172.18.0.92:4567/dice";
     }
 
     public String usersIP(){
-        return "172.18.0.93:4567";
+        return "172.18.0.29:4567";
     }
 
     public String eventsIP(){
@@ -30,4 +28,6 @@ public class IPAdresses {
     public String boardsIP(){
         return null;
     }
+
+    public String clientIP() { return null; }
 }

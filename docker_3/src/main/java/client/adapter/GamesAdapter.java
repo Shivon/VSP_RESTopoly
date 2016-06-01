@@ -26,11 +26,12 @@ public class GamesAdapter {
         String games = Unirest.get(_ipAdresses.gamesIP() + "/games")
                 .asString().getBody();
         Game[] gamesList = gson.fromJson(games, Game[].class);
-        System.out.println("games list " +gamesList);
-        System.out.println(gamesList[0].getName());
-        System.out.println(gamesList[0].getUri());
+        System.out.println("games list " + gamesList);
+        System.out.println("GAme Name: " + gamesList[0].getName());
+        System.out.println("GAme Uri: " +gamesList[0].getUri());
         System.out.println("id first game: " +
-                gamesList[0].getGameId() + ", id second game: " + gamesList[1].getGameId()+ ", Länge GamesList: " + gamesList.length);
+                gamesList[0].getGameId() + ", id second game: " + gamesList[1].getGameId()+
+                ", Länge GamesList: " + gamesList.length);
         return gamesList;
     }
 

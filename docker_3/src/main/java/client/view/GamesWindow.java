@@ -3,18 +3,11 @@ package client.view;
 import client.adapter.PlayerAdapter;
 import client.model.User;
 import client.model.gameModels.Game;
+import clientUI.GamesWindowUI;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import javafx.scene.control.TableSelectionModel;
 
 import javax.swing.*;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,9 +20,9 @@ public class GamesWindow {
     private PlayerLogInWindow _playerWindow;
     private PlayerAdapter _playerAdapter;
     private VstTableModel _gamesTableModel;
-    private Gson gson = new Gson();
+//    private Gson gson = new Gson();
     private Game _selectedGame;
-    private String _userName;
+//    private String _userName;
     private User _user;
 
     public GamesWindow(VstTableModel gamesTableModel, User user) throws UnirestException {
@@ -51,10 +44,10 @@ public class GamesWindow {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 System.out.println("maus click");
                 int row = _gamesWindowUI.getAllGameTable().rowAtPoint(evt.getPoint());
-                System.out.println(""+row);
+                System.out.println("Zeile: " +row);
 
                 if (row >= 0){
-                    System.out.println("" +_gamesWindowUI.getTableModel().getValueAt(row,0));
+                    System.out.println("Eintrag in Zeile: " +_gamesWindowUI.getTableModel().getValueAt(row,0));
                    _selectedGame = _gamesTableModel.getGameAt(row);
                 }
             }
@@ -70,7 +63,7 @@ public class GamesWindow {
 //                wenn game markiert, dann
                 if (selectRow() != null){
                     try {
-                        System.out.println("selected Game submit " + _selectedGame);
+                        System.out.println("selected Game submit " + _selectedGame.getName());
                         _playerWindow = new PlayerLogInWindow(_selectedGame, _user);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();

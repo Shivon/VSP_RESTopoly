@@ -1,13 +1,12 @@
 package client.view;
 
 import client.adapter.DiceAdapter;
-import com.mashape.unirest.http.HttpResponse;
+import clientUI.TurnToRollWindowUI;
 //import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 /**
  * Created by Jana Mareike on 11.05.2016.
@@ -20,6 +19,7 @@ public class TurnToRollWindow {
 
     public TurnToRollWindow(){
         _turnToRollWindowUI = new TurnToRollWindowUI();
+        _diceAdapter = new DiceAdapter();
         _turnToRollWindowUI.getDiceFrame().setVisible(true);
         registerRoll();
     }

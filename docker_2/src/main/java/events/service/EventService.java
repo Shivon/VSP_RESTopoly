@@ -52,7 +52,7 @@ public class EventService {
             System.out.println(reason);
             eventList = eventRepo.findEventByAttributes(game, type, name, reason, resource, player);
 
-            System.out.println("event beu get ............." + eventList.get(0).getGame());
+            System.out.println("event bei get ............." + eventList.get(0).getGame());
             System.out.println("events bei get" + eventList);
             // list = repo.findEventsByGame(game);
             //

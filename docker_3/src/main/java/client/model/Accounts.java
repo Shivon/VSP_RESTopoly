@@ -1,4 +1,4 @@
-package banks.model;
+package client.model;
 
 import com.google.gson.annotations.Expose;
 
@@ -24,7 +24,7 @@ public class Accounts {
 
     @Column(name = "player")
     @Expose
-    private String player;
+    private URI player;
 
     @Column(name = "saldo")
     @Expose
@@ -35,7 +35,7 @@ public class Accounts {
     public Accounts(){
     }
 
-    public Accounts(String player, int saldo) {
+    public Accounts(URI player, int saldo) {
         this.id = UUID.randomUUID().toString();
         this.player = player;
         this.saldo = saldo;
@@ -49,7 +49,7 @@ public class Accounts {
         this.id = id;
     }
 
-    public String getPlayer() {
+    public URI getPlayer() {
         return player;
     }
 
@@ -57,7 +57,7 @@ public class Accounts {
         this.saldo += saldo;
     }
 
-    public void setPlayer(String player) {
+    public void setPlayer(URI player) {
         this.player = player;
     }
 
