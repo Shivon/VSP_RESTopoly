@@ -16,12 +16,13 @@ import java.net.URI;
  */
 public class UserService {
     private Gson gson = new Gson();
-    private UsersBusinesslogic usersBL = new UsersBusinesslogic();
+    private UsersBusinesslogic usersBL;
 
     public UserService() {
         GsonBuilder gb = new GsonBuilder();
         gb.excludeFieldsWithoutExposeAnnotation();
         gson = gb.create();
+        this.usersBL = new UsersBusinesslogic();
 
         get("/users", (req, res) -> {
             Users users = usersBL.getUsers();
