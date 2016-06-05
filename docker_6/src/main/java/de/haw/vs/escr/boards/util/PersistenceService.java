@@ -11,7 +11,7 @@ public class PersistenceService {
     private static final EntityManagerFactory entityManagerFactory;
     static {
         try {
-            entityManagerFactory = Persistence.createEntityManagerFactory("games");
+            entityManagerFactory = Persistence.createEntityManagerFactory("boards");
 
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
