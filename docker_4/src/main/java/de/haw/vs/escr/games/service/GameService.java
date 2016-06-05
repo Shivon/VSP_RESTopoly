@@ -48,7 +48,10 @@ public class GameService {
 
         post("/games", (req, res) -> {
             Game game = gson.fromJson(req.body(), Game.class);
-            Game g = this.gameBL.createGame(game);
+
+            Game g = this.gameBL.initializeAndCreateGame(game);
+
+            //Game g = this.gameBL.createGame(game);
             return gson.toJson(g);
             //return "POST /games";
         });

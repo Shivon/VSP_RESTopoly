@@ -2,34 +2,24 @@ package de.haw.vs.escr.users.model;
 
 import com.google.gson.annotations.Expose;
 
-import javax.persistence.*;
-import java.net.URI;
 import java.util.UUID;
 
 /**
  * Created by Christian on 05.04.2016.
  */
-@Entity
-@Table(name = "User")
 public class User {
-    @Id
-    @Column(name = "uuid")
     @Expose(serialize = false)
     private String uuid;
 
-    @Column(name = "nameId", unique = true, nullable = false)
     @Expose(serialize = false)
     private String nameId;
 
-    @Column(name = "userId")
     @Expose
     private String id;
 
-    @Column(name = "name")
     @Expose
     private String name;
 
-    @Column(name = "uri")
     @Expose
     private String uri;
 
@@ -43,6 +33,14 @@ public class User {
         this.id = id;
         this.name = name;
         this.uri = uri;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getNameId() {
@@ -76,4 +74,6 @@ public class User {
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+
 }

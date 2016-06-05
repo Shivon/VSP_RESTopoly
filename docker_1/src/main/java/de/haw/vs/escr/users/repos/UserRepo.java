@@ -1,17 +1,43 @@
 package de.haw.vs.escr.users.repos;
 
 import de.haw.vs.escr.users.model.User;
-import de.haw.vs.escr.users.util.PersistenceService;
-
-import javax.persistence.EntityManager;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Christian on 05.04.2016.
  */
 public class UserRepo {
-    private EntityManager entityManager = PersistenceService.getEntityManager();
+    private List<User> userList;
+
+    public UserRepo() {
+        this.userList = new ArrayList<>();
+    }
+
+    public User saveUser(User user) {
+        if (this.userList.stream().anyMatch(u -> u.getUuid().equals(user.getUuid()))) return this.updateUser(user);
+        this.userList.add(user);
+        return this.userList.stream().filter(u -> u.getUuid().equals(user.getUuid())).findFirst().get();
+    }
+
+    private User updateUser(User user) {
+        this.deleteUser(user);
+        return this.saveUser(user);
+    }
+
+    public List<User> listUser() {
+        return this.userList;
+    }
+
+    public void deleteUser(User user) {
+        this.userList.removeIf(u -> u.getUuid().equals(user.getUuid()));
+    }
+
+    public User findUserByNameId(String nameId) {
+        return this.userList.stream().filter(u -> u.getNameId().equals(nameId)).findFirst().get();
+    }
+
+    /*private EntityManager entityManager = PersistenceService.getEntityManager();
 
     public User saveUser(User user) {
         try {
@@ -47,7 +73,7 @@ public class UserRepo {
         }
     }
 
-    /*public User findUser(String userid) {
+    public User findUser(String userid) {
         try {
             entityManager.getTransaction().begin();
             User user = entityManager.find(User.class, userid);
@@ -57,7 +83,7 @@ public class UserRepo {
             entityManager.getTransaction().rollback();
         }
         return null;
-    }*/
+    }
 
     public User findUserByNameId(String nameId) {
         try {
@@ -69,5 +95,5 @@ public class UserRepo {
             entityManager.getTransaction().rollback();
         }
         return null;
-    }
+    }*/
 }

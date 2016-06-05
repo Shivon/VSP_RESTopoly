@@ -4,45 +4,34 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import de.haw.vs.escr.games.dtos.PlayerDTO;
 
-import javax.persistence.*;
 
 /**
  * Created by Christian on 03.05.2016.
  */
-@Entity
-@Table(name = "Player")
 public class Player {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "playerId")
     @Expose(deserialize = false)
     private int playerId;
 
-    @Column(name = "uri", unique = true)
     @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "user", unique = true, nullable = false)
     @Expose
     private String user;
 
-    @Column(name = "pawn")
     @Expose
     private String pawn;
 
-    @Column(name = "account")
     @Expose
     private String account;
 
-    @Column(name = "turn")
     private boolean turn;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Ready ready;
 
     public Player() {
+        this.ready = new Ready(false);
         this.turn = false;
     }
 

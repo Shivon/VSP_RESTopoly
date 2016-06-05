@@ -1,0 +1,12 @@
+/*C1*/SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+COMMIT
+/*C2*/SET SCHEMA PUBLIC
+create table User (uuid varchar(255) not null, userId varchar(255), name varchar(255), nameId varchar(255) not null, uri varchar(255), primary key (uuid))
+alter table User add constraint UK_5sixgukqvmicai0o1sh7qnmxi unique (nameId)
+INSERT INTO USER VALUES('6ca2a837-6d70-4df7-b005-6d4ee1bd4049','/users/christian','christian','christian','/users/christian')
+COMMIT
+INSERT INTO USER VALUES('cc439926-e16a-4bac-9025-c0ee3a3e0581','/users/eric','Eric','eric','/users/eric')
+COMMIT
+INSERT INTO USER VALUES('ca480123-3f65-49f6-91d6-b8dc57278f68','/users/ericsson','Ericsson','ericsson','/users/ericsson')
+COMMIT

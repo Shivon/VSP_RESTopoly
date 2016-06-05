@@ -6,44 +6,31 @@ import de.haw.vs.escr.games.dtos.GameDTO;
 import de.haw.vs.escr.games.dtos.PlayerURI;
 import de.haw.vs.escr.games.dtos.StatusDTO;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Christian on 29.04.2016.
  */
-@Entity
-@Table(name = "Game")
 public class Game {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gameId")
     private int gameId;
 
-    @Column(name = "uri", unique = true)
     @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "name", nullable = false)
     @Expose
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private List<Player> players;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths services;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths components;
 
-    @Enumerated(EnumType.STRING)
     private GameStatus status;
 
     public Game() {

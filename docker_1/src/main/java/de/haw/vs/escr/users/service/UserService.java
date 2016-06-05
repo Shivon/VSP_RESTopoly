@@ -2,7 +2,6 @@ package de.haw.vs.escr.users.service;
 
 import static spark.Spark.*;
 
-import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.haw.vs.escr.users.businesslogic.UsersBusinesslogic;
