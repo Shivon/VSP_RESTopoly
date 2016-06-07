@@ -12,8 +12,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Jana Mareike on 11.05.2016.
@@ -22,8 +21,6 @@ public class PlayerLogInWindow {
 
     private String _playerPawn;
     private PlayerLoginWindowUI _playerWindowUI;
-//    private GamesWindowUI _gamesWindowUI;
-//    private VstTableModel _gamesTableModel;
     private PlayerAdapter _playerAdapter;
     private BanksAdapter _banksAdapter;
     private Accounts _account;
@@ -33,14 +30,18 @@ public class PlayerLogInWindow {
     private TurnToRollWindow _turnToRollWindow;
 
     public PlayerLogInWindow(Game selectedGame, User user) throws UnirestException {
-//        this._gamesWindowUI = gamesWindow;
         this._user = user;
-        _pawnList = Arrays.asList("Car", "Shoe", "Hat", "Dog", "Ship");
+        _pawnList = new ArrayList<>();
+        _pawnList.add("Car");
+        _pawnList.add("Shoe");
+        _pawnList.add("Hat");
+        _pawnList.add("Dog");
+        _pawnList.add("Ship");
+        _pawnList.add("Flatiron");
+
         System.out.println(_pawnList);
         _playerWindowUI = new PlayerLoginWindowUI();
-//        _playerPawn = new String();
         this._game = selectedGame;
-//        this._gamesTableModel = tableModel;
         _playerAdapter = new PlayerAdapter();
         _banksAdapter = new BanksAdapter();
         System.out.println("constructor playerloginwindow - before showavailablepawns");
@@ -53,17 +54,27 @@ public class PlayerLogInWindow {
     private List<String> showAvailablePawns() throws UnirestException {
         System.out.println("hallo");
         System.out.println("game show "+_game);
-        List<Player> playerList  = _playerAdapter.getPlayers(_game);
-        System.out.println(playerList);
-        if(!playerList.isEmpty()) {
-            for (int i = 0; i <= playerList.size(); i++) {
-                for (int j = 0; j < _pawnList.size(); j++) {
-                    if (playerList.get(i).getPawn().equals(_pawnList.get(j))) {
-                        _pawnList.remove(j);
-                    }
+        if(!_game.getPlayers().isEmpty()){
+            List<Player> playerList = _game.getPlayers();
+            Set<String> playerPawnSet = new HashSet<>();
+            System.out.println(playerList);
+            for (Player player : playerList) {
+                System.out.println("PLAYERLIST PAWN: " + player.getPawn());
+                System.out.println("PLAYERLIST : " + playerList);
+                playerPawnSet.add(player.getPawn());
+                System.out.println(playerPawnSet);
+                System.out.println(_pawnList.size());
+            }
+
+            Iterator<String> iterator = _pawnList.iterator();
+            while(iterator.hasNext()){
+                String pawn = iterator.next();
+                if(playerPawnSet.contains(pawn)){
+                    iterator.remove();
                 }
             }
         }
+
         System.out.println("PAWNLIST"+ _pawnList);
         return _pawnList;
     }
@@ -84,20 +95,15 @@ public class PlayerLogInWindow {
                         e1.printStackTrace();
                     }
                     System.out.println(_playerPawn);
-                    //Semaphore
                     try {
                         System.out.println("before post");
                       _playerAdapter.postPlayer( _playerPawn, _game, _user);
                         System.out.println("after post im Submit");
                         System.out.println("get Player: " +  _playerAdapter.getPlayer(_game, _user));
-                      _banksAdapter.postAccount(_playerAdapter.getPlayer(_game, _user), _game);
-                      _account = _banksAdapter.getAccount(_user, _game);
-                      _playerAdapter.putPlayer(_user, _game, _account, true);
-                        playersTurnToRoll(_user, _game);
+                        _playerWindowUI.getPlayerNameFrame().setVisible(false);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    //Semaphore Ende
                 }else{
                     JOptionPane.showMessageDialog(null, "No pawn chosen", "enter pawn",
                             JOptionPane.ERROR_MESSAGE);
@@ -109,13 +115,17 @@ public class PlayerLogInWindow {
     private void playersTurnToRoll(User user, Game game) throws UnirestException {
         this._user = user;
         this._game = game;
-        _account = _banksAdapter.getAccount(_user, _game);
         Player player = _playerAdapter.getPlayer(_game, _user);
+//        if(Eingang Post von Boards){
+//        isReady false
+//        _turnToRollWindow = new TurnToRollWindow();
+
+
         while(! _playerAdapter.getPlayerIsReady(_game, player)){
             _playerAdapter.putPlayerTurn(_game, player);
         }
         _playerAdapter.putPlayer(_user, _game, _account, false);
-        _turnToRollWindow = new TurnToRollWindow();
+        _turnToRollWindow = new TurnToRollWindow(_game, _user);
     }
 
 }

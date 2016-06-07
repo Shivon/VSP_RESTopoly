@@ -2,9 +2,6 @@ package clientUI;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -20,7 +17,9 @@ public class GamesWindowUI {
     private TableColumn _gamesColumn;
     private JPanel _takePartButtonPanel;
     private JButton _takePartButton;
-//    private ListSelectionListener _selectionModel;
+    private JButton _newGameButton;
+    private  JButton _startGameButton;
+
 
 
     public GamesWindowUI(){
@@ -28,14 +27,17 @@ public class GamesWindowUI {
         _allGamesPanel = new JPanel();
         _tableModel = new DefaultTableModel();
         _gamesColumn = new TableColumn();
-//        _allGamesTable = new JTable();
         _allGamesTable =  new JTable(_tableModel);
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
+        _newGameButton = new JButton("New Game");
+        _startGameButton = new JButton("Start Game");
 
         _takePartButtonPanel.setBorder(new EmptyBorder(2,3,2,3));
         _takePartButtonPanel.setPreferredSize(new Dimension(300,50));
         _takePartButtonPanel.add(_takePartButton);
+        _takePartButtonPanel.add(_newGameButton);
+        _takePartButtonPanel.add(_startGameButton);
 
         _allGamesPanel.setBorder(new EmptyBorder(2,3,2,3));
         _allGamesPanel.setPreferredSize(new Dimension(300,450));
@@ -45,10 +47,8 @@ public class GamesWindowUI {
         _allGamesTable.setSelectionBackground(Color.BLUE);
         _allGamesTable.setSelectionForeground(Color.CYAN);
         _tableModel.addColumn(_gamesColumn);
-//        _allGamesTable.addColumn(new TableColumn());
         _allGamesTable.setSelectionMode(0);
         _allGamesTable.setRowSelectionAllowed(true);
-//        _allGamesTable.getSelectedRow();
         _allGamesTable.setPreferredSize(new Dimension(400,10000));
         _allGamesTable.setEnabled(false);
 
@@ -75,4 +75,8 @@ public class GamesWindowUI {
     public JButton getTakePartButton(){
         return _takePartButton;
     }
+
+    public JButton getNewGameButton() { return _newGameButton; }
+
+    public JButton getStartGameButton() { return  _startGameButton; }
 }

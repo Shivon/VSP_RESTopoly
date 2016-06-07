@@ -1,15 +1,21 @@
 package client.view;
 
+import client.adapter.GamesAdapter;
 import client.adapter.PlayerAdapter;
+import client.adapter.UserAdapter;
 import client.model.User;
 import client.model.gameModels.Game;
+import client.model.gameModels.Player;
+import client.model.gameModels.Ready;
 import clientUI.GamesWindowUI;
-import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+
 
 /**
  * Created by Jana Mareike on 11.05.2016.
@@ -19,22 +25,24 @@ public class GamesWindow {
     private GamesWindowUI _gamesWindowUI;
     private PlayerLogInWindow _playerWindow;
     private PlayerAdapter _playerAdapter;
+    private GamesAdapter _gamesAdapter;
     private VstTableModel _gamesTableModel;
-//    private Gson gson = new Gson();
     private Game _selectedGame;
-//    private String _userName;
     private User _user;
+    private Ready _ready;
+    private  WaitWindow _waitWindow;
 
     public GamesWindow(VstTableModel gamesTableModel, User user) throws UnirestException {
         this._gamesTableModel = gamesTableModel;
         _gamesWindowUI = new GamesWindowUI();
         _playerAdapter = new PlayerAdapter();
+        _gamesAdapter = new GamesAdapter(_playerAdapter);
+        _ready = new Ready(true);
         this._user = user;
-//        _playerWindowUI = new PlayerLoginWindowUI();
-//        _gamesTableModel.addTableModelListener();
         registerSubmitJoinTheGame();
+        registerNewGame();
+        registerStartGame(_selectedGame);
         selectRow();
-
     }
 
     private Game selectRow(){
@@ -60,25 +68,90 @@ public class GamesWindow {
         _gamesWindowUI.getTakePartButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Game[] gamesList = new Game[0];
+                try {
+                    gamesList = _gamesAdapter.getGames();
+                } catch (UnirestException e1) {
+                    e1.printStackTrace();
+                }
+                System.out.println("GamesList im UserWindow: " + gamesList);
+                if (gamesList.length == 0) {
+                    System.out.println("Es gibt noch keine Games");
+                    NewGameWindow newGameWindow = new NewGameWindow(_user);
+                    _gamesWindowUI.getMainFrame().setVisible(false);
+
+                    System.out.println(gamesList);
 //                wenn game markiert, dann
-                if (selectRow() != null){
-                    try {
-                        System.out.println("selected Game submit " + _selectedGame.getName());
-                        _playerWindow = new PlayerLogInWindow(_selectedGame, _user);
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
+                } else if (selectRow() != null) {
+                        try {
+                            System.out.println("selected Game submit " + _selectedGame.getName());
+                            System.out.println("SELECTED GAME PLAYERS " + _selectedGame.getPlayers());
+                            _playerWindow = new PlayerLogInWindow(_selectedGame, _user);
+                        } catch (UnirestException e1) {
+                            e1.printStackTrace();
+                        }
 
                 } else {
                     JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
                             JOptionPane.ERROR_MESSAGE);
                 }
-
             }
         });
     }
-        public GamesWindowUI getGamesWindowUI(){
-        return _gamesWindowUI;
+
+    public void registerNewGame(){
+        _gamesWindowUI.getNewGameButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewGameWindow newGameWindow = new NewGameWindow(_user);
+                _gamesWindowUI.getMainFrame().setVisible(false);
+            }
+        });
     }
+
+    public void registerStartGame(Game game){
+        _selectedGame = game;
+        _gamesWindowUI.getStartGameButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game[] gamesList = new Game[0];
+                try {
+                    gamesList = _gamesAdapter.getGames();
+                } catch (UnirestException e1) {
+                    e1.printStackTrace();
+                }
+                System.out.println("GamesList im UserWindow: " + gamesList);
+                if (gamesList.length == 0) {
+                    System.out.println("Es gibt noch keine Games");
+                    NewGameWindow newGameWindow = new NewGameWindow(_user);
+                    _gamesWindowUI.getMainFrame().setVisible(false);
+
+                    System.out.println(gamesList);
+//                wenn game markiert, dann
+                } else if (selectRow() != null) {
+                    try {
+                        System.out.println("selected Game submit " + _selectedGame.getName());
+                        System.out.println("SELECTED GAME PLAYERS " + _selectedGame.getPlayers());
+                        _gamesAdapter.putGameStatusRunning(_selectedGame);
+                        System.out.println(_gamesAdapter.getGamesStatus(_selectedGame));
+                        List<Player> playerList = _selectedGame.getPlayers();
+                        System.out.println(playerList);
+                        for (Player player : playerList) {
+                            player.setReady(_ready);
+                        }
+                        _gamesWindowUI.getMainFrame().setVisible(false);
+                        _waitWindow = new WaitWindow(_user, _selectedGame);
+                    } catch (UnirestException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
+    public GamesWindowUI getGamesWindowUI(){ return _gamesWindowUI;}
 
 }

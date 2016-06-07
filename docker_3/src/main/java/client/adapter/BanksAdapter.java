@@ -27,6 +27,8 @@ public class BanksAdapter {
     public void postAccount(Player player, Game game) throws UnirestException {
         this._player = player;
         this._game = game;
+        System.out.println("GAME IM BANKSADAPTER: " + game);
+        System.out.println("BANK: " + _game.getComponents().getBank());
         String bankString = _game.getComponents().getBank();
 
         this._account = new Accounts();
@@ -35,14 +37,15 @@ public class BanksAdapter {
         Unirest.post( bankString + "/accounts").body(this.gson.toJson(_account)).getBody();
     }
 
-//    public Bank getBank(String bankID) throws UnirestException {
-//
-//        String bankString =  Unirest.get("http://" +  _ipAdresses.banksIP()
-//                + "/banks/" + _game.getComponents().getBank()).asString().getBody();
-//
-//        Bank bank = gson.fromJson(bankString, Bank.class);
-//        return bank;
-//    }
+    public Bank getBank(Game game) throws UnirestException {
+        _game = game;
+
+        String bankString =  Unirest.get("http://" +  _ipAdresses.banksIP()
+                + "/banks/" + _game.getComponents().getBank()).asString().getBody();
+
+        Bank bank = gson.fromJson(bankString, Bank.class);
+        return bank;
+    }
 
     public Accounts getAccount(User user, Game game) throws UnirestException {
         this._user = user;

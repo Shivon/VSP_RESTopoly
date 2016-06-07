@@ -1,7 +1,5 @@
 package client;
-import client.adapter.PlayerAdapter;
-import client.service.MainThread;
-//import client.view.ClientUIController;
+
 import client.view.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -15,11 +13,7 @@ public class MyMainClass {
     }
 
     public static void main(String[] args) throws UnirestException {
-
-//        new MainThread();
-// new TurnToRollWindow();
         new UserWindow();
-//        new GamesWindow();
     }
 
 }

@@ -2,14 +2,9 @@ package client.view;
 
 import client.adapter.GamesAdapter;
 import client.model.gameModels.Game;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.eclipse.jetty.server.Authentication;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Jana Mareike on 04.05.2016.
@@ -21,7 +16,7 @@ public class VstTableModel  extends AbstractTableModel {
 
 
     public VstTableModel(Game[] gamesList) throws UnirestException {
-        this.gamesAdapter = new GamesAdapter();
+        this.gamesAdapter = new GamesAdapter(null);
         this._gamesList = gamesList;
     }
 
@@ -74,13 +69,6 @@ public class VstTableModel  extends AbstractTableModel {
         //....
     }
     */
-
-    /**
-     * This will return the user at the specified row...
-     * @param row
-     * @return
-     */
-
 
 }
 

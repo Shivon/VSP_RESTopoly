@@ -1,48 +1,32 @@
-package client.model.gameModels;
+package client.model.dtos;
 
-import client.model.dtos.PlayerDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import javax.persistence.*;
-import java.util.List;
 
 /**
  * Created by Christian on 03.05.2016.
  */
-@Entity
-@Table(name = "Player")
-public class Player {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "playerId")
+public class PlayerDTO {
     private int playerId;
 
-    @Column(name = "uri", unique = true)
     @Expose
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "user")
     @Expose
     private String user;
 
-    @Column(name = "pawn")
     @Expose
     private String pawn;
 
-    @Column(name = "account")
     @Expose
     private String account;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
-    private Ready ready;
+    private String ready;
 
-    public Player() {
-    }
-
-    public Player(String uri, String user, String pawn, String account, Ready ready) {
+    public PlayerDTO(int playerId, String uri, String user, String pawn, String account, String ready) {
+        this.playerId = playerId;
         this.uri = uri;
         this.user = user;
         this.pawn = pawn;
@@ -62,8 +46,8 @@ public class Player {
         return uri;
     }
 
-    public void setUri(String id) {
-        this.uri = id;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public String getUser() {
@@ -90,16 +74,11 @@ public class Player {
         this.account = account;
     }
 
-    public Ready getReady() {
+    public String getReady() {
         return ready;
     }
 
-    public void setReady(Ready ready) {
+    public void setReady(String ready) {
         this.ready = ready;
     }
-
-//    public PlayerDTO toDTO() {
-//        String readyUri = this.getUri() + "/ready";
-//        return new PlayerDTO(this.getPlayerId(), this.getUri(), this.getUser(), this.getPawn(), this.getAccount(), readyUri);
-//    }
 }

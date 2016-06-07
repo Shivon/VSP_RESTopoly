@@ -124,7 +124,7 @@ public class Game {
 //        GameDTO gDto = new GameDTO(this.getGameId(), this.getUri(), this.getName(), playerURI, serviceURI, componentURI);
 //        return gDto;
 //    }
-
+//
 //    public StatusDTO toStatus() {
 //        return new StatusDTO(this.getStatus());
 //    }
@@ -137,3 +137,4 @@ public class Game {
 //        return pu;
 //    }
 }
+

@@ -2,19 +2,20 @@ package client.view;
 
 import client.adapter.GamesAdapter;
 import client.adapter.IPAdresses;
+import client.adapter.PlayerAdapter;
 import client.adapter.UserAdapter;
 import client.model.User;
-import client.model.Users;
 import client.model.gameModels.Game;
+import client.model.gameModels.GameStatus;
 import clientUI.UserWindowUI;
-import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.util.*;
 
+import static client.model.gameModels.GameStatus.*;
 /**
  * Created by Jana Mareike on 11.05.2016.
  */
@@ -25,15 +26,19 @@ public class UserWindow {
     private VstTableModel _gamesTableModel;
     private String _userName;
     private UserAdapter _userAdapter;
+    private PlayerAdapter _playerAdapter;
     private GamesAdapter _gamesAdapter;
 //    private IPAdresses _ipAdresses;
     private User _user;
+//    private GameStatus _gameStatus;
 //    private Gson gson = new Gson();
 
     public UserWindow() throws UnirestException{
         _userWindowUI = new UserWindowUI();
         _userAdapter = new UserAdapter();
-        _gamesAdapter = new GamesAdapter();
+        _playerAdapter = new PlayerAdapter();
+        _gamesAdapter = new GamesAdapter(_playerAdapter);
+//        _gameStatus = GameStatus.registration;
         registerSubmitUserName();
     }
 
@@ -45,7 +50,6 @@ public class UserWindow {
                 System.out.println("hallo");
                 if(! _userWindowUI.getLogInArea().getText().isEmpty()){
                     _userName = _userWindowUI.getLogInArea().getText();
-                    //                Semaphore?
                     try {
                         _user = _userAdapter.getUser(_userName.toLowerCase());
                         if(_user != null){
@@ -59,30 +63,37 @@ public class UserWindow {
                     try {
                         _userAdapter.postUser(_userName);
                         System.out.println("user after post " + _userAdapter.getUser(_userName.toLowerCase()));
-//                        _userAdapter.putUser(_userName);
-//                        System.out.println("username after put"+_userName);
-//                        System.out.println("users after put" +_userAdapter.getUsers());
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    //Semaphore Ende
                     _userWindowUI.getLogInFrame().setVisible(false);
-//                    alle Games holen und im Tabel auflisten
                     //Semaphore, weil max Anzahl Spieler?
                     try {
                         Game[] gamesList = _gamesAdapter.getGames();
-                        System.out.println(gamesList);
-                        _gamesTableModel =  new VstTableModel(gamesList);
-                        _user =  _userAdapter.getUser(_userName);
-                        _gamesWindow = new GamesWindow(_gamesTableModel, _user);
-                        for (int i = 0; i < gamesList.length; i++ ) {
-                            _gamesWindow.getGamesWindowUI().getTableModel() // ui defaulttablemoodel
-                                    .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});
+                        List<Game> games = Arrays.asList(gamesList);
+                        List<Game> gamesListRegistrationStatus = new ArrayList<Game>();
+                        System.out.println("GamesList im UserWindow: " + gamesList);
+
+                        for (Game game : games) {
+//                            game.hasStatus(GameStatus.registration)
+                            if(_gamesAdapter.getGamesStatus(game).equals(registration)){
+                                gamesListRegistrationStatus.add(game);
+//                                games.remove(game);
+
+                            }
+                        }
+                            System.out.println(gamesList);
+                            _gamesTableModel =  new VstTableModel(gamesList);
+                            _user =  _userAdapter.getUser(_userName);
+                            _gamesWindow = new GamesWindow(_gamesTableModel, _user);
+                            for (int i = 0; i < gamesListRegistrationStatus.size(); i++ ) {
+                                _gamesWindow.getGamesWindowUI().getTableModel() // ui defaulttablemoodel
+                                        .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});
                         }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    //Semaphore Ende
+
                     _gamesWindow.getGamesWindowUI().getMainFrame().setVisible(true);
                 }else {
                     JOptionPane.showMessageDialog(null, "No user name", "no user name",
@@ -92,7 +103,4 @@ public class UserWindow {
         });
     }
 
-//    public VstTableModel getGamesTableModel(){
-//        return _gamesTableModel;
-//    }
 }
