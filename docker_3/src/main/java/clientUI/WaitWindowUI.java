@@ -25,13 +25,13 @@ public class WaitWindowUI {
         _waitTextArea.setWrapStyleWord(true);
         _waitTextArea.setLineWrap(true);
         _waitTextArea.setCaretPosition(0);
-        _waitTextArea.setPreferredSize(new Dimension(60, 30));
+        _waitTextArea.setPreferredSize(new Dimension(180, 130));
         _waitTextArea.setEnabled(false);
         _waitTextArea.setText("Wait until your turn to roll");
 
         _waitPanel.add(_waitTextArea, BorderLayout.CENTER);
 
-        _waitFrame.setSize(200, 130);
+        _waitFrame.setSize(300, 130);
         _waitFrame.add(_waitPanel, BorderLayout.CENTER);
         _waitFrame.setVisible(false);
         _waitFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

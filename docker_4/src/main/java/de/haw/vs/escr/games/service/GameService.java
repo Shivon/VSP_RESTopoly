@@ -1,7 +1,5 @@
 package de.haw.vs.escr.games.service;
 
-import static spark.Spark.*;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.haw.vs.escr.games.businesslogic.GameBusinessLogic;
@@ -20,6 +18,8 @@ import spark.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static spark.Spark.*;
 
 /**
  * Created by Christian on 29.04.2016.

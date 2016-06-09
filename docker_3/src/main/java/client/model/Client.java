@@ -39,13 +39,13 @@ public class Client {
 
     @Column(name = "uri")
     @Expose
-    private URI uri;
+    private String uri;
 
     // leerer Konstruktor notwendig, weil gson das braucht, sonst Probleme mit ID
     public Client() {
     }
 
-    public Client(String name, URI uri){
+    public Client(String name, String uri){
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.uri = uri;
@@ -60,11 +60,11 @@ public class Client {
         this.name = name;
     }
 
-    public URI getUri() {
+    public String getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 

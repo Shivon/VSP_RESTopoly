@@ -2,6 +2,7 @@ package client.view;
 
 import client.adapter.GamesAdapter;
 import client.adapter.UserAdapter;
+import client.logic.GamesLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.GameStatus;
@@ -26,7 +27,6 @@ public class NewGameWindow {
     private GamesAdapter _gamesAdapter;
     private GamesWindow _gamesWindow;
     private String _gameName;
-    private VstTableModel _gamesTableModel;
     private UserAdapter _userAdapter;
     private User _user;
 
@@ -63,32 +63,11 @@ public class NewGameWindow {
                         Game game = _gamesAdapter.getGame(_gameName);
                         game.setStatus(GameStatus.registration);
                         System.out.println("GAMES im newGames: " + _gamesAdapter.getGames());
-
-                        Game[] gamesList = _gamesAdapter.getGames();
-                        List<Game> games = Arrays.asList(gamesList);
-                        List<Game> gamesListRegistrationStatus = new ArrayList<Game>();
-                        System.out.println("GamesList im UserWindow: " + gamesList);
-
-                        for (Game gameToCheckStatus : games) {
-//                            game.hasStatus(GameStatus.registration)
-                            if(_gamesAdapter.getGamesStatus(gameToCheckStatus).equals(registration)){
-                                gamesListRegistrationStatus.add(gameToCheckStatus);
-//                                games.remove(game);
-
-                            }
-                        }
-                        System.out.println(gamesList);
-                        _gamesTableModel =  new VstTableModel(gamesList);
-//                        _user =  _userAdapter.getUser(_userName);
-                        _gamesWindow = new GamesWindow(_gamesTableModel, _user);
-                        for (int i = 0; i < gamesListRegistrationStatus.size(); i++ ) {
-                            _gamesWindow.getGamesWindowUI().getTableModel() // ui defaulttablemoodel
-                                    .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});
-                        }
+                        _gamesWindow = new GamesWindow(_user);
+                        _newGameWindowUI.getLogInFrame().setVisible(false);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    _gamesWindow.getGamesWindowUI().getMainFrame().setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "No game name", "no game name",
                             JOptionPane.ERROR_MESSAGE);

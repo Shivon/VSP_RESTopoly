@@ -5,6 +5,7 @@ import client.model.gameModels.Game;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
 /**
  * Created by Jana Mareike on 04.05.2016.
@@ -12,18 +13,20 @@ import javax.swing.table.AbstractTableModel;
 public class VstTableModel  extends AbstractTableModel {
 
     private GamesAdapter gamesAdapter;
-    private Game[] _gamesList;
+//    private Game[] _gamesList;
+    private List<Game> _gamesList;
 
 
-    public VstTableModel(Game[] gamesList) throws UnirestException {
+    public VstTableModel(List<Game> gamesList) throws UnirestException {
         this.gamesAdapter = new GamesAdapter(null);
         this._gamesList = gamesList;
     }
 
     @Override
-    public int getRowCount() {
-        return _gamesList.length;
-    }
+//    public int getRowCount() {
+//        return _gamesList.length;
+//    }
+    public int getRowCount(){ return _gamesList.size();}
 
     @Override
     public int getColumnCount() {
@@ -35,7 +38,8 @@ public class VstTableModel  extends AbstractTableModel {
 
         Object value = "??";
 
-         Game game = _gamesList[rowIndex];
+//         Game game = _gamesList[rowIndex];
+        Game game = _gamesList.get(rowIndex);
         switch (columnIndex) {
             case 0:
                 value = game.getGameId();
@@ -55,9 +59,16 @@ public class VstTableModel  extends AbstractTableModel {
 
     }
 
-    public Game getGameAt(int row) {
-        return _gamesList[row];
+//    public Game getGameAt(int row) {
+//        return _gamesList[row];
+//    }
+    public Game getGameAt(int row){
+        return _gamesList.get(row);
     }
+
+
+
+
 //    @Override
 //    public Class<?> getColumnClass(int columnIndex) {
 //        return // Return the class that best represents the column...

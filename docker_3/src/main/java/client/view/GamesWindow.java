@@ -3,18 +3,17 @@ package client.view;
 import client.adapter.GamesAdapter;
 import client.adapter.PlayerAdapter;
 import client.adapter.UserAdapter;
+import client.logic.GamesLogic;
+import client.logic.WaitLogic;
 import client.model.User;
 import client.model.gameModels.Game;
-import client.model.gameModels.Player;
 import client.model.gameModels.Ready;
 import clientUI.GamesWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 
 /**
@@ -30,19 +29,36 @@ public class GamesWindow {
     private Game _selectedGame;
     private User _user;
     private Ready _ready;
-    private  WaitWindow _waitWindow;
+    private WaitLogic _waitLogic;
+    private UserAdapter _userAdapter;
+    private String _userName;
+    private GamesLogic _gamesLogic;
 
-    public GamesWindow(VstTableModel gamesTableModel, User user) throws UnirestException {
-        this._gamesTableModel = gamesTableModel;
+    public GamesWindow(User user) throws UnirestException {
+
         _gamesWindowUI = new GamesWindowUI();
+        this._user = user;
+        _gamesLogic = new GamesLogic(_gamesWindowUI, _user);
+        _userAdapter = new UserAdapter();
         _playerAdapter = new PlayerAdapter();
         _gamesAdapter = new GamesAdapter(_playerAdapter);
         _ready = new Ready(true);
-        this._user = user;
+
+
+        buildGamesWindowUI();
         registerSubmitJoinTheGame();
         registerNewGame();
-        registerStartGame(_selectedGame);
+        registerStartGame(_selectedGame, _user);
         selectRow();
+    }
+
+    private void buildGamesWindowUI(){
+        try {
+            _gamesLogic.gamesWithRegistrationStatusTable();
+        } catch (UnirestException e1) {
+            e1.printStackTrace();
+        }
+        _gamesLogic.setGamesUIVisible();
     }
 
     private Game selectRow(){
@@ -53,10 +69,8 @@ public class GamesWindow {
                 System.out.println("maus click");
                 int row = _gamesWindowUI.getAllGameTable().rowAtPoint(evt.getPoint());
                 System.out.println("Zeile: " +row);
-
-                if (row >= 0){
-                    System.out.println("Eintrag in Zeile: " +_gamesWindowUI.getTableModel().getValueAt(row,0));
-                   _selectedGame = _gamesTableModel.getGameAt(row);
+                if (_gamesLogic.checkIfRowIsChosen(row)) {
+                   _selectedGame=  _gamesLogic.getSelectedGameFromTable(row);
                 }
             }
         });
@@ -68,79 +82,13 @@ public class GamesWindow {
         _gamesWindowUI.getTakePartButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game[] gamesList = new Game[0];
-                try {
-                    gamesList = _gamesAdapter.getGames();
-                } catch (UnirestException e1) {
-                    e1.printStackTrace();
-                }
-                System.out.println("GamesList im UserWindow: " + gamesList);
-                if (gamesList.length == 0) {
-                    System.out.println("Es gibt noch keine Games");
-                    NewGameWindow newGameWindow = new NewGameWindow(_user);
-                    _gamesWindowUI.getMainFrame().setVisible(false);
-
-                    System.out.println(gamesList);
-//                wenn game markiert, dann
-                } else if (selectRow() != null) {
-                        try {
-                            System.out.println("selected Game submit " + _selectedGame.getName());
-                            System.out.println("SELECTED GAME PLAYERS " + _selectedGame.getPlayers());
-                            _playerWindow = new PlayerLogInWindow(_selectedGame, _user);
-                        } catch (UnirestException e1) {
-                            e1.printStackTrace();
-                        }
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-    }
-
-    public void registerNewGame(){
-        _gamesWindowUI.getNewGameButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NewGameWindow newGameWindow = new NewGameWindow(_user);
-                _gamesWindowUI.getMainFrame().setVisible(false);
-            }
-        });
-    }
-
-    public void registerStartGame(Game game){
-        _selectedGame = game;
-        _gamesWindowUI.getStartGameButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Game[] gamesList = new Game[0];
-                try {
-                    gamesList = _gamesAdapter.getGames();
-                } catch (UnirestException e1) {
-                    e1.printStackTrace();
-                }
-                System.out.println("GamesList im UserWindow: " + gamesList);
-                if (gamesList.length == 0) {
-                    System.out.println("Es gibt noch keine Games");
-                    NewGameWindow newGameWindow = new NewGameWindow(_user);
-                    _gamesWindowUI.getMainFrame().setVisible(false);
-
-                    System.out.println(gamesList);
-//                wenn game markiert, dann
-                } else if (selectRow() != null) {
+                if(_gamesLogic.checkIfThereAreNoGames()){
+                    _gamesLogic.openNewGameWindow();
+                    _gamesLogic.closeGamesWindowUI();
+                } else if (isRowSelected()) {
                     try {
-                        System.out.println("selected Game submit " + _selectedGame.getName());
-                        System.out.println("SELECTED GAME PLAYERS " + _selectedGame.getPlayers());
-                        _gamesAdapter.putGameStatusRunning(_selectedGame);
-                        System.out.println(_gamesAdapter.getGamesStatus(_selectedGame));
-                        List<Player> playerList = _selectedGame.getPlayers();
-                        System.out.println(playerList);
-                        for (Player player : playerList) {
-                            player.setReady(_ready);
-                        }
-                        _gamesWindowUI.getMainFrame().setVisible(false);
-                        _waitWindow = new WaitWindow(_user, _selectedGame);
+                        _gamesLogic.closeGamesWindowUI();
+                        _gamesLogic.openPlayerLoginWindow();
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -152,6 +100,53 @@ public class GamesWindow {
         });
     }
 
-    public GamesWindowUI getGamesWindowUI(){ return _gamesWindowUI;}
+    private void registerNewGame(){
+        _gamesWindowUI.getNewGameButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _gamesLogic.openNewGameWindow();
+                _gamesLogic.closeGamesWindowUI();
+            }
+        });
+    }
+
+    private void registerStartGame(Game game, User user){
+        _user = user;
+        _selectedGame = game;
+        _gamesWindowUI.getStartGameButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(_gamesLogic.checkIfThereAreNoGames()){
+                    System.out.println("Es gibt noch keine Games");
+                    _gamesLogic.openNewGameWindow();
+                    _gamesLogic.closeGamesWindowUI();
+                } else if (isRowSelected()) {
+                    try {
+                        if(_gamesLogic.checkIfUserHasAPlayerInGame(_selectedGame)){
+                        _gamesLogic.startGame(_selectedGame);
+                        _gamesLogic.closeGamesWindowUI();
+                        _gamesLogic.startWaitWindow(_user, _selectedGame, _playerAdapter);
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "No pawn choosen", "You have to join the game to start it!",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (UnirestException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
+    private boolean isRowSelected(){
+        if (selectRow() != null){
+            return true;
+        }
+        return false;
+    }
 
 }

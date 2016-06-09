@@ -1,5 +1,6 @@
 package client.adapter;
 
+import client.model.Client;
 import client.model.User;
 import client.model.Users;
 import com.google.gson.Gson;
@@ -21,6 +22,8 @@ public class UserAdapter {
 
     Gson gson = new Gson();
     private IPAdresses _ipAdresses;
+    private Client _client;
+    private User _user;
 
     public UserAdapter(){
         _ipAdresses = new IPAdresses();
@@ -62,18 +65,21 @@ public class UserAdapter {
         return userObj;
     }
 
-    public void postUser(String _userName) throws UnirestException {
+    public void postUser(User user) throws UnirestException {
 
-        User user = new User();
-        user.setName(_userName);
-        user.setNameId("/users/" + _userName.toLowerCase());
-        user.setUri("http://somehost:4567/client/" + _userName.toLowerCase());
-        System.out.println( "im POST: " + user + "  "
+        _user = user;
+//        _client = client;
+//       String  _userName = _client.getName();
+        String _userName = _user.getName();
+//        user.setName(_userName);
+//        user.setNameId("/users/" + _userName.toLowerCase());
+//        user.setUri(client.getUri());
+        System.out.println( "im POST: " + _user + "  "
                 + Unirest.post("http://"+_ipAdresses.usersIP()+ "/users")
-                .body(this.gson.toJson(user)).getBody());
+                .body(this.gson.toJson(_user)).getBody());
 
         Unirest.post("http://"+_ipAdresses.usersIP()+ "/users")
-                .body(this.gson.toJson(user)).asJson();
+                .body(this.gson.toJson(_user)).asJson();
 
         System.out.println("USER NACH POST: " + getUser(_userName.toLowerCase()).getName());
 //        System.out.println("USERS NACH POST: " + getUsers());

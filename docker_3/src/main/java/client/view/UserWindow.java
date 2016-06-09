@@ -4,6 +4,7 @@ import client.adapter.GamesAdapter;
 import client.adapter.IPAdresses;
 import client.adapter.PlayerAdapter;
 import client.adapter.UserAdapter;
+import client.logic.UserLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.GameStatus;
@@ -28,17 +29,19 @@ public class UserWindow {
     private UserAdapter _userAdapter;
     private PlayerAdapter _playerAdapter;
     private GamesAdapter _gamesAdapter;
-//    private IPAdresses _ipAdresses;
     private User _user;
-//    private GameStatus _gameStatus;
-//    private Gson gson = new Gson();
+
+    private UserLogic _userLogic;
+
 
     public UserWindow() throws UnirestException{
         _userWindowUI = new UserWindowUI();
+
+        _userLogic = new UserLogic(_userWindowUI);
+
         _userAdapter = new UserAdapter();
         _playerAdapter = new PlayerAdapter();
         _gamesAdapter = new GamesAdapter(_playerAdapter);
-//        _gameStatus = GameStatus.registration;
         registerSubmitUserName();
     }
 
@@ -48,53 +51,33 @@ public class UserWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("hallo");
-                if(! _userWindowUI.getLogInArea().getText().isEmpty()){
-                    _userName = _userWindowUI.getLogInArea().getText();
+                if(_userLogic.isLoginAreaNotEmpty()){
+                    _userLogic.getUserNameFromLoginArea();
                     try {
-                        _user = _userAdapter.getUser(_userName.toLowerCase());
-                        if(_user != null){
+                        if(_userLogic.checkIfUserAlreadyExists()){
                             JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-
                     try {
-                        _userAdapter.postUser(_userName);
-                        System.out.println("user after post " + _userAdapter.getUser(_userName.toLowerCase()));
+                        _userLogic.postUser(_userLogic.getUserNameFromLoginArea());
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    _userWindowUI.getLogInFrame().setVisible(false);
-                    //Semaphore, weil max Anzahl Spieler?
                     try {
-                        Game[] gamesList = _gamesAdapter.getGames();
-                        List<Game> games = Arrays.asList(gamesList);
-                        List<Game> gamesListRegistrationStatus = new ArrayList<Game>();
-                        System.out.println("GamesList im UserWindow: " + gamesList);
-
-                        for (Game game : games) {
-//                            game.hasStatus(GameStatus.registration)
-                            if(_gamesAdapter.getGamesStatus(game).equals(registration)){
-                                gamesListRegistrationStatus.add(game);
-//                                games.remove(game);
-
-                            }
-                        }
-                            System.out.println(gamesList);
-                            _gamesTableModel =  new VstTableModel(gamesList);
-                            _user =  _userAdapter.getUser(_userName);
-                            _gamesWindow = new GamesWindow(_gamesTableModel, _user);
-                            for (int i = 0; i < gamesListRegistrationStatus.size(); i++ ) {
-                                _gamesWindow.getGamesWindowUI().getTableModel() // ui defaulttablemoodel
-                                        .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});
-                        }
+                        _userLogic.getUser();
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
+                    _userLogic.closeUserUI();
 
-                    _gamesWindow.getGamesWindowUI().getMainFrame().setVisible(true);
+                    try {
+                        _userLogic.openGamesWindow(_userLogic.getUser());
+                    } catch (UnirestException e1) {
+                        e1.printStackTrace();
+                    }
                 }else {
                     JOptionPane.showMessageDialog(null, "No user name", "no user name",
                             JOptionPane.ERROR_MESSAGE);

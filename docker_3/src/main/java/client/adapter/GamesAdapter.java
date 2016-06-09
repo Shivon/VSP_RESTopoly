@@ -155,4 +155,12 @@ public class GamesAdapter {
                 .body(this.gson.toJson(game)).asJson();
     }
 
+//    public void setCurrentGame(Game game){
+//
+//    }
+//
+//    public Game getCurrentGame(){
+//        return
+//    }
+
 }
