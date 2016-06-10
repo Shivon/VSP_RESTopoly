@@ -31,6 +31,8 @@ public class TurnToRollWindow {
     private PlayerAdapter _playerAdapter;
     private Ready _ready;
     private WaitWindowUI _waitWindowUI;
+    private int _diceRoll1;
+    private int _diceRoll2;
 
     public TurnToRollWindow(Game game, User user, WaitWindowUI waitWindowUI) throws UnirestException {
         _turnToRollWindowUI = new TurnToRollWindowUI();
@@ -43,6 +45,7 @@ public class TurnToRollWindow {
         _ready = new Ready(true);
         _turnToRollWindowUI.getDiceFrame().setVisible(true);
         _waitWindowUI = waitWindowUI;
+
         registerRoll();
     }
 
@@ -52,11 +55,19 @@ public class TurnToRollWindow {
             public void actionPerformed(ActionEvent e) {
                 try {
 //TODO würfeln und Betrag anzeigen
+//                    2 mal get Dice roll, 1 post board roll mit number?
+                   _diceRoll1 =  _diceAdapter.getDiceRollNumber();
+                    _diceRoll2 = _diceAdapter.getDiceRollNumber();
                     _diceAdapter.postDiceRollOnBoard(_game, _user);
-                    int number = _diceAdapter.getDiceRollNumber();
-                    _diceAdapter.postDiceRollOnBoard(_game, _user);
-                    number += _diceAdapter.getDiceRollNumber();
+                    int number = _diceRoll1 + _diceRoll2;
                     _turnToRollWindowUI.getDiceNumber().setText("" + number);
+                    try {
+                        _turnToRollWindowUI.wait(5000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    _turnToRollWindowUI.getDiceFrame().setVisible(false);
+
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
                 }

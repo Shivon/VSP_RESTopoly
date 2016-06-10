@@ -39,14 +39,23 @@ public class WaitLogic {
     public void registerPlayersTurn(Player player) throws UnirestException {
         _player = player;
         _player.setReady(_ready);
-        _waitWindowUI.getWaitText().setText("Now it´s your turn to roll!");
+        _waitWindowUI.getWaitText().setText(getWindowText() + "Now it´s your turn to roll!");
         _waitWindowUI.getWaitText().setForeground(Color.RED);
         _turnToRollWindow = new TurnToRollWindow(_game, _user, _waitWindowUI);
     }
 
     public void registerAndShowEvent(Event event){
         _event = event;
-        _waitWindowUI.getWaitText().setText("New Event!" + _event);
+        _waitWindowUI.getWaitText().setText(getWindowText() + "New Event!\n" + _event);
+
+
+//        TODO
+//        if(event = you are on a place which you can buy){
+//        new BuyPlaceWindow
+//        }
     }
 
+    public String getWindowText(){
+        return  _waitWindowUI.getWaitText().getText() + "\n";
+    }
 }

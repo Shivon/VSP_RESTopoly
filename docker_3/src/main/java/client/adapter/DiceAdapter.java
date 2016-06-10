@@ -1,6 +1,7 @@
 package client.adapter;
 
 import client.model.Board;
+import client.model.Dice;
 import client.model.User;
 import client.model.gameModels.Game;
 import com.google.gson.Gson;
@@ -25,20 +26,19 @@ public class DiceAdapter {
     }
 
     public int getDiceRollNumber() throws UnirestException {
-        String rollString = Unirest.get(_ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
-                + "/pawns/" + _user.getName() + "/roll").asString().getBody();
+        String rollString = Unirest.get(_ipAdresses.diceIP() + "/dice").asString().getBody();
 //        TODO was gibt das get zurück????
-        int number = gson.fromJson(rollString, Integer.class);
-        System.out.println("" + number);
-        return  number;
+        Dice dice = gson.fromJson(rollString, Dice.class);
+        System.out.println("" + dice.getNumber());
+        return  dice.getNumber();
     }
 
     public void postDiceRollOnBoard(Game game, User user) throws UnirestException {
         _game = game;
         _user = user;
 //        TODO was wird geposted?
-        _board = _game.getComponents().getBoard();
-        Unirest.post(_ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
-                + "/pawns/" + _user.getName() + "/roll").body(this.gson.toJson(_board)).asJson();
+//        _board = _game.getComponents().getBoard();
+//        Unirest.post(_ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
+//                + "/pawns/" + _user.getName() + "/roll").body(this.gson.toJson(Throw)).asJson();
     }
 }

@@ -123,6 +123,8 @@ public class GamesLogic {
         for (Player player : playerList) {
             player.setReady(_ready);
         }
+
+//        TODO put player ready
     }
 
     public boolean checkIfUserHasAPlayerInGame(Game game){
