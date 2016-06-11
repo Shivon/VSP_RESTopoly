@@ -69,7 +69,17 @@ public class EventService {
 
         post("/events", (request, response) -> {
             System.out.println("post");
-            // Required params
+
+//            Event event = this.gson.fromJson(request.body().toString(), Event.class);
+//
+//            if(event.getGame().equals("") || event.getName().equals("") ||
+//                    event.getType().equals("") || event.getReason().equals("")){
+//                response.status(500);
+//                response.type("application/json");
+//                return "Param(s) missing, require \"game\", \"type\", \"name\", \"reason\"";
+//            }
+//            String id = "/events/" + event.getName().toLowerCase();
+//            event.setId(id);
             String[] requiredParams = {"game", "type", "name", "reason"};
             for (int i = 0; i < requiredParams.length; i++) {
                 if (request.queryParams(requiredParams[i]) == null) {

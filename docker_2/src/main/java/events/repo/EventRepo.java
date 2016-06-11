@@ -4,9 +4,8 @@ import events.model.Event;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import java.util.*;
-
-import static events.repo.EventMatcher.*;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Created by marjan on 07.04.16.
  */

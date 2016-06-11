@@ -1,5 +1,10 @@
 package de.haw.vs.escr.games.businesslogic;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.jayway.restassured.response.Response;
+import de.haw.vs.escr.games.dtos.GameUriDTO;
+import de.haw.vs.escr.games.dtos.PathUriDTO;
 import de.haw.vs.escr.games.dtos.PlayerDetailDTO;
 import de.haw.vs.escr.games.dtos.StatusDTO;
 import de.haw.vs.escr.games.models.Game;
@@ -8,8 +13,11 @@ import de.haw.vs.escr.games.models.Player;
 import de.haw.vs.escr.games.models.Ready;
 import de.haw.vs.escr.games.repos.GameRepo;
 import de.haw.vs.escr.games.repos.PlayerRepo;
+import de.haw.vs.escr.games.util.URLBuilder.URLBuilder;
 
 import java.util.List;
+
+import static com.jayway.restassured.RestAssured.given;
 
 /**
  * Created by Christian on 30.04.2016.
@@ -17,17 +25,20 @@ import java.util.List;
 public class GameBusinessLogic {
     private GameRepo gameRepo = null;
     private PlayerRepo playerRepo = null;
+    private Gson gson;
 
     public GameBusinessLogic(GameRepo gameRepo, PlayerRepo playerRepo) {
         this.gameRepo = gameRepo;
         this.playerRepo = playerRepo;
+        GsonBuilder gb = new GsonBuilder();
+        gb.excludeFieldsWithoutExposeAnnotation();
+        this.gson = gb.create();
     }
 
     public Game createGame(Game game) {
         Game g1 = this.gameRepo.saveGame(game);
         g1.setUri("/games/" + g1.getGameId());
         Game g2 = this.gameRepo.saveGame(g1);
-        //Component Links missing!!!
         return g2;
     }
 
@@ -166,5 +177,54 @@ public class GameBusinessLogic {
             p.setTurn(false);
             this.updatePlayer(p);
         }
+    }
+
+    public Game initializeAndCreateGame(Game game) {
+        Game unroutedGame = this.createGame(game);
+        Game routedGame = this.setGameRoutes(unroutedGame);
+        return this.updateGame(routedGame);
+    }
+
+    private Game setGameRoutes(Game game) {
+        Paths services = game.getServices();
+        Paths components = new Paths();
+        if (services.getDice() != null) components.setDice(services.getDice());
+        if (services.getGame() != null) components.setGame(services.getGame() + "/" + game.getGameId());
+        if (services.getBank() != null) components.setBank(this.initializeBankService(services.getBank(), game));
+        if (services.getBroker() != null) components.setBroker(this.initializeBrokerService(services.getBroker(), game));
+        if (services.getDecks() != null) components.setBroker(this.initializeDecksService(services.getDecks(), game));
+        if (services.getBoard() != null) components.setBoard(this.initializeBoardService(services.getBoard(), game));
+        if (services.getEvents() != null) components.setEvents(services.getEvents());
+        game.setComponents(components);
+        return game;
+    }
+
+    private String initializeBoardService(String board, Game game) {
+        return this.initalizeService(board, game);
+    }
+
+    private String initializeDecksService(String decks, Game game) {
+        return this.initalizeService(decks, game);
+    }
+
+    private String initializeBrokerService(String broker, Game game) {
+        return this.initalizeService(broker, game);
+    }
+
+    private String initializeBankService(String bank, Game game) {
+        return initalizeService(bank, game);
+    }
+
+    private String initalizeService(String uri, Game game) {
+        GameUriDTO gud = new GameUriDTO(game.getUri());
+
+        //POST Service
+        Response res = given().body(this.gson.toJson(gud)).post(uri);
+
+        PathUriDTO pud = this.gson.fromJson(res.body().asString(), PathUriDTO.class);
+
+        URLBuilder ub = new URLBuilder(uri);
+
+        return ub.getProtocolAndAuthority() + pud.getId();
     }
 }

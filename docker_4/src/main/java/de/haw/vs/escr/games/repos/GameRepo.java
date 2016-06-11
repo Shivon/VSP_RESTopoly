@@ -1,16 +1,50 @@
 package de.haw.vs.escr.games.repos;
 
 import de.haw.vs.escr.games.models.Game;
-import de.haw.vs.escr.games.util.PersistenceService;
-
-import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Christian on 30.04.2016.
  */
 public class GameRepo {
-    private EntityManager em = PersistenceService.getEntityManager();
+    private List<Game> gameList;
+    private int gameCounter = 1;
+
+    public GameRepo() {
+        this.gameList = new ArrayList<>();
+    }
+
+    public Game saveGame(Game game) {
+        if (this.gameList.stream().anyMatch(g -> g.getGameId() == game.getGameId())) return this.updateGame(game);
+        game.setGameId(this.getGameCounter());
+        this.gameList.add(game);
+        return this.findGame(game.getGameId());
+    }
+
+    private Game updateGame(Game game) {
+        this.deleteGame(game);
+        this.gameList.add(game);
+        return this.findGame(game.getGameId());
+    }
+
+    public void deleteGame(Game game) {
+        this.gameList.removeIf(g -> g.getGameId() == game.getGameId());
+    }
+
+    public Game findGame(int gameid) {
+        return this.gameList.stream().filter(g -> g.getGameId() == gameid).findFirst().get();
+    }
+
+    public List<Game> findAllGames() {
+        return this.gameList;
+    }
+
+    private int getGameCounter() {
+        return this.gameCounter++;
+    }
+}
+    /*private EntityManager em = PersistenceService.getEntityManager();
 
     public Game saveGame(Game game) {
         Game savedGame = null;
@@ -57,4 +91,4 @@ public class GameRepo {
         }
         return null;
     }
-}
+}*/

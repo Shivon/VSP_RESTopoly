@@ -2,8 +2,6 @@ package de.haw.vs.escr.users.model;
 
 import com.google.gson.annotations.Expose;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**

@@ -28,6 +28,7 @@ public class Event {
     private String type;
 
     @Column(name = "name")
+
     @Expose
     private String name;
 
@@ -80,6 +81,34 @@ public class Event {
 
     public URI getPlayer() {
         return player;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setGame(URI game) {
+        this.game = game;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setResource(URI resource) {
+        this.resource = resource;
+    }
+
+    public void setPlayer(URI player) {
+        this.player = player;
     }
 
     @Override
