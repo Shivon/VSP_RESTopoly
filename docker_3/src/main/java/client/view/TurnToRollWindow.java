@@ -33,6 +33,7 @@ public class TurnToRollWindow {
     private WaitWindowUI _waitWindowUI;
     private int _diceRoll1;
     private int _diceRoll2;
+    private boolean _rolled = false;
 
     public TurnToRollWindow(Game game, User user, WaitWindowUI waitWindowUI) throws UnirestException {
         _turnToRollWindowUI = new TurnToRollWindowUI();
@@ -53,27 +54,26 @@ public class TurnToRollWindow {
         _turnToRollWindowUI.getDiceButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
+                if (!_rolled) {
+                    try {
 //TODO würfeln und Betrag anzeigen
 //                    2 mal get Dice roll, 1 post board roll mit number?
-                   _diceRoll1 =  _diceAdapter.getDiceRollNumber();
-                    _diceRoll2 = _diceAdapter.getDiceRollNumber();
-                    _diceAdapter.postDiceRollOnBoard(_game, _user);
-                    int number = _diceRoll1 + _diceRoll2;
-                    _turnToRollWindowUI.getDiceNumber().setText("" + number);
-                    try {
-                        _turnToRollWindowUI.wait(5000);
-                    } catch (InterruptedException e1) {
+                        _diceRoll1 =  _diceAdapter.getDiceRollNumber();
+                        _diceRoll2 = _diceAdapter.getDiceRollNumber();
+                        _diceAdapter.postDiceRollOnBoard(_game, _user);
+                        int number = _diceRoll1 + _diceRoll2;
+                        _turnToRollWindowUI.getDiceNumber().setText("" + number);
+                        _rolled = true;
+                        _turnToRollWindowUI.getDiceButton().setText("Close");
+                    } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    _turnToRollWindowUI.getDiceFrame().setVisible(false);
-
-                } catch (UnirestException e1) {
-                    e1.printStackTrace();
-                }
                     _player.setReady(_ready);
                     _waitWindowUI.getWaitText().setText("Wait until your turn to roll");
                     _waitWindowUI.getWaitText().setForeground(Color.ORANGE);
+                } else {
+                    _turnToRollWindowUI.getDiceFrame().setVisible(false);
+                }
             }
         });
     }

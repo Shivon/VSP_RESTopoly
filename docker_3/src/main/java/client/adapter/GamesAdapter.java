@@ -101,12 +101,9 @@ public class GamesAdapter {
     }
 
 
-    public void postGames(String gameName) throws UnirestException {
-        Game newGame = new Game();
-        newGame.setName(gameName);
-
+    public void postGames(Game game ) throws UnirestException {
         Unirest.post(_ipAdresses.gamesIP() + "/games")
-                .body(this.gson.toJson(newGame)).asJson();
+                .body(this.gson.toJson(game)).asJson();
     }
 
 //    public void putGameStatusRegistration(Game game) throws UnirestException {

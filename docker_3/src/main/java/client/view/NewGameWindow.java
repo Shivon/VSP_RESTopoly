@@ -29,12 +29,16 @@ public class NewGameWindow {
     private String _gameName;
     private UserAdapter _userAdapter;
     private User _user;
+    private GamesLogic _gamesLogic;
+//    private Game _game;
+//    private PlayerLogInWindow _playerLoginWindow;
 
-    public NewGameWindow(User user){
+    public NewGameWindow(User user, GamesLogic gamesLogic){
         _newGameWindowUI = new NewGameWindowUI();
         _userAdapter = new UserAdapter();
         _newGameWindowUI.getLogInFrame().setVisible(true);
         _gamesAdapter = new GamesAdapter(null);
+        _gamesLogic = gamesLogic;
         _user = user;
         registerSubmitGameName();
     }
@@ -58,13 +62,14 @@ public class NewGameWindow {
                     }
 
                     try {
-                        _gamesAdapter.postGames(_gameName);
-                        System.out.println("Game geposted");
-                        Game game = _gamesAdapter.getGame(_gameName);
+                        Game game = new Game();
+                        game.setName(_gameName);
                         game.setStatus(GameStatus.registration);
-                        System.out.println("GAMES im newGames: " + _gamesAdapter.getGames());
-                        _gamesWindow = new GamesWindow(_user);
+                        _gamesAdapter.postGames(game);
+                        System.out.println(game);
+                        game = _gamesAdapter.getGame(_gameName);
                         _newGameWindowUI.getLogInFrame().setVisible(false);
+                        new PlayerLogInWindow(game, _user, _gamesLogic);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

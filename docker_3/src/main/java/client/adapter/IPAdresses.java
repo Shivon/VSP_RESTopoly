@@ -10,7 +10,7 @@ public class IPAdresses {
     public String gamesIP(){ return "http://172.18.0.26:4567"; }
 
     public String diceIP(){
-        return "http://172.18.0.92:4567/dice";
+        return "http://172.18.0.35:4567";
     }
 
     public String usersIP(){

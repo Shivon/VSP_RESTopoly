@@ -26,8 +26,10 @@ public class DiceAdapter {
     }
 
     public int getDiceRollNumber() throws UnirestException {
+        System.out.println("Dice roll");
         String rollString = Unirest.get(_ipAdresses.diceIP() + "/dice").asString().getBody();
 //        TODO was gibt das get zurück????
+        System.out.println(rollString);
         Dice dice = gson.fromJson(rollString, Dice.class);
         System.out.println("" + dice.getNumber());
         return  dice.getNumber();

@@ -4,6 +4,7 @@ import client.adapter.IPAdresses;
 import client.adapter.UserAdapter;
 import client.model.Client;
 import client.model.User;
+import client.service.ClientService;
 import client.view.GamesWindow;
 import clientUI.UserWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -15,19 +16,16 @@ public class UserLogic {
 
     private UserWindowUI _userWindowUI;
     private String _userName;
-//    private String _clientUri;
     private User _user;
     private UserAdapter _userAdapter;
     private GamesWindow _gamesWindow;
     private Client _client;
     private IPAdresses _ipAdresses;
 
-    public UserLogic(UserWindowUI userWindowUI){
-
+    public UserLogic(UserWindowUI userWindowUI, UserAdapter userAdapter){
         _userWindowUI = userWindowUI;
-        _userAdapter = new UserAdapter();
+        _userAdapter = userAdapter;
         _ipAdresses = new IPAdresses();
-//        _client = new Client();
     }
 
     public boolean isLoginAreaNotEmpty(){
@@ -38,24 +36,24 @@ public class UserLogic {
     }
 
     public String getUserNameFromLoginArea(){
-     return _userName = _userWindowUI.getLogInArea().getText();
+        return _userWindowUI.getLogInArea().getText();
     }
 
-    public User getUser() throws UnirestException {
-       return  _user = _userAdapter.getUser(_userName.toLowerCase());
+    public User getUser(String userName) throws UnirestException {
+        return _userAdapter.getUser(userName.toLowerCase());
     }
 
-    public boolean checkIfUserAlreadyExists() throws UnirestException {
-        _user = getUser();
+    public boolean checkIfUserAlreadyExists(String userName) throws UnirestException {
+        _user = getUser(userName);
         if (_user != null){
             return true;
         }
         return false;
     }
 
-    public void postUser(String userName) throws UnirestException {
-        _client = new Client();
+    public void setUser( String userName) throws UnirestException {
         _user = new User();
+        _client = new Client();
         _userName = userName;
         _client.setName(_userName);
         _user.setName(_userName);
@@ -73,7 +71,6 @@ public class UserLogic {
     }
 
     public void openGamesWindow(User user) throws UnirestException {
-        _user = user;
-        _gamesWindow = new GamesWindow(_user);
+        _gamesWindow = new GamesWindow(user);
     }
 }

@@ -1,47 +1,32 @@
 package client.view;
 
-import client.adapter.GamesAdapter;
-import client.adapter.IPAdresses;
-import client.adapter.PlayerAdapter;
 import client.adapter.UserAdapter;
 import client.logic.UserLogic;
+import client.logic.WaitLogic;
+import client.model.Client;
 import client.model.User;
-import client.model.gameModels.Game;
-import client.model.gameModels.GameStatus;
+import client.service.ClientService;
 import clientUI.UserWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 
-import static client.model.gameModels.GameStatus.*;
 /**
  * Created by Jana Mareike on 11.05.2016.
  */
 public class UserWindow {
 
     private UserWindowUI _userWindowUI;
-    private GamesWindow _gamesWindow;
-    private VstTableModel _gamesTableModel;
-    private String _userName;
     private UserAdapter _userAdapter;
-    private PlayerAdapter _playerAdapter;
-    private GamesAdapter _gamesAdapter;
-    private User _user;
-
     private UserLogic _userLogic;
-
+    private String _userName;
 
     public UserWindow() throws UnirestException{
         _userWindowUI = new UserWindowUI();
-
-        _userLogic = new UserLogic(_userWindowUI);
-
         _userAdapter = new UserAdapter();
-        _playerAdapter = new PlayerAdapter();
-        _gamesAdapter = new GamesAdapter(_playerAdapter);
+        _userLogic = new UserLogic(_userWindowUI, _userAdapter);
         registerSubmitUserName();
     }
 
@@ -52,9 +37,9 @@ public class UserWindow {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("hallo");
                 if(_userLogic.isLoginAreaNotEmpty()){
-                    _userLogic.getUserNameFromLoginArea();
+                    _userName = _userLogic.getUserNameFromLoginArea();
                     try {
-                        if(_userLogic.checkIfUserAlreadyExists()){
+                        if(_userLogic.checkIfUserAlreadyExists(_userName)){
                             JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
                         }
@@ -62,19 +47,14 @@ public class UserWindow {
                         e1.printStackTrace();
                     }
                     try {
-                        _userLogic.postUser(_userLogic.getUserNameFromLoginArea());
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        _userLogic.getUser();
+                        _userLogic.setUser(_userName);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
                     _userLogic.closeUserUI();
 
                     try {
-                        _userLogic.openGamesWindow(_userLogic.getUser());
+                        _userLogic.openGamesWindow(_userLogic.getUser(_userName));
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

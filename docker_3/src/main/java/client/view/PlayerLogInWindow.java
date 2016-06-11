@@ -2,11 +2,14 @@ package client.view;
 
 import client.adapter.BanksAdapter;
 import client.adapter.PlayerAdapter;
+import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
+import client.logic.WaitLogic;
 import client.model.Accounts;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
+import client.service.ClientService;
 import clientUI.PlayerLoginWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -24,14 +27,17 @@ public class PlayerLogInWindow {
     private Game _game;
     private User _user;
     private PlayerLogic _playerLogic;
-    private GamesWindow _gamesWindow;
+    private GamesLogic _gamesLogic;
+    private PlayerAdapter _playerAdapter;
 
-    public PlayerLogInWindow(Game selectedGame, User user) throws UnirestException {
+    public PlayerLogInWindow(Game selectedGame, User user, GamesLogic gamesLogic) throws UnirestException {
 
         this._user = user;
         _playerWindowUI = new PlayerLoginWindowUI();
         this._game = selectedGame;
+        _playerAdapter = new PlayerAdapter();
         _playerLogic = new PlayerLogic(_playerWindowUI, _game, _user);
+        _gamesLogic = gamesLogic;
         System.out.println("constructor playerloginwindow - before showavailablepawns");
         _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.showAvailablePawns().toString());
         System.out.println("constructor playerloginwindow - after showavailablepawns");
@@ -55,7 +61,7 @@ public class PlayerLogInWindow {
                     try {
                         _playerLogic.postPlayer();
                         _playerLogic.closePlayerWindow();
-                        _gamesWindow = new GamesWindow(_user);
+                        new StartGameWindow(_user, _game,_playerAdapter,_gamesLogic);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

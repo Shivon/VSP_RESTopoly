@@ -5,7 +5,7 @@ import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
 import client.model.gameModels.Ready;
-import client.view.PlayerLogInWindow;
+//import client.view.PlayerLogInWindow;
 import clientUI.PlayerLoginWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 

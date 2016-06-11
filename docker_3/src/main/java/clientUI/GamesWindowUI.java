@@ -18,7 +18,7 @@ public class GamesWindowUI {
     private JPanel _takePartButtonPanel;
     private JButton _takePartButton;
     private JButton _newGameButton;
-    private  JButton _startGameButton;
+//    private  JButton _startGameButton;
 
 
 
@@ -31,13 +31,13 @@ public class GamesWindowUI {
         _takePartButtonPanel = new JPanel();
         _takePartButton = new JButton("Join Game");
         _newGameButton = new JButton("New Game");
-        _startGameButton = new JButton("Start Game");
+//        _startGameButton = new JButton("Start Game");
 
         _takePartButtonPanel.setBorder(new EmptyBorder(2,3,2,3));
         _takePartButtonPanel.setPreferredSize(new Dimension(300,50));
         _takePartButtonPanel.add(_takePartButton);
         _takePartButtonPanel.add(_newGameButton);
-        _takePartButtonPanel.add(_startGameButton);
+//        _takePartButtonPanel.add(_startGameButton);
 
         _allGamesPanel.setBorder(new EmptyBorder(2,3,2,3));
         _allGamesPanel.setPreferredSize(new Dimension(300,450));
@@ -78,5 +78,5 @@ public class GamesWindowUI {
 
     public JButton getNewGameButton() { return _newGameButton; }
 
-    public JButton getStartGameButton() { return  _startGameButton; }
+//    public JButton getStartGameButton() { return  _startGameButton; }
 }

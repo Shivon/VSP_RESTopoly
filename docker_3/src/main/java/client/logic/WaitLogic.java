@@ -23,7 +23,6 @@ public class WaitLogic {
     private Game _game;
     private Player _player;
     private PlayerAdapter _playerAdapter;
-    private Ready _ready;
     private Event _event;
 
     public WaitLogic(User user , Game game, PlayerAdapter playerAdapter) throws UnirestException {
@@ -33,12 +32,10 @@ public class WaitLogic {
         _game = game;
         _playerAdapter = playerAdapter;
         _player = _playerAdapter.getPlayer(_game, _user);
-        _ready = new Ready(false);
     }
 
-    public void registerPlayersTurn(Player player) throws UnirestException {
-        _player = player;
-        _player.setReady(_ready);
+    public void playerTurn(Player player) throws UnirestException {
+        player.setReady(new Ready(false));
         _waitWindowUI.getWaitText().setText(getWindowText() + "Now it´s your turn to roll!");
         _waitWindowUI.getWaitText().setForeground(Color.RED);
         _turnToRollWindow = new TurnToRollWindow(_game, _user, _waitWindowUI);

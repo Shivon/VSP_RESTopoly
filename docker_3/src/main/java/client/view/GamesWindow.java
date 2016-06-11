@@ -8,6 +8,7 @@ import client.logic.WaitLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Ready;
+import client.service.ClientService;
 import clientUI.GamesWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -22,7 +23,6 @@ import java.awt.event.ActionListener;
 public class GamesWindow {
 
     private GamesWindowUI _gamesWindowUI;
-    private PlayerLogInWindow _playerWindow;
     private PlayerAdapter _playerAdapter;
     private GamesAdapter _gamesAdapter;
     private VstTableModel _gamesTableModel;
@@ -30,7 +30,6 @@ public class GamesWindow {
     private User _user;
     private Ready _ready;
     private WaitLogic _waitLogic;
-    private UserAdapter _userAdapter;
     private String _userName;
     private GamesLogic _gamesLogic;
 
@@ -39,16 +38,13 @@ public class GamesWindow {
         _gamesWindowUI = new GamesWindowUI();
         this._user = user;
         _gamesLogic = new GamesLogic(_gamesWindowUI, _user);
-        _userAdapter = new UserAdapter();
         _playerAdapter = new PlayerAdapter();
         _gamesAdapter = new GamesAdapter(_playerAdapter);
         _ready = new Ready(true);
 
-
         buildGamesWindowUI();
         registerSubmitJoinTheGame();
         registerNewGame();
-        registerStartGame(_selectedGame, _user);
         selectRow();
     }
 
@@ -83,12 +79,12 @@ public class GamesWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(_gamesLogic.checkIfThereAreNoGames()){
-                    _gamesLogic.openNewGameWindow();
+                    new NewGameWindow(_user, _gamesLogic);
                     _gamesLogic.closeGamesWindowUI();
                 } else if (isRowSelected()) {
                     try {
                         _gamesLogic.closeGamesWindowUI();
-                        _gamesLogic.openPlayerLoginWindow();
+                        new PlayerLogInWindow(_selectedGame, _user, _gamesLogic);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -104,40 +100,8 @@ public class GamesWindow {
         _gamesWindowUI.getNewGameButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                _gamesLogic.openNewGameWindow();
+                new NewGameWindow(_user, _gamesLogic);
                 _gamesLogic.closeGamesWindowUI();
-            }
-        });
-    }
-
-    private void registerStartGame(Game game, User user){
-        _user = user;
-        _selectedGame = game;
-        _gamesWindowUI.getStartGameButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(_gamesLogic.checkIfThereAreNoGames()){
-                    System.out.println("Es gibt noch keine Games");
-                    _gamesLogic.openNewGameWindow();
-                    _gamesLogic.closeGamesWindowUI();
-                } else if (isRowSelected()) {
-                    try {
-                        if(_gamesLogic.checkIfUserHasAPlayerInGame(_selectedGame)){
-                        _gamesLogic.startGame(_selectedGame);
-                        _gamesLogic.closeGamesWindowUI();
-                        _gamesLogic.startWaitWindow(_user, _selectedGame, _playerAdapter);
-                        }
-                        else{
-                            JOptionPane.showMessageDialog(null, "No pawn choosen", "You have to join the game to start it!",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
-                            JOptionPane.ERROR_MESSAGE);
-                }
             }
         });
     }
