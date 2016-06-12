@@ -3,6 +3,8 @@ package client.adapter;
 import client.model.Board;
 import client.model.Dice;
 import client.model.User;
+import client.model.boardModels.Roll;
+import client.model.boardModels.Throw;
 import client.model.gameModels.Game;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
@@ -28,19 +30,23 @@ public class DiceAdapter {
     public int getDiceRollNumber() throws UnirestException {
         System.out.println("Dice roll");
         String rollString = Unirest.get(_ipAdresses.diceIP() + "/dice").asString().getBody();
-//        TODO was gibt das get zurück????
         System.out.println(rollString);
         Dice dice = gson.fromJson(rollString, Dice.class);
         System.out.println("" + dice.getNumber());
         return  dice.getNumber();
     }
 
-    public void postDiceRollOnBoard(Game game, User user) throws UnirestException {
+    public void postDiceRollOnBoard(Game game, User user, Roll diceRoll1, Roll diceRoll2) throws UnirestException {
         _game = game;
         _user = user;
-//        TODO was wird geposted?
-//        _board = _game.getComponents().getBoard();
-//        Unirest.post(_ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
-//                + "/pawns/" + _user.getName() + "/roll").body(this.gson.toJson(Throw)).asJson();
+        Throw throwOnBoard = new Throw();
+        throwOnBoard.setRoll1(diceRoll1);
+        throwOnBoard.setRoll2(diceRoll2);
+        System.out.println("Throw: " + throwOnBoard);
+        System.out.println(Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
+                + "/pawns/" + _user.getName().toLowerCase() + "/roll").body(this.gson.toJson(throwOnBoard)).getBody());
+
+        Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
+                + "/pawns/" + _user.getName().toLowerCase() + "/roll").body(this.gson.toJson(throwOnBoard)).getBody();
     }
 }

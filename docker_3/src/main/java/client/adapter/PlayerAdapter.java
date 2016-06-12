@@ -121,6 +121,7 @@ public class PlayerAdapter {
     public void putPlayerReady(Game game, Player player) throws UnirestException {
         this._game = game;
         this._player = player;
+        _player.setReady(new Ready(true));
 // /games/{gameid}/players/{playerid}/ready
         Unirest.put(_ipAdresses.gamesIP()
                 + _game.getUri() + "/players/" + _player.getPlayerId() + "/ready")

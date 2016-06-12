@@ -26,7 +26,7 @@ public class IPAdresses {
     }
 
     public String boardsIP(){
-        return null;
+        return "172.18.0.38:4567";
     }
 
     public String clientIP() { return "192.168.255.38:4567"; }
