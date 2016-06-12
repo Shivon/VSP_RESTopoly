@@ -25,13 +25,10 @@ public class NewGameWindow {
 
     private NewGameWindowUI _newGameWindowUI;
     private GamesAdapter _gamesAdapter;
-    private GamesWindow _gamesWindow;
     private String _gameName;
     private UserAdapter _userAdapter;
     private User _user;
     private GamesLogic _gamesLogic;
-//    private Game _game;
-//    private PlayerLogInWindow _playerLoginWindow;
 
     public NewGameWindow(User user, GamesLogic gamesLogic){
         _newGameWindowUI = new NewGameWindowUI();
@@ -51,25 +48,27 @@ public class NewGameWindow {
                 if (!_newGameWindowUI.getLogInArea().getText().isEmpty()) {
                     _gameName = _newGameWindowUI.getLogInArea().getText();
                     try {
+                        System.out.println("HALLO VOR DER SCHLEIFE");
+                        System.out.println("hallo hallo in der Schleife");
                         for (Game game : _gamesAdapter.getGames()) {
                             if (game.getName().equals(_gameName)) {
                                 JOptionPane.showMessageDialog(null, "game name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
+                                return;
                             }
                         }
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-
-                    try {
-                        Game game = new Game();
-                        game.setName(_gameName);
-                        game.setStatus(GameStatus.registration);
-                        _gamesAdapter.postGames(game);
-                        System.out.println(game);
-                        game = _gamesAdapter.getGame(_gameName);
-                        _newGameWindowUI.getLogInFrame().setVisible(false);
-                        new PlayerLogInWindow(game, _user, _gamesLogic);
+                        try {
+                            Game newGame = new Game();
+                            newGame.setName(_gameName);
+                            newGame.setStatus(GameStatus.registration);
+                            _gamesAdapter.postGames(newGame);
+                            System.out.println(newGame);
+                            newGame = _gamesAdapter.getGame(_gameName);
+                            _newGameWindowUI.getLogInFrame().setVisible(false);
+                            new PlayerLogInWindow(newGame, _user, _gamesLogic);
+                        } catch (UnirestException e1) {
+                            e1.printStackTrace();
+                        }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

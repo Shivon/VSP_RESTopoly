@@ -78,6 +78,10 @@ public class PlayerAdapter {
                 + "/players/" + user.getName().toLowerCase()
                 + "?account=" + _account
                 + "&ready=" + _ready);
+//                Unirest.put( _ipAdresses.gamesIP() + "/" + _game.getGameId()
+//        + "/players/" + user.getName().toLowerCase()
+//                + "?account=" + _account
+//                + "&ready=" + _ready);
     }
 
     public Player getPlayer(Game game, User user) throws UnirestException {
