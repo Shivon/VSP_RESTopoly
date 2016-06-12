@@ -1,24 +1,20 @@
-package de.haw.vs.escr.boards.models;
+package de.haw.vs.escr.boards.models.entities;
 
 import com.google.gson.annotations.Expose;
 
 /**
  * Created by Eric on 25.05.2016.
  */
-//@Entity
-//@Table(name = "Place")
 public class Place {
-    //@Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     int placeId;
 
     @Expose
-    //@Column(name = "Name")
-    String name;
+    private String name;
 
     @Expose
-   // @Column(name = "BrokerURI")
-    String brokerURI;
+    private String brokerURI;
+
+    private String uri;
 
     public int getPlaceId() {
         return placeId;
@@ -42,5 +38,13 @@ public class Place {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

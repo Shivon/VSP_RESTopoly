@@ -1,81 +1,49 @@
 package de.haw.vs.escr.boards.repos;
 
-import com.google.gson.annotations.Expose;
-import de.haw.vs.escr.boards.models.Board;
-import de.haw.vs.escr.boards.util.PersistenceService;
+import de.haw.vs.escr.boards.models.entities.Board;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Eric on 03.05.2016.
  */
 public class BoardRepo {
-    private final EntityManager entityManager;
+
+    private int counter;
+
+    private List<Board> boardList;
 
     public BoardRepo() {
-        entityManager = PersistenceService.getEntityManager();
+        this.boardList = new ArrayList<>();
+        this.counter = 1;
     }
 
     public Board saveBoard(Board board) {
-        Board savedBoard = null;
-        try {
-            entityManager.getTransaction().begin();
-            savedBoard = entityManager.merge(board);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
-        return savedBoard;
+        if (this.boardList.stream().anyMatch(b -> b.getBoardId() == board.getBoardId())) return this.updateBoard(board);
+        board.setUri("/boards/"+board.getBoardId());
+        this.boardList.add(board);
+        return this.boardList.stream().filter(b -> b.getBoardId() == board.getBoardId()).findFirst().get();
     }
+
+    private Board updateBoard(Board board) {
+        this.deleteBoard(board);
+        this.boardList.add(board);
+        return board;
+    }
+
 
     public void deleteBoard(Board board) {
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.remove(board);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
+        this.boardList.removeIf((b -> b.getBoardId() == board.getBoardId()));
     }
 
-    public Board findBoard(int boardId) {
-        try {
-            entityManager.getTransaction().begin();
-            Board board = entityManager.find(Board.class, boardId);
-            entityManager.getTransaction().commit();
-            return board;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
-        return null;
+
+    public List<Board> findAllBoards() {
+        return this.boardList;
     }
 
-    public List<Board> findAllBoards(){
-        try{
-            entityManager.getTransaction().begin();
-            List<Board> boards = entityManager.createQuery("select bo from Board bo").getResultList();
-            entityManager.getTransaction().commit();
-            return boards;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
-        return null;
-    }
-
-    public Board findBoardByGameId(int gameId) {
-        try{
-            entityManager.getTransaction().begin();
-            //Board board = (Board) entityManager.createQuery("select bo from Board bo where bo.gameId = :gameId").getSingleResult();
-            Query q = entityManager.createQuery("select bo from Board bo where bo.gameId = :gameId");
-            q.setParameter("gameId", gameId);
-            Board board = (Board) q.getSingleResult();
-            entityManager.getTransaction().commit();
-            return board;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
-        return null;
+    public Board findBoardByGameId(String gameId) {
+        System.out.println("gameId = " + gameId);
+        return this.boardList.stream().filter(b -> b.getGameURI().equals(gameId)).findFirst().get();
     }
 }

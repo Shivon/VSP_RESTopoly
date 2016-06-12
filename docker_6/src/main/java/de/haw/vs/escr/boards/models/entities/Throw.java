@@ -1,4 +1,4 @@
-package de.haw.vs.escr.boards.models;
+package de.haw.vs.escr.boards.models.entities;
 
 import com.google.gson.annotations.Expose;
 
@@ -8,17 +8,12 @@ import com.google.gson.annotations.Expose;
 //@Entity
 //@Table(name = "Throw")
 public class Throw {
-
-   // @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     int rollId;
 
     @Expose
-    //@Column(name = "Roll1")
     Roll roll1;
 
     @Expose
-    //@Column(name = "Roll2")
     Roll roll2;
 
     public int getRollId() {
