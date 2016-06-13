@@ -29,7 +29,7 @@ public class UsersBusinesslogic {
     public User saveUserAndAddId(User user) {
         String id = "/users/" + user.getName().toLowerCase();
         user.setNameId(user.getName().toLowerCase());
-        user.setId(id);
+        //user.setId(id);
         return userRepo.saveUser(user);
     }
 

@@ -17,23 +17,8 @@ import java.util.List;
  */
 public class MyMainClass {
     public static void main(String[] args) {
-        /*IYellowPages yp = new YellowPagesService();
+        IYellowPages yp = new YellowPagesService();
         yp.registrateService("/users", "fancy_users", "fancy_users", "A fancy User Registration Service");
-        new UserService();*/
-
-        User u = new User();
-        u.setName("jklsd");
-        u.setId("dsalrök");
-        u.setNameId("skjd");
-        u.setUri("jsad");
-
-        List<User> users = new ArrayList<>();
-        users.add(u);
-
-        List<User> cp = new ArrayList<>(users);
-
-        User u2 = cp.stream().filter(u3 -> u3.getUri().equals("jsad")).findFirst().get();
-        u2.setName("Christian");
-
+        new UserService();
     }
 }
