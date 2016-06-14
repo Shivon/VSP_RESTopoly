@@ -6,6 +6,7 @@ import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
 import client.logic.WaitLogic;
 import client.model.Accounts;
+import client.model.Client;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
@@ -29,15 +30,17 @@ public class PlayerLogInWindow {
     private PlayerLogic _playerLogic;
     private GamesLogic _gamesLogic;
     private PlayerAdapter _playerAdapter;
+    private ClientService _clientService;
 
     public PlayerLogInWindow(Game selectedGame, User user, GamesLogic gamesLogic) throws UnirestException {
-
         this._user = user;
-        _playerWindowUI = new PlayerLoginWindowUI();
         this._game = selectedGame;
+        _gamesLogic = gamesLogic;
+
+        _clientService = new ClientService(null);
+        _playerWindowUI = new PlayerLoginWindowUI();
         _playerAdapter = new PlayerAdapter();
         _playerLogic = new PlayerLogic(_playerWindowUI, _game, _user);
-        _gamesLogic = gamesLogic;
         System.out.println("constructor playerloginwindow - before showavailablepawns");
         _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.showAvailablePawns().toString());
         System.out.println("constructor playerloginwindow - after showavailablepawns");
@@ -54,14 +57,11 @@ public class PlayerLogInWindow {
                         if(_playerLogic.checkIfPlayerPawnIsNotAvailable()){
                             JOptionPane.showMessageDialog(null, "pawn not available", "choose an other pawn!",
                                     JOptionPane.ERROR_MESSAGE);
+                        }else{
+                            _playerLogic.postPlayer();
+                            _playerLogic.closePlayerWindow();
+                            new StartGameWindow(_user, _game,_playerAdapter,_gamesLogic, _clientService);
                         }
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        _playerLogic.postPlayer();
-                        _playerLogic.closePlayerWindow();
-                        new StartGameWindow(_user, _game,_playerAdapter,_gamesLogic);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

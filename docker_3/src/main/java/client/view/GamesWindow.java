@@ -29,8 +29,6 @@ public class GamesWindow {
     private Game _selectedGame;
     private User _user;
     private Ready _ready;
-    private WaitLogic _waitLogic;
-    private String _userName;
     private GamesLogic _gamesLogic;
 
     public GamesWindow(User user) throws UnirestException {

@@ -1,47 +1,23 @@
 package client.model.boardModels;
 
-import com.google.gson.annotations.Expose;
 
-import java.util.List;
+import client.model.dtos.PawnDTO;
 
 /**
  * Created by Eric on 25.05.2016.
  */
-//@Entity
-//@Table(name = "Pawn")
 public class Pawn {
-    //@Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    int pawnId;
-
-    //@Column(name = "ID")
-    @Expose
     private String id;
-
-    //@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Throw> throwList;
-
-    //@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Integer> moveList;
-
-    //@Column(name = "PlayerURI")
+    private String pawnURI;
+    private String throwsURI;
+    private String movesURI;
     private String playerURI;
+    private int position;
+    private String PlaceURI;
 
-    public String getId() {
-        return id;
+    public Pawn() {
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public int getPawnId() {
-        return pawnId;
-    }
-
-    public void setPawnId(int pawnId) {
-        this.pawnId = pawnId;
-    }
 
     public String getPlayerURI() {
         return playerURI;
@@ -51,20 +27,60 @@ public class Pawn {
         this.playerURI = playerURI;
     }
 
-    public List<Throw> getThrowList() {
-        return throwList;
+    public String getMovesURI() {
+        return movesURI;
     }
 
-    public void setThrowList(List<Throw> throwList) {
-        this.throwList = throwList;
+    public void setMovesURI(String movesURI) {
+        this.movesURI = movesURI;
     }
 
-    public List<Integer> getMoveList() {
-        return moveList;
+    public String getThrowsURI() {
+        return throwsURI;
     }
 
-    public void setMoveList(List<Integer> moveList) {
-        this.moveList = moveList;
+    public void setThrowsURI(String throwsURI) {
+        this.throwsURI = throwsURI;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public String getPlaceURI() {
+        return PlaceURI;
+    }
+
+    public void setPlaceURI(String placeURI) {
+        PlaceURI = placeURI;
+    }
+
+    public PawnDTO toPawnDTO() {
+        PawnDTO pawnDTO = new PawnDTO();
+        pawnDTO.setPosition(this.position);
+        pawnDTO.setPlace(this.getPlaceURI());
+        pawnDTO.setPawnURI(this.getPawnURI());
+        pawnDTO.setId(this.getId());
+        return pawnDTO;
+    }
+
+    public String getPawnURI() {
+        return pawnURI;
+    }
+
+    public void setPawnURI(String pawnURI) {
+        this.pawnURI = pawnURI;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

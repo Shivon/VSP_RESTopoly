@@ -21,6 +21,9 @@ public class BuyPlaceWindowUI {
     public BuyPlaceWindowUI(){
         _mainFrame = new JFrame("You can buy a new place");
 
+        _placeToBuyPanel = new JPanel();
+        _placeToBuyArea = new JTextArea("You are on Field: ");
+
         _placeToBuyButtonPanel = new JPanel();
         _buyPlaceButton = new JButton("Buy Place");
         _dontBuyButton = new JButton("Don´t buy and continue");
@@ -32,7 +35,6 @@ public class BuyPlaceWindowUI {
 
         _placeToBuyPanel.setBorder(new EmptyBorder(2,3,2,3));
         _placeToBuyPanel.setPreferredSize(new Dimension(300,450));
-
         _placeToBuyPanel.add(_placeToBuyArea, BorderLayout.CENTER );
 
         _mainFrame.setSize(450, 550);

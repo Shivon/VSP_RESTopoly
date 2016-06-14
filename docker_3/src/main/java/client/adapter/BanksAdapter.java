@@ -52,10 +52,12 @@ public class BanksAdapter {
     public Accounts getAccount(User user, Game game) throws UnirestException {
         this._user = user;
         this._game = game;
+        System.out.println(_game);
+        System.out.println("" + _game.getComponents());
         String bankString = _game.getComponents().getBank();
 
-        String accountString = Unirest.get(bankString + "/accounts/"
-                + _user.getName().toLowerCase()).asString().getBody();
+        System.out.println(bankString);
+        String accountString = Unirest.get(bankString + _player.getAccount()).asString().getBody();
 
         Accounts account = gson.fromJson(accountString, Accounts.class);
         return account;

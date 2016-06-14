@@ -31,16 +31,13 @@ public class GamesLogic {
     private GamesWindowUI _gamesWindowUI;
     private Game _selectedGame;
     private User _user;
-    private PlayerLogInWindow _playerWindow;
-    private PlayerLogic _playerLogic;
     private Ready _ready;
-    private WaitLogic _waitLogic;
 
-    public GamesLogic(GamesWindowUI gamesWindowUI, User user){
-        _playerAdapter = new PlayerAdapter();
-        _gamesAdapter = new GamesAdapter(_playerAdapter);
+    public GamesLogic(GamesWindowUI gamesWindowUI, User user) throws UnirestException {
         _gamesWindowUI = gamesWindowUI;
         _user = user;
+        _playerAdapter = new PlayerAdapter();
+        _gamesAdapter = new GamesAdapter(_playerAdapter);
         _ready = new Ready(true);
     }
 
@@ -106,11 +103,14 @@ public class GamesLogic {
         System.out.println(_gamesAdapter.getGamesStatus(game));
     }
 
-    public void startWaitWindow(User user, Game game, PlayerAdapter playerAdapter) throws UnirestException {
+    public void startWaitWindow(User user, Game game, PlayerAdapter playerAdapter, ClientService clientService) throws UnirestException {
         _playerAdapter = playerAdapter;
         _user = user;
         _selectedGame = game;
+        System.out.println("USER Im startwait window: " + _user);
+        System.out.println("Game im start wait window: " + _selectedGame);
         WaitLogic waitLogic = new WaitLogic(_user, _selectedGame, _playerAdapter);
-        new ClientService(waitLogic);
+//         new ClientService(waitLogic);
+        clientService.setWaitLogic(waitLogic);
     }
 }

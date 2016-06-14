@@ -18,6 +18,11 @@ public class ClientService {
     private Gson gson = new Gson();
     private ClientRepo clientRepo = new ClientRepo();
     private Client client;
+    private WaitLogic _waitLogic;
+
+    public void setWaitLogic(WaitLogic logic) {
+        this._waitLogic = logic;
+    }
 
     public ClientService(WaitLogic waitLogic) {
 
@@ -48,7 +53,7 @@ public class ClientService {
             // text anzeige ändert sich
             // logic.
             Player player = gson.fromJson(request.body(), Player.class);
-            waitLogic.playerTurn(player);
+            _waitLogic.playerTurn(player);
 
             return "";
         });
@@ -56,8 +61,14 @@ public class ClientService {
        post("/client/event", (request, response) -> {
 //           TODO
 //           inform a player about a new event
-           Event event = gson.fromJson(request.body(), Event.class);
-           waitLogic.registerAndShowEvent(event);
+                   Event event = gson.fromJson(request.body(), Event.class);
+
+//           if(event.getName.equals("Game has started"){
+//           new WaitLogic;
+//           startGameWundow.handleGameStartPost();
+//           close startGameWindow;
+//               }else{
+           _waitLogic.registerAndShowEvent(event);
            return "";
        });
     }
