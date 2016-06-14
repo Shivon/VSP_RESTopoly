@@ -35,8 +35,7 @@ public class FieldRepo {
     }
 
     public Field findFieldByFieldId(int fieldId) {
-        return this.fieldList.get(fieldId-1);
-        //return this.fieldList.stream().filter((f -> f.getFieldId() == fieldId)).findFirst().get();
+        return this.fieldList.get(fieldId);
     }
 
     public Field addPawn(Pawn pawn, Place place) {

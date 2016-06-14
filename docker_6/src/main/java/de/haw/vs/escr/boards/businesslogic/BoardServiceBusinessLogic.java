@@ -2,10 +2,7 @@ package de.haw.vs.escr.boards.businesslogic;
 
 import de.haw.vs.escr.boards.models.dtos.*;
 import de.haw.vs.escr.boards.models.entities.*;
-import de.haw.vs.escr.boards.repos.BoardRepo;
-import de.haw.vs.escr.boards.repos.FieldRepo;
-import de.haw.vs.escr.boards.repos.PawnRepo;
-import de.haw.vs.escr.boards.repos.PlaceRepo;
+import de.haw.vs.escr.boards.repos.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +15,18 @@ public class BoardServiceBusinessLogic {
     private PawnRepo pawnRepo;
     private PlaceRepo placeRepo;
     private FieldRepo fieldRepo;
+    private ThrowRepo throwRepo;
+    private MoveRepo moveRepo;
     private String brokerURI;
+    private final int MAX_FIELDS = 35;
 
     public BoardServiceBusinessLogic() {
         this.pawnRepo = new PawnRepo();
         this.boardRepo = new BoardRepo();
         this.placeRepo = new PlaceRepo();
         this.fieldRepo = new FieldRepo();
+        this.throwRepo = new ThrowRepo();
+        this.moveRepo = new MoveRepo();
         this.brokerURI = "/test/broker";
     }
 
@@ -46,13 +48,13 @@ public class BoardServiceBusinessLogic {
 
     public List<Field> initFields(Board b) {
         List<Field> fieldList = new ArrayList<>();
-        for(int i = 0; i < 32; i++){
+        for (int i = 0; i < MAX_FIELDS; i++) {
             Field f = new Field();
-            f.setFieldId(fieldRepo.getAllFields().size()+1);
+            f.setFieldId(fieldRepo.getAllFields().size());
             f.setBoardId(b.getBoardId());
             fieldRepo.saveField(f);
             Place place = new Place();
-            place.setUri(b.getUri()+"/places/"+(i+1));
+            place.setUri(b.getUri() + "/places/" + (i));
             place.setBrokerURI(this.brokerURI);
             place.setPlaceId(f.getFieldId());
             placeRepo.savePlace(place);
@@ -74,25 +76,33 @@ public class BoardServiceBusinessLogic {
     public List<String> getAllPawns(Board board) {
         List<Field> fields = fieldRepo.getAllFieldsByBoardId(board.getBoardId());
         List<String> ret = new ArrayList<>();
-        for(Field f: fields){
+        for (Field f : fields) {
             ret.addAll(f.getPawns());
         }
         return ret;
     }
 
-    public Pawn findPawnByPawnId(String pawnId, Board board) {
-        return pawnRepo.findPawnByPawnId(pawnId);
+    public Pawn findPawnByPawnName(String pawnName, Board board) {
+        return pawnRepo.findPawnByPawnName(pawnName);
     }
 
     public Pawn addPawn(PawnDTO pawn, Board board) {
         Pawn p = pawn.toEntity();
         int lastSlash = pawn.getPlayer().lastIndexOf('/');
         String name = pawn.getPlayer().substring(lastSlash + 1);
+
+        if (pawnRepo.findPawnByPawnName(name) != null) {
+            return null;
+        }
+        p.setIdOnBoard(board.getPositions().size());
         p.setPawnURI(board.getUri() + "/pawns/" + name);
-        p.setId(name);
+        p.setName(name);
+        p.setMovesURI(p.getPawnURI());
+        p.setThrowsURI(p.getPawnURI());
         p = pawnRepo.savePawn(p);
         Place place = placeRepo.findPlaceByURI(p.getPlaceURI());
-        fieldRepo.addPawn(p, place);
+        Field f = fieldRepo.addPawn(p, place);
+        board.addPawnToPosition(f.getFieldId(), p.getIdOnBoard());
         boardRepo.saveBoard(board);
         return p;
     }
@@ -101,11 +111,11 @@ public class BoardServiceBusinessLogic {
         return placeRepo.findPlaceById(placeId);
     }
 
-    private Place getPlaceByPlaceURI(String placeURI){
+    private Place getPlaceByPlaceURI(String placeURI) {
         try {
-            int placeId = Integer.parseInt(placeURI.substring(placeURI.lastIndexOf("/")+1));
+            int placeId = Integer.parseInt(placeURI.substring(placeURI.lastIndexOf("/") + 1));
             return this.getPlace(placeId);
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -113,19 +123,31 @@ public class BoardServiceBusinessLogic {
     public Pawn updatePawn(Pawn newPawn, Pawn oldPawn, Board board) {
         Place oldPlace = placeRepo.findPlaceByURI(newPawn.getPlaceURI());
         Place newPlace = placeRepo.findPlaceByURI(oldPawn.getPlaceURI());
+        int id = Integer.parseInt(newPlace.getUri().substring(newPlace.getUri().lastIndexOf("/")+1));
         if (oldPawn.getPlayerURI() != null) newPawn.setPlayerURI(oldPawn.getPlayerURI());
         if (oldPawn.getMovesURI() != null) newPawn.setMovesURI(oldPawn.getMovesURI());
         if (oldPawn.getThrowsURI() != null) newPawn.setThrowsURI(oldPawn.getThrowsURI());
-        if (oldPawn.getId() != null) newPawn.setId(oldPawn.getId());
+        if (oldPawn.getName() != null) newPawn.setName(oldPawn.getName());
         if (oldPawn.getPlaceURI() != null) newPawn.setPlaceURI(oldPawn.getPlaceURI());
-        if (oldPawn.getPosition() > 0) newPawn.setPosition(oldPawn.getPosition());
+        newPawn.setPosition(id);
         fieldRepo.updatePawn(newPawn, oldPlace, newPlace);
         board.updateFields(fieldRepo.getAllFieldsByBoardId(board.getBoardId()));
         return pawnRepo.savePawn(newPawn);
     }
 
-    public Board updateBoard(Board board) {
+    public Board updateBoard(BoardDTO boardDTO) {
+        Board board = boardDTO.toEntity();
+        for (FieldDTO fieldDTO : boardDTO.getFields()) {
+            Field f = fieldDTO.toEntity();
+            f.setBoardId(board.getBoardId());
+            this.updateField(f);
+        }
+        board.updateFields(fieldRepo.getAllFieldsByBoardId(board.getBoardId()));
         return boardRepo.saveBoard(board);
+    }
+
+    private Field updateField(Field field) {
+        return this.fieldRepo.saveField(field);
     }
 
     public void deletePawn(Pawn pawn) {
@@ -134,10 +156,12 @@ public class BoardServiceBusinessLogic {
 
     public RollEventsDTO movePawn(Pawn pawn, Move move, Board board) {
         Place currPlace = this.getPlaceByPlaceURI(pawn.getPlaceURI());
-        int newPlaceId = currPlace.getPlaceId()+move.getNumber();
-        Place newPlace = placeRepo.findPlaceByURI(board.getUri()+"/places/"+newPlaceId);
+        int newPlaceId = (currPlace.getPlaceId() + move.getNumber()) % MAX_FIELDS;
+        Place newPlace = placeRepo.findPlaceByURI(board.getUri() + "/places/" + newPlaceId);
         Pawn p2 = new Pawn();
+        p2.setPosition(newPlaceId);
         p2.setPlaceURI(newPlace.getUri());
+        moveRepo.addMove(pawn.getMovesURI(), move);
         this.updatePawn(pawn, p2, board);
         EventDTO eventDTO = new EventDTO();
         eventDTO.setName("Test Event");
@@ -151,6 +175,13 @@ public class BoardServiceBusinessLogic {
         return reDTO;
     }
 
+    public RollEventsDTO movePawn(Pawn pawn, Throw thrw, Board board) {
+        throwRepo.addThrow(pawn.getThrowsURI(), thrw);
+        Move move = new Move();
+        move.setNumber(thrw.getRoll1().getNumber() + thrw.getRoll2().getNumber());
+        return this.movePawn(pawn, move, board);
+    }
+
     public Place findPlaceByPlaceId(String placeId, Board b) {
         int id = Integer.parseInt(placeId);
         Field field = fieldRepo.findFieldByFieldId(id);
@@ -159,7 +190,7 @@ public class BoardServiceBusinessLogic {
 
     public PlacesDTO getPlacesForBoard(int boardId) {
         PlacesDTO places = new PlacesDTO();
-        for(Field f: fieldRepo.getAllFieldsByBoardId(boardId)){
+        for (Field f : fieldRepo.getAllFieldsByBoardId(boardId)) {
             places.addPlace(f.getPlace().getUri());
         }
         return places;
@@ -172,5 +203,12 @@ public class BoardServiceBusinessLogic {
         f.setPlace(p);
         fieldRepo.saveField(f);
         return p;
+    }
+
+    public ThrowDTO getRollsOfPawn(Board board, Pawn pawn) {
+        List<Throw> throwList = this.throwRepo.getThrowsByThrowURI(pawn.getThrowsURI());
+        ThrowDTO dto = new ThrowDTO();
+        dto.addAll(throwList);
+        return dto;
     }
 }

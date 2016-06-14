@@ -1,6 +1,7 @@
 package de.haw.vs.escr.boards.models.entities;
 
 import com.google.gson.annotations.Expose;
+import de.haw.vs.escr.boards.models.dtos.FieldDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,5 +64,12 @@ public class Field {
 
     public void setBoardId(int boardId) {
         this.boardId = boardId;
+    }
+
+    public FieldDTO toDTO(){
+        FieldDTO fieldDTO = new FieldDTO();
+        fieldDTO.setPawns(this.pawns);
+        fieldDTO.setPlace(this.placeURI);
+        return fieldDTO;
     }
 }

@@ -19,7 +19,7 @@ public class PawnRepo {
     }
 
     public Pawn savePawn(Pawn pawn) {
-        if (this.pawnList.stream().anyMatch(b -> b.getId().equals(pawn.getId()))) return this.updatePawn(pawn);
+        if (this.pawnList.stream().anyMatch(b -> b.getName().equals(pawn.getName()))) return this.updatePawn(pawn);
         this.pawnList.add(pawn);
         return this.pawnList.stream().filter(b -> b.getPawnURI() == pawn.getPawnURI()).findFirst().get();
     }
@@ -27,13 +27,13 @@ public class PawnRepo {
     private Pawn updatePawn(Pawn pawn) {
         this.deletePawn(pawn);
         this.pawnList.add(pawn);
-        System.out.println(pawn.getId());
+        System.out.println(pawn.getName());
         return pawn;
     }
 
 
     public void deletePawn(Pawn pawn) {
-        this.pawnList.removeIf((b -> b.getId().equals(pawn.getId())));
+        this.pawnList.removeIf((b -> b.getName().equals(pawn.getName())));
     }
 
 
@@ -41,8 +41,11 @@ public class PawnRepo {
         return this.pawnList;
     }
 
-    public Pawn findPawnByPawnId(String pawnId) {
-        System.out.println("pawnId = " + pawnId);
-        return this.pawnList.stream().filter(p -> p.getId().equals(pawnId)).findFirst().get();
+    public Pawn findPawnByPawnName(String pawnName) {
+        Pawn pawn = null;
+        try {
+            pawn = this.pawnList.stream().filter(p -> p.getName().equals(pawnName)).findFirst().get();
+        } catch (Exception e) {}
+        return pawn;
     }
 }
