@@ -7,10 +7,12 @@ public class BoardRESTModel {
     private final String pawns = "pawns";
     private final String componentPath;
     private final String servicePath;
+    private final String place;
 
-    public BoardRESTModel(String componentPath, String servicePath) {
+    public BoardRESTModel(String componentPath, String servicePath, String boardComponentPath) {
         this.componentPath = componentPath;
         this.servicePath = servicePath;
+        this.place = String.format("%s/places", boardComponentPath);
     }
 
     public String getPawnsRoute() {
@@ -19,5 +21,13 @@ public class BoardRESTModel {
 
     public String getPawnsServiceRoute() {
         return String.format("%s/%s", this.servicePath, this.pawns);
+    }
+
+    public String getInitialPlace() {
+        return String.format("%s/0", this.place);
+    }
+
+    public String getInitialPosition() {
+        return "0";
     }
 }

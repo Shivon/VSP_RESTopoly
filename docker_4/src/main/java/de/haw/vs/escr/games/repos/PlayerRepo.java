@@ -36,6 +36,10 @@ public class PlayerRepo {
         return this.playerList.stream().filter(p -> p.getPlayerId() == playerId).findFirst().get();
     }
 
+    public Player findPlayerByName(String name) {
+        return this.playerList.stream().filter(p -> p.getUser().equals(name)).findFirst().get();
+    }
+
     private int getPlayerCounter(){
         return this.playerCounter++;
     }
