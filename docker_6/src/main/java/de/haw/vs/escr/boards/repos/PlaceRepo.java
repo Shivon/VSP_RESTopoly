@@ -47,7 +47,7 @@ public class PlaceRepo {
     }
 
     public Place findPlaceById(int placeId) {
-        return this.placeList.get(placeId-1);
+        return this.placeList.get(placeId);
         // return this.placeList.stream().filter(p -> p.getPlaceId() == placeId).findFirst().get();
     }
 

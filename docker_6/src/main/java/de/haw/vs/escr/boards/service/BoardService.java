@@ -34,18 +34,18 @@ public class BoardService {
 
         put("/boards/:gameId", (request, response) -> {
             Board boardByGameId;
-            Board givenBoard;
+            BoardDTO givenBoard;
             String gameURI = "/games/" + request.params(":gameId");
 
             try {
                 boardByGameId = boardServiceBusinessLogic.findBoardByGameURI(gameURI);
-                givenBoard = gson.fromJson(request.body(), Board.class);
+                givenBoard = gson.fromJson(request.body(), BoardDTO.class);
             } catch (Exception e) {
                 response.status(404);
                 e.printStackTrace();
                 return null;
             }
-            if (givenBoard.getBoardId() != boardByGameId.getBoardId()) {
+            if (!givenBoard.getId().equals(boardByGameId.getUri())) {
                 response.status(404);
                 System.out.println("wrong boardID");
                 return null;
@@ -79,7 +79,7 @@ public class BoardService {
                 return null;
             }
             Board b = boardServiceBusinessLogic.createBoard(board);
-            return gson.toJson(b);
+            return gson.toJson(b.toBoardDTO());
         });
         //</editor-fold>
 
@@ -109,16 +109,29 @@ public class BoardService {
             }
             try {
                 b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
-                p = this.boardServiceBusinessLogic.findPawnByPawnId(req.params(":pawnId"), b);
+                p = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), b);
             } catch (Exception e) {
                 res.status(404);
                 return null;
             }
-            int number = thrw.getRoll1().getNumber() + thrw.getRoll2().getNumber();
-            Move move = new Move();
-            move.setNumber(number);
-            RollEventsDTO rollEventsDTO = this.boardServiceBusinessLogic.movePawn(p, move, b);
+
+            RollEventsDTO rollEventsDTO = this.boardServiceBusinessLogic.movePawn(p, thrw, b);
             return gson.toJson(rollEventsDTO);
+        });
+
+        get("/boards/:gameid/pawns/:pawnId/roll", (req, res) -> {
+            Board b;
+            Pawn p;
+
+            try {
+                b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
+                p = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), b);
+            } catch (Exception e) {
+                res.status(404);
+                return null;
+            }
+
+            return gson.toJson(boardServiceBusinessLogic.getRollsOfPawn(b, p));
         });
 
         post("/boards/:gameid/pawns/:pawnId/move", (req, res) -> {
@@ -134,7 +147,7 @@ public class BoardService {
 
             try {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
-                pawn = this.boardServiceBusinessLogic.findPawnByPawnId(req.params(":pawnId"), board);
+                pawn = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), board);
             } catch (Exception e) {
                 res.status(404);
                 return null;
@@ -150,7 +163,7 @@ public class BoardService {
             Pawn pawn;
             try {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI(gameURI);
-                pawn = this.boardServiceBusinessLogic.findPawnByPawnId(pawnId, board);
+                pawn = this.boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
             } catch (Exception e) {
                 res.status(404);
                 return null;
@@ -166,7 +179,7 @@ public class BoardService {
             Pawn pawnByPawnId;
             try {
                 board = boardServiceBusinessLogic.findBoardByGameURI(gameURI);
-                pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnId(pawnId, board);
+                pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
                 givenPawn = gson.fromJson(req.body(), PawnDTO.class).toEntity();
             } catch (Exception e) {
                 res.status(404);
@@ -186,7 +199,7 @@ public class BoardService {
 
             try {
                 board = boardServiceBusinessLogic.findBoardByGameURI(gameURI);
-                pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnId(pawnId, board);
+                pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
             } catch (Exception e) {
                 res.status(404);
                 res.body("Pawn not found");
@@ -205,9 +218,14 @@ public class BoardService {
             PawnDTO pawn;
             Board board;
             Pawn p;
-
+            System.out.println("test");
             try {
                 pawn = gson.fromJson(req.body(), PawnDTO.class);
+                int id = Integer.parseInt(pawn.getPlace().substring(pawn.getPlace().lastIndexOf("/")+1));
+                if (id != pawn.getPosition()){
+                    res.status(400);
+                    return null;
+                }
             } catch (Exception e) {
                 res.status(400);
                 return null;
@@ -218,9 +236,15 @@ public class BoardService {
                 p = this.boardServiceBusinessLogic.addPawn(pawn, board);
             } catch (Exception e) {
                 res.status(404);
+                e.printStackTrace();
                 return null;
             }
-            return gson.toJson(p);
+
+            if(p == null){
+                res.status(400);
+                return null;
+            }
+            return gson.toJson(p.toPawnPostDTO());
         });
 
         get("/boards/:gameid/pawns", (req, res) -> {

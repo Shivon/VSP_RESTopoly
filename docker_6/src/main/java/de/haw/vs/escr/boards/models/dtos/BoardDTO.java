@@ -1,7 +1,6 @@
 package de.haw.vs.escr.boards.models.dtos;
 
 import com.google.gson.annotations.Expose;
-import de.haw.vs.escr.boards.models.entities.Field;
 import de.haw.vs.escr.boards.models.entities.Board;
 
 import java.util.ArrayList;
@@ -11,17 +10,20 @@ import java.util.List;
  * Created by Eric on 08.06.2016.
  */
 public class BoardDTO {
+    @Expose(serialize = false)
     private String game;
+
     @Expose
     private String id;
 
     @Expose
-    private List<Field> fields;
+    private List<FieldDTO> fields;
 
     @Expose
-    private int[] positions;
+    private List<Integer> positions;
 
     public BoardDTO(){
+        this.positions = new ArrayList<>();
         this.fields = new ArrayList<>();
     }
 
@@ -41,19 +43,19 @@ public class BoardDTO {
         this.id = id;
     }
 
-    public int[] getPositions() {
+    public List<Integer> getPositions() {
         return positions;
     }
 
-    public void setPositions(int[] positions) {
+    public void setPositions(List<Integer> positions) {
         this.positions = positions;
     }
 
-    public List<Field> getFields() {
+    public List<FieldDTO> getFields() {
         return fields;
     }
 
-    public void setFields(List<Field> fields) {
+    public void setFields(List<FieldDTO> fields) {
         this.fields = fields;
     }
 

@@ -5,16 +5,15 @@ import com.google.gson.annotations.Expose;
 /**
  * Created by Eric on 25.05.2016.
  */
-//@Entity
-//@Table(name = "Throw")
 public class Throw {
-    int rollId;
 
     @Expose
-    Roll roll1;
+    private Roll roll1;
 
     @Expose
-    Roll roll2;
+    private Roll roll2;
+
+    private int rollId;
 
     public int getRollId() {
         return rollId;
@@ -39,4 +38,5 @@ public class Throw {
     public void setRoll2(Roll roll2) {
         this.roll2 = roll2;
     }
+
 }

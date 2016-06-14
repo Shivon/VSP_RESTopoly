@@ -1,9 +1,11 @@
 package de.haw.vs.escr.boards.models.entities;
 
 import de.haw.vs.escr.boards.models.dtos.BoardDTO;
+import de.haw.vs.escr.boards.models.dtos.FieldDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Eric on 03.05.2016.
@@ -16,24 +18,32 @@ public class Board {
 
     private String gameURI;
 
-
     /*
-     * spieler (playerList) an der stelle i soll an stelle i in positions stehen
-     * players: {A, B, C}
-     * positions: [3, 1, 2}
-     */
-    private int[] positions;
+         * spieler (playerList) an der stelle i soll an stelle i in positions stehen
+         * players: {A, B, C}
+         * positions: [3, 1, 2}
+         */
+    private List<String> positions;
 
     private List<Field> fields;
 
     private String playerListURI;
 
     public Board() {
+        this.positions = new ArrayList<>();
         this.fields = new ArrayList<>();
     }
 
     public Board(String uri) {
         this.uri = uri;
+    }
+
+    public List<String> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(List<String> positions) {
+        this.positions = positions;
     }
 
     public String getUri() {
@@ -69,11 +79,13 @@ public class Board {
     }
 
     public BoardDTO toBoardDTO(){
+        ArrayList<Integer> positions = this.positions.stream().map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new));
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setId(this.uri);
         boardDTO.setGame(this.gameURI);
-        boardDTO.setPositions(this.positions);
-        boardDTO.setFields(this.fields);
+        boardDTO.setPositions(positions);
+        List<FieldDTO> fieldDTOs = fields.stream().map(Field::toDTO).collect(Collectors.toList());
+        boardDTO.setFields(fieldDTOs);
         return boardDTO;
     }
 
@@ -85,16 +97,12 @@ public class Board {
         this.playerListURI = playerListURI;
     }
 
-    public int[] getPositions() {
-        return positions;
-    }
-
-    public void setPositions(int[] positions) {
-        this.positions = positions;
-    }
-
     public void updateFields(List<Field> fields) {
         this.fields = fields;
     }
 
+    public void addPawnToPosition(int placeId, int idOnBoard) {
+        if(this.positions.size() >= placeId + 1) this.positions.remove(placeId);
+        this.positions.add(placeId, String.valueOf(idOnBoard));
+    }
 }

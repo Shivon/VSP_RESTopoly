@@ -1,13 +1,17 @@
 package de.haw.vs.escr.games.dtos;
 
+import com.google.gson.annotations.Expose;
 import de.haw.vs.escr.games.models.Player;
 
 /**
  * Created by Christian on 25.05.2016.
  */
 public class PlayerDetailDTO {
+    @Expose
     private Player player;
+    @Expose
     private boolean hasAlreadyTurn;
+    @Expose
     private boolean hasTurnNow;
 
     public PlayerDetailDTO() {

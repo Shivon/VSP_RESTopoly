@@ -219,6 +219,7 @@ public class GameService {
 
             Player reqPlayer = gson.fromJson(req.body(), Player.class);
             Player player = this.gameBL.createPlayerAndAddToGame(gameId, reqPlayer);
+            this.gameBL.checkGameStatus(gameId);
 
             return gson.toJson(player);
             //return "POST /games/" + req.params(":gameid") + "/players";

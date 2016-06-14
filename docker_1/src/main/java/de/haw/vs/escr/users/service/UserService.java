@@ -34,7 +34,7 @@ public class UserService {
         post("/users", (req, res) -> {
             User user = this.gson.fromJson(req.body().toString(), User.class);
 
-            if (user.getUri().equals("") || user.getName().equals("")) {
+            if (user.getId() == null || user.getName() == null || user.getId().equals("") || user.getName().equals("")) {
                 res.status(400);
                 res.type("application/json");
                 return "";
