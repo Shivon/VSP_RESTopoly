@@ -1,5 +1,7 @@
 package de.haw.vs.escr.games.restmodel;
 
+import de.haw.vs.escr.games.util.URLBuilder.URLBuilder;
+
 /**
  * Created by Christian on 07.06.2016.
  */
@@ -9,14 +11,14 @@ public class BoardRESTModel {
     private final String servicePath;
     private final String place;
 
-    public BoardRESTModel(String componentPath, String servicePath, String boardComponentPath) {
+    public BoardRESTModel(String componentPath, String servicePath) {
         this.componentPath = componentPath;
         this.servicePath = servicePath;
-        this.place = String.format("%s/places", boardComponentPath);
+        this.place = String.format("%s/places", componentPath);
     }
 
     public String getPawnsRoute() {
-        return String.format("%s/$s", this.componentPath, this.pawns);
+        return this.componentPath + "/" + this.pawns;
     }
 
     public String getPawnsServiceRoute() {
@@ -24,7 +26,8 @@ public class BoardRESTModel {
     }
 
     public String getInitialPlace() {
-        return String.format("%s/0", this.place);
+        URLBuilder ub = new URLBuilder(this.place);
+        return ub.getPath() + "/0";
     }
 
     public String getInitialPosition() {
