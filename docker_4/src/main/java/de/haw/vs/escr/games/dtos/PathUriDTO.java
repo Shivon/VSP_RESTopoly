@@ -1,6 +1,7 @@
 package de.haw.vs.escr.games.dtos;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Christian on 05.06.2016.
