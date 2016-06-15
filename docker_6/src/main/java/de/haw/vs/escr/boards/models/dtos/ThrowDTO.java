@@ -1,5 +1,6 @@
 package de.haw.vs.escr.boards.models.dtos;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import de.haw.vs.escr.boards.models.entities.Throw;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * Created by Eric on 12.06.2016.
  */
 public class ThrowDTO {
+    @Expose
     @SerializedName("throws")
     List<Throw> thrws;
 
@@ -22,6 +24,8 @@ public class ThrowDTO {
     }
 
     public void addAll(List<Throw> thrws){
-        this.thrws.addAll(thrws);
+        if(thrws != null){
+            this.thrws.addAll(thrws);
+        }
     }
 }

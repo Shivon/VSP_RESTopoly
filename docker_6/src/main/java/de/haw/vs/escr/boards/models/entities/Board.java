@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 public class Board {
     private int boardId;
     private String uri;
-
+    private Paths paths;
     private String gameURI;
 
     /*
-         * spieler (playerList) an der stelle i soll an stelle i in positions stehen
-         * players: {A, B, C}
-         * positions: [3, 1, 2}
-         */
+     * spieler (playerList) an der stelle i soll an stelle i in positions stehen
+     * players: {A, B, C}
+     * positions: [3, 1, 2}
+     */
     private List<String> positions;
 
     private List<Field> fields;
@@ -68,7 +68,7 @@ public class Board {
 
     public List<String> getAllPawns() {
         List<String> ret = new ArrayList<>();
-        for (Field f: fields) {
+        for (Field f : fields) {
             ret.addAll(f.getPawns());
         }
         return ret;
@@ -78,7 +78,7 @@ public class Board {
         this.boardId = boardId;
     }
 
-    public BoardDTO toBoardDTO(){
+    public BoardDTO toBoardDTO() {
         ArrayList<Integer> positions = this.positions.stream().map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new));
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setId(this.uri);
@@ -102,7 +102,16 @@ public class Board {
     }
 
     public void addPawnToPosition(int placeId, int idOnBoard) {
-        if(this.positions.size() >= placeId + 1) this.positions.remove(placeId);
+        System.out.println("------ CHECK: "+this.positions.size() +" >= "+ placeId+1);
+        if (this.positions.size() >= placeId + 1) this.positions.remove(placeId);
         this.positions.add(placeId, String.valueOf(idOnBoard));
+    }
+
+    public Paths getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Paths paths) {
+        this.paths = paths;
     }
 }

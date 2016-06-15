@@ -10,11 +10,13 @@ public class PawnDTO {
 
     @Expose
     private String id;
+    @Expose(serialize = false)
     private String pawnURI;
     @Expose
     private String place;
     @Expose
     private int position;
+    @Expose(serialize = false)
     private String player;
 
     public String getPawnURI() {

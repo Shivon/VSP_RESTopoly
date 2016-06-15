@@ -20,6 +20,7 @@ public class BoardRepo {
     }
 
     public Board saveBoard(Board board) {
+        System.out.println("------- BOARD REPO: Saving Board: "+board.getUri());
         if (this.boardList.stream().anyMatch(b -> b.getBoardId() == board.getBoardId())) return this.updateBoard(board);
         board.setUri("/boards/"+board.getBoardId());
         this.boardList.add(board);
