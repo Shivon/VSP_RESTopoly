@@ -28,4 +28,8 @@ public class URLBuilder {
     public String getProtocolAndAuthority() {
         return String.format("%s://%s", url.getProtocol(), url.getAuthority());
     }
+
+    public String getPath() {
+        return this.url.getPath();
+    }
 }

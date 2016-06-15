@@ -9,8 +9,16 @@ public class BoardPlayerDTO {
     @Expose
     private String player;
 
-    public BoardPlayerDTO(String player) {
+    @Expose
+    private String place;
+
+    @Expose
+    private String position;
+
+    public BoardPlayerDTO(String player, String place, String position) {
         this.player = player;
+        this.place = place;
+        this.position = position;
     }
 
     public String getPlayer() {
@@ -19,5 +27,21 @@ public class BoardPlayerDTO {
 
     public void setPlayer(String player) {
         this.player = player;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

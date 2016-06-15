@@ -1,5 +1,6 @@
 package de.haw.vs.escr.boards.models.dtos;
 
+import com.google.gson.annotations.Expose;
 import de.haw.vs.escr.boards.models.entities.Field;
 
 import java.util.ArrayList;
@@ -9,7 +10,9 @@ import java.util.List;
  * Created by Eric on 12.06.2016.
  */
 public class FieldDTO {
+    @Expose
     private String place;
+    @Expose
     private List<String> pawns;
 
     public FieldDTO(){

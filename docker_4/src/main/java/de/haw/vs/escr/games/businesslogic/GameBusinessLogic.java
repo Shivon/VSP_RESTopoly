@@ -10,7 +10,10 @@ import de.haw.vs.escr.games.repos.PlayerRepo;
 import de.haw.vs.escr.games.restmodel.BankRestModel;
 import de.haw.vs.escr.games.restmodel.BoardRESTModel;
 import de.haw.vs.escr.games.util.URLBuilder.URLBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -19,6 +22,7 @@ import static com.jayway.restassured.RestAssured.given;
  * Created by Christian on 30.04.2016.
  */
 public class GameBusinessLogic {
+    private static final Logger logger = LoggerFactory.getLogger(GameBusinessLogic.class);
     private GameRepo gameRepo = null;
     private PlayerRepo playerRepo = null;
     private Gson gson;
@@ -82,7 +86,7 @@ public class GameBusinessLogic {
 
     public Player createPlayer(int gameId, Player player) {
         Player savedPlayer = this.playerRepo.savePlayer(player);
-        savedPlayer.setUri("/games/" + gameId + "/players/" + savedPlayer.getPlayerId());
+        savedPlayer.setUri("/games/" + gameId + "/players/" + savedPlayer.getUser().toLowerCase());
         Player updatedPlayer = this.playerRepo.savePlayer(savedPlayer);
         return updatedPlayer;
     }
@@ -92,13 +96,20 @@ public class GameBusinessLogic {
         Player savedPlayer = this.createPlayer(gameId, player);
 
         // Set pawn
-        BoardRESTModel brm = new BoardRESTModel(g.getComponents().getBoard(), g.getServices().getBoard());
-        BoardPawnDTO bPawn = this.postPawnToBoardService(brm, savedPlayer.getUri());
-        savedPlayer.setPawn(bPawn.getId());
+        if (g.getComponents() != null) {
+            if (g.getComponents().getBoard() != null) {
+                BoardRESTModel brm = new BoardRESTModel(g.getComponents().getBoard(), g.getServices().getBoard());
+                BoardPawnDTO bPawn = this.postPawnToBoardService(brm, savedPlayer.getUri());
+                savedPlayer.setPawn(bPawn.getId());
+            }
 
-        // Set bank account
-        BankRestModel bankRest = new BankRestModel(g.getComponents().getBank(), g.getServices().getBank());
-        BankAccountDTO bad = this.postAccountToBankService(bankRest, savedPlayer.getUri());
+            if (g.getComponents().getBank() != null) {
+                // Set bank account
+                BankRestModel bankRest = new BankRestModel(g.getComponents().getBank(), g.getServices().getBank());
+                BankAccountDTO bad = this.postAccountToBankService(bankRest, savedPlayer.getUri());
+                savedPlayer.setAccount(bad.getId());
+            }
+        }
 
         g.addPlayer(savedPlayer);
         this.updateGame(g);
@@ -109,14 +120,18 @@ public class GameBusinessLogic {
         BankAccountDTO bad = new BankAccountDTO();
         bad.setPlayer(playerURI);
         bad.setSaldo(4000);
+        logger.info("POST to Board Service with Route '" + bankRest.getAccountComponentRoute() + "': " + this.gson.toJson(bad).toString());
         Response res = given().body(this.gson.toJson(bad)).post(bankRest.getAccountComponentRoute());
+        logger.info("Response was: "+ res.body().asString());
         bad = this.gson.fromJson(res.body().asString(), BankAccountDTO.class);
         return bad;
     }
 
     private BoardPawnDTO postPawnToBoardService(BoardRESTModel brm, String playerURI) {
-        BoardPlayerDTO bpd = new BoardPlayerDTO(playerURI);
+        BoardPlayerDTO bpd = new BoardPlayerDTO(playerURI, brm.getInitialPlace(), brm.getInitialPosition());
+        logger.info("POST to Board Service with Route '" + brm.getPawnsRoute() + "': " + this.gson.toJson(bpd).toString());
         Response res = given().body(bpd).post(brm.getPawnsRoute());
+        logger.info("Response was: "+ res.body().asString());
         BoardPawnDTO bPawn = this.gson.fromJson(res.body().asString(), BoardPawnDTO.class);
         return bPawn;
     }
@@ -222,32 +237,63 @@ public class GameBusinessLogic {
     }
 
     private String initializeBoardService(String board, Game game) {
-        return this.initalizeService(board, game);
-    }
-
-    private String initializeDecksService(String decks, Game game) {
-        return this.initalizeService(decks, game);
-    }
-
-    private String initializeBrokerService(String broker, Game game) {
-        return this.initalizeService(broker, game);
-    }
-
-    private String initializeBankService(String bank, Game game) {
-        return initalizeService(bank, game);
-    }
-
-    private String initalizeService(String uri, Game game) {
         GameUriDTO gud = new GameUriDTO(game.getUri());
 
         //POST Service
-        Response res = given().body(this.gson.toJson(gud)).post(uri);
+        logger.info("POST to '" + board + "': " + this.gson.toJson(gud).toString());
+        Response res = given().body(this.gson.toJson(gud)).post(board);
+        logger.info("Response was: " + res.body().asString());
 
-        PathUriDTO pud = this.gson.fromJson(res.body().asString(), PathUriDTO.class);
+        BoardDTO bdto = this.gson.fromJson(res.body().asString(), BoardDTO.class);
 
-        URLBuilder ub = new URLBuilder(uri);
+        URLBuilder ub = new URLBuilder(board);
 
-        return ub.getProtocolAndAuthority() + pud.getId();
+        return ub.getProtocolAndAuthority() + bdto.getId();
+    }
+
+    private String initializeDecksService(String decks, Game game) {
+        GameUriDTO gud = new GameUriDTO(game.getUri());
+
+        //POST Service
+        logger.info("POST to '" + decks + "': " + this.gson.toJson(gud).toString());
+        Response res = given().body(this.gson.toJson(gud)).post(decks);
+        logger.info("Response was: " + res.body().asString());
+
+        DeckDTO ddto = this.gson.fromJson(res.body().asString(), DeckDTO.class);
+
+        URLBuilder ub = new URLBuilder(decks);
+
+        return ub.getProtocolAndAuthority() + ddto.getId();
+    }
+
+    private String initializeBrokerService(String broker, Game game) {
+        GameUriDTO gud = new GameUriDTO(game.getUri());
+
+        //POST Service
+        logger.info("POST to '" + broker + "': " + this.gson.toJson(gud).toString());
+        Response res = given().body(this.gson.toJson(gud)).post(broker);
+        logger.info("Response was: " + res.body().asString());
+
+        BrokerDTO bdto = this.gson.fromJson(res.body().asString(), BrokerDTO.class);
+
+        URLBuilder ub = new URLBuilder(broker);
+
+        return ub.getProtocolAndAuthority() + bdto.getId();
+    }
+
+    private String initializeBankService(String bank, Game game) {
+        GameUriDTO gud = new GameUriDTO(game.getUri());
+
+        //POST Service
+        logger.info("POST to '" + bank + "': " + this.gson.toJson(gud).toString());
+        Response res = given().body(this.gson.toJson(gud)).post(bank);
+        logger.info("Response was: " + res.body().asString());
+
+        BankDTO bdto = this.gson.fromJson(res.body().asString(), BankDTO.class);
+
+        URLBuilder ub = new URLBuilder(bank);
+
+        return ub.getProtocolAndAuthority() + bdto.getId();
     }
 
     public void checkGameStatus(int gameId) {

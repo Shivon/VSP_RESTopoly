@@ -1,34 +1,21 @@
-package de.haw.vs.escr.broker.model;
+package de.haw.vs.escr.games.dtos;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Created by Christian on 13.06.2016.
+ * Created by Christian on 15.06.2016.
  */
-public class Broker {
-    private int brokerId;
-
+public class BrokerDTO {
     @Expose
     private String id;
 
-    @Expose
+    @Expose(deserialize = false)
     private String game;
 
-    @Expose
+    @Expose(deserialize = false)
     private String estates;
 
-    public Broker() {
-    }
-
-    public int getBrokerId() {
-        return brokerId;
-    }
-
-    public void setBrokerId(int brokerId) {
-        this.brokerId = brokerId;
+    public BrokerDTO() {
     }
 
     public String getId() {

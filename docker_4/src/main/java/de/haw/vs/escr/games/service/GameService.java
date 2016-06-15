@@ -237,20 +237,13 @@ public class GameService {
                 return null;
             }
 
-            int playerId;
-            try {
-                playerId = Integer.parseInt(req.params(":playerid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
+            String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
 
             Player p = null;
             for (Player pf : g.getPlayers()) {
-                if (pf.getPlayerId() == playerId) p = pf;
+                if (pf.getUser().equals(playerId)) p = pf;
             }
 
             if (p == null) {
@@ -272,19 +265,12 @@ public class GameService {
                 return null;
             }
 
-            int playerId;
-            try {
-                playerId = Integer.parseInt(req.params(":playerid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
+            String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
             Player p = null;
             for (Player pf : g.getPlayers()) {
-                if (pf.getPlayerId() == playerId) p = pf;
+                if (pf.getUser().equals(playerId)) p = pf;
             }
 
             if (p == null) {
@@ -310,19 +296,12 @@ public class GameService {
                 return null;
             }
 
-            int playerId;
-            try {
-                playerId = Integer.parseInt(req.params(":playerid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
+            String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
             Player p = null;
             for (Player pf : g.getPlayers()) {
-                if (pf.getPlayerId() == playerId) p = pf;
+                if (pf.getUser().equals(playerId)) p = pf;
             }
 
             if (p == null) {
@@ -346,19 +325,12 @@ public class GameService {
                 return null;
             }
 
-            int playerId;
-            try {
-                playerId = Integer.parseInt(req.params(":playerid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
+            String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
             Player p = null;
             for (Player pf : g.getPlayers()) {
-                if (pf.getPlayerId() == playerId) p = pf;
+                if (pf.getUser().equals(playerId)) p = pf;
             }
 
             if (p == null) {
@@ -380,19 +352,12 @@ public class GameService {
                 return null;
             }
 
-            int playerId;
-            try {
-                playerId = Integer.parseInt(req.params(":playerid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
+            String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
             Player p = null;
             for (Player pf : g.getPlayers()) {
-                if (pf.getPlayerId() == playerId) p = pf;
+                if (pf.getUser().equals(playerId)) p = pf;
             }
 
             if (p == null) {
