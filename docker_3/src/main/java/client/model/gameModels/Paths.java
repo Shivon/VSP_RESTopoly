@@ -2,47 +2,32 @@ package client.model.gameModels;
 
 import com.google.gson.annotations.Expose;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * Created by Christian on 29.04.2016.
  */
-@Entity
-@Table(name = "Paths")
 public class Paths {
-    @Id
-    @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "game")
     @Expose
     private String game;
 
-    @Column(name = "dice")
     @Expose
     private String dice;
 
-    @Column(name = "board")
     @Expose
     private String board;
 
-    @Column(name = "bank")
     @Expose
     private String bank;
 
-    @Column(name = "broker")
     @Expose
     private String broker;
 
-    @Column(name = "decks")
     @Expose
     private String decks;
 
-    @Column(name = "events")
     @Expose
     private String events;
 

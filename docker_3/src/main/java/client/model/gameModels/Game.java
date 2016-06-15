@@ -1,49 +1,37 @@
 package client.model.gameModels;
 
+import client.model.dtos.GameDTO;
+import client.model.dtos.PlayerURI;
+import client.model.dtos.StatusDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-//import de.haw.vs.escr.games.dtos.GameDTO;
-//import de.haw.vs.escr.games.dtos.PlayerURI;
-//import de.haw.vs.escr.games.dtos.StatusDTO;
 
-import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Christian on 29.04.2016.
  */
-@Entity
-@Table(name = "Game")
 public class Game {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gameId")
-//    @Expose
     private int gameId;
 
-    @Column(name = "uri", unique = true)
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "name", nullable = false)
     @Expose
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private List<Player> players;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths services;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Expose
     private Paths components;
 
-    @Enumerated(EnumType.STRING)
     private GameStatus status;
 
     public Game() {
@@ -52,7 +40,6 @@ public class Game {
     }
 
     public Game(String uri, String name, List<Player> players, Paths services, Paths components) {
-//        this.gameId = id;
         this.uri = uri;
         this.name = name;
         this.players = players;
@@ -117,24 +104,27 @@ public class Game {
         this.status = status;
     }
 
-//    public GameDTO toDTO() {
-//        String serviceURI = this.getUri() + "/services";
-//        String componentURI = this.getUri() + "/components";
-//        String playerURI = this.getUri() + "/players";
-//        GameDTO gDto = new GameDTO(this.getGameId(), this.getUri(), this.getName(), playerURI, serviceURI, componentURI);
-//        return gDto;
-//    }
-//
-//    public StatusDTO toStatus() {
-//        return new StatusDTO(this.getStatus());
-//    }
-//
-//    public PlayerURI getPlayerURIs() {
-//        PlayerURI pu = new PlayerURI();
-//        for (Player p : this.players) {
-//            pu.addURIToPlayers(p.getUri());
-//        }
-//        return pu;
-//    }
-}
+    public void addPlayer(Player p) {
+        this.players.add(p);
+    }
 
+    public GameDTO toDTO() {
+        String serviceURI = this.getUri() + "/services";
+        String componentURI = this.getUri() + "/components";
+        String playerURI = this.getUri() + "/players";
+        GameDTO gDto = new GameDTO(this.getGameId(), this.getUri(), this.getName(), playerURI, serviceURI, componentURI);
+        return gDto;
+    }
+
+    public StatusDTO toStatus() {
+        return new StatusDTO(this.getStatus());
+    }
+
+    public PlayerURI getPlayerURIs() {
+        PlayerURI pu = new PlayerURI();
+        for (Player p : this.players) {
+            pu.addURIToPlayers(p.getUri());
+        }
+        return pu;
+    }
+}

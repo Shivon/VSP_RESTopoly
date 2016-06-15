@@ -41,10 +41,10 @@ public class BanksAdapter {
     public Bank getBank(Game game) throws UnirestException {
         _game = game;
 
-        String bankString =  Unirest.get("http://" +  _ipAdresses.banksIP()
-                + "/banks/" + _game.getComponents().getBank()).asString().getBody();
-//    String bankString =  Unirest.get(_ipAdresses.banksIP()
-//        + "/" + _game.getComponents().getBank()).asString().getBody();
+//        String bankString =  Unirest.get("http://" +  _ipAdresses.banksIP()
+//                + "/banks/" + _game.getComponents().getBank()).asString().getBody();
+    String bankString =  Unirest.get(_ipAdresses.banksIP()
+        + "/" + _game.getComponents().getBank()).asString().getBody();
         Bank bank = gson.fromJson(bankString, Bank.class);
         return bank;
     }

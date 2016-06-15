@@ -3,26 +3,23 @@ package client.model;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by Jana Mareike on 19.05.2016.
+ * Created by Christian on 05.04.2016.
  */
 public class Users {
     @Expose
-    private List<User> users;
-
-    public Users(List<User> users) {
-        this.users = users;
-    }
+    private ArrayList<String> users;
 
     public Users() {
-        users = new ArrayList<User>();
+        users = new ArrayList<String>();
     }
 
-    public List<User> getUsers() {
+    public ArrayList<String> getUsers() {
         return users;
     }
 
+    public void addUserToList(String uri) {
+        this.users.add(uri);
+    }
 }
-

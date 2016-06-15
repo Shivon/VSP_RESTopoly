@@ -4,42 +4,36 @@ import client.model.dtos.PlayerDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import javax.persistence.*;
-import java.util.List;
+
 
 /**
  * Created by Christian on 03.05.2016.
  */
-@Entity
-@Table(name = "Player")
 public class Player {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "playerId")
+    @Expose(deserialize = false)
     private int playerId;
 
-    @Column(name = "uri", unique = true)
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName("id")
     private String uri;
 
-    @Column(name = "user")
     @Expose
     private String user;
 
-    @Column(name = "pawn")
     @Expose
     private String pawn;
 
-    @Column(name = "account")
     @Expose
     private String account;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private boolean turn;
+
     @Expose
     private Ready ready;
 
     public Player() {
+        this.ready = new Ready(false);
+        this.turn = false;
     }
 
     public Player(String uri, String user, String pawn, String account, Ready ready) {
@@ -48,6 +42,7 @@ public class Player {
         this.pawn = pawn;
         this.account = account;
         this.ready = ready;
+        this.turn = false;
     }
 
     public int getPlayerId() {
@@ -98,8 +93,16 @@ public class Player {
         this.ready = ready;
     }
 
-//    public PlayerDTO toDTO() {
-//        String readyUri = this.getUri() + "/ready";
-//        return new PlayerDTO(this.getPlayerId(), this.getUri(), this.getUser(), this.getPawn(), this.getAccount(), readyUri);
-//    }
+    public boolean isTurn() {
+        return turn;
+    }
+
+    public void setTurn(boolean turn) {
+        this.turn = turn;
+    }
+
+    public PlayerDTO toDTO() {
+        String readyUri = this.getUri() + "/ready";
+        return new PlayerDTO(this.getPlayerId(), this.getUri(), this.getUser(), this.getPawn(), this.getAccount(), readyUri);
+    }
 }

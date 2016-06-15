@@ -44,10 +44,17 @@ public class UserLogic {
     }
 
     public boolean checkIfUserAlreadyExists(String userName) throws UnirestException {
-        _user = getUser(userName);
-        if (_user != null){
-            return true;
+
+        System.out.println( _userAdapter.getUsers());
+        for (String user : _userAdapter.getUsers().getUsers()) {
+            if(user.equals(_ipAdresses.usersIP() + "/" + userName)){
+                return true;
+            }
         }
+//        _user = getUser(userName);
+//        if (_user != null){
+//            return true;
+//        }
         return false;
     }
 
@@ -57,7 +64,7 @@ public class UserLogic {
         _userName = userName;
         _client.setName(_userName);
         _user.setName(_userName);
-        _user.setNameId("/users/" + _userName.toLowerCase());
+        _user.setId("/users/" + _userName.toLowerCase());
         System.out.println("USER NAME : " + _userName);
         System.out.println("BANKIP: " + _ipAdresses.banksIP());
         System.out.println("IP: " + _ipAdresses.clientIP() );

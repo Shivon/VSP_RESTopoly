@@ -30,8 +30,8 @@ public class DiceAdapter {
 
     public int getDiceRollNumber() throws UnirestException {
         System.out.println("Dice roll");
-        String rollString = Unirest.get(_ipAdresses.diceIP() + "/dice").asString().getBody();
-//        String rollString = Unirest.get(_ipAdresses.diceIP()).asString().getBody();
+//        String rollString = Unirest.get(_ipAdresses.diceIP() + "/dice").asString().getBody();
+        String rollString = Unirest.get(_ipAdresses.diceIP()).asString().getBody();
         System.out.println(rollString);
         Dice dice = gson.fromJson(rollString, Dice.class);
         System.out.println("" + dice.getNumber());
@@ -48,12 +48,12 @@ public class DiceAdapter {
         System.out.println(Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
                 + "/pawns/" + _user.getName().toLowerCase() + "/roll").body(this.gson.toJson(throwOnBoard)).getBody());
 
-        String eventString = Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
-                + "/pawns/" + _user.getName().toLowerCase() + "/roll")
-                .body(this.gson.toJson(throwOnBoard)).asString().getBody();
-//        Unirest.post(_ipAdresses.boardsIP() + "/" + _game.getGameId()
-//        + "/pawns/" + _user.getName().toLowerCase() + "/roll")
-//        .body(this.gson.toJson(throwOnBoard)).getBody();
+//        String eventString = Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
+//                + "/pawns/" + _user.getName().toLowerCase() + "/roll")
+//                .body(this.gson.toJson(throwOnBoard)).asString().getBody();
+        String eventString = Unirest.post(_ipAdresses.boardsIP() + "/" + _game.getGameId()
+        + "/pawns/" + _user.getName().toLowerCase() + "/roll")
+        .body(this.gson.toJson(throwOnBoard)).asString().getBody();
 
         EventDTO eventDTO = gson.fromJson(eventString, EventDTO.class);
 

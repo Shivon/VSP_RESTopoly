@@ -59,13 +59,15 @@ public class PlayerAdapter {
         System.out.println("GAme im postPlayer: " + _game.getUri());
         System.out.println("Gamename: " + _game.getName());
 
-        System.out.println("Player im Post: " + _player + "  " +
-                Unirest.post(_ipAdresses.gamesIP()+ _game.getUri() + "/players")
-                .body(this.gson.toJson(_player)).getBody());
-        System.out.println(_ipAdresses.gamesIP()+ _game.getUri() + "/players");
+        System.out.println("PlayerUII IM Post: " + _ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players");
 
-        Unirest.post(_ipAdresses.gamesIP()+ _game.getUri() + "/players")
-                .body(this.gson.toJson( _player)).asJson();
+        System.out.println("Player im Post: " + _player + "  " +
+                Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
+                .body(this.gson.toJson(_player)).getBody());
+        System.out.println(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games", "") + "/players");
+
+        Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
+                .body(this.gson.toJson( _player)).asJson().getBody();
     }
 
     public void putPlayer(User user, Game game, Accounts account, boolean ready) throws UnirestException {
@@ -74,14 +76,14 @@ public class PlayerAdapter {
         this._user = user ;
         this._ready = new Ready(ready);
 
-        Unirest.put( _ipAdresses.gamesIP() + "/games/" + _game.getGameId()
-                + "/players/" + user.getName().toLowerCase()
-                + "?account=" + _account
-                + "&ready=" + _ready);
-//                Unirest.put( _ipAdresses.gamesIP() + "/" + _game.getGameId()
-//        + "/players/" + user.getName().toLowerCase()
+//        Unirest.put( _ipAdresses.gamesIP() + "/games/" + _game.getGameId()
+//                + "/players/" + user.getName().toLowerCase()
 //                + "?account=" + _account
 //                + "&ready=" + _ready);
+                Unirest.put( _ipAdresses.gamesIP() + "/" + _game.getGameId()
+        + "/players/" + user.getName().toLowerCase()
+                + "?account=" + _account
+                + "&ready=" + _ready);
     }
 
     public Player getPlayer(Game game, User user) throws UnirestException {
@@ -103,7 +105,7 @@ public class PlayerAdapter {
         this._game = game;
         System.out.println("game " + _game + ", uri: " + _game.getUri());
         String players = Unirest.get(_ipAdresses.gamesIP()
-                    + _game.getUri() + "/players")
+                    + _game.getUri().replaceFirst("/games", "") + "/players")
                     .asString().getBody();
         System.out.println("playerstring: " +players);
         PlayerURI playerUriList = gson.fromJson(players, PlayerURI.class);
@@ -112,7 +114,7 @@ public class PlayerAdapter {
         Player[] playerList = new Player[playerFromUriList.size()+1];
         for(int i = 0; i < playerFromUriList.size(); i++) {
             String playerDTOString = Unirest.get(_ipAdresses.gamesIP()
-                    + playerFromUriList.get(i)).asString().getBody();
+                    + playerFromUriList.get(i).replaceFirst("/games", "")).asString().getBody();
               System.out.println("PLAYER: " + playerDTOString);
 
             Player playerDTO = gson.fromJson(playerDTOString, Player.class);
