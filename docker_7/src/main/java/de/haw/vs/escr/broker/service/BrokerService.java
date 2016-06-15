@@ -2,6 +2,12 @@ package de.haw.vs.escr.broker.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.haw.vs.escr.broker.businesslogic.BrokerBusinesslogic;
+import de.haw.vs.escr.broker.model.Broker;
+import de.haw.vs.escr.broker.repo.BrokerRepo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -10,16 +16,23 @@ import static spark.Spark.*;
  */
 public class BrokerService {
     private Gson gson;
+    private final BrokerRepo brokerREPO;
+    private final BrokerBusinesslogic brokerBL;
 
     public BrokerService() {
         this.initializeGson();
+        this.brokerREPO = new BrokerRepo();
+        this.brokerBL = new BrokerBusinesslogic(this.brokerREPO, this.gson);
 
         get("/broker", (req, res) -> {
-            return "JO";
+            List<String> uris = this.brokerBL.getUriList();
+            return this.gson.toJson(uris);
         });
 
         post("/broker", (req, res) -> {
-            return null;
+            Broker broker = this.gson.fromJson(req.body(), Broker.class);
+            Broker savedBroker = this.brokerBL.createBroker(broker);
+            return this.gson.toJson(savedBroker);
         });
 
         get("/broker/:gameid", (req, res) -> {
