@@ -4,12 +4,8 @@ import client.adapter.GamesAdapter;
 import client.adapter.PlayerAdapter;
 import client.model.User;
 import client.model.gameModels.Game;
-import client.model.gameModels.Player;
 import client.model.gameModels.Ready;
 import client.service.ClientService;
-import client.view.NewGameWindow;
-//import client.view.PlayerLogInWindow;
-import client.view.PlayerLogInWindow;
 import client.view.VstTableModel;
 import clientUI.GamesWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -45,7 +41,6 @@ public class GamesLogic {
         Game[] gamesList = _gamesAdapter.getGames();
         List<Game> games = Arrays.asList(gamesList);
         List<Game> gamesListRegistrationStatus = new ArrayList<Game>();
-        System.out.println("GamesList im UserWindow: " + gamesList);
 
         for (Game game : games) {
             if (_gamesAdapter.getGamesStatus(game).equals(registration)) {
@@ -85,7 +80,6 @@ public class GamesLogic {
         } catch (UnirestException e1) {
             e1.printStackTrace();
         }
-        System.out.println("GamesList im UserWindow: " + gamesList);
         if (gamesList.length == 0) {
             return true;
         }
@@ -97,20 +91,14 @@ public class GamesLogic {
     }
 
     public void startGame(Game game) throws UnirestException {
-        System.out.println(game);
         _gamesAdapter.putGameStatusRunning(game);
-        //        TODO put player ready im Game bei Status Running
-        System.out.println(_gamesAdapter.getGamesStatus(game));
     }
 
     public void startWaitWindow(User user, Game game, PlayerAdapter playerAdapter, ClientService clientService) throws UnirestException {
         _playerAdapter = playerAdapter;
         _user = user;
         _selectedGame = game;
-        System.out.println("USER Im startwait window: " + _user);
-        System.out.println("Game im start wait window: " + _selectedGame);
         WaitLogic waitLogic = new WaitLogic(_user, _selectedGame, _playerAdapter);
-//         new ClientService(waitLogic);
         clientService.setWaitLogic(waitLogic);
     }
 }

@@ -34,7 +34,7 @@ public class BanksAdapter {
         this._account = new Accounts();
         _account.setPlayer(URI.create(_player.getUri()));
         _account.setSaldo(4000);
-        Unirest.post( bankString + "/accounts").body(this.gson.toJson(_account)).getBody();
+        Unirest.post( bankString + "/accounts").body(this.gson.toJson(_account)).asJson().getBody();
 
     }
 
@@ -53,7 +53,7 @@ public class BanksAdapter {
         this._user = user;
         this._game = game;
         System.out.println(_game);
-        System.out.println("" + _game.getComponents());
+        System.out.println("" + _game.getComponents().getBank());
         String bankString = _game.getComponents().getBank();
 
         System.out.println(bankString);

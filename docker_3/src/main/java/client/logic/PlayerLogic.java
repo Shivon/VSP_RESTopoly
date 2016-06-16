@@ -17,14 +17,13 @@ import java.util.*;
 public class PlayerLogic {
 
     private PlayerLoginWindowUI _playerWindowUI;
-    private List<Player> _playerList;
+//    private List<Player> _playerList;
     private Ready _ready;
     private Game _game;
     private List<String> _pawnList;
     private String _playerPawn;
     private PlayerAdapter _playerAdapter;
     private User _user ;
-    private Player _player;
 
     public PlayerLogic(PlayerLoginWindowUI playerLoginWindowUI, Game game, User user ){
         _playerWindowUI = playerLoginWindowUI;
@@ -40,28 +39,22 @@ public class PlayerLogic {
         _pawnList.add("Flatiron");
         _playerAdapter = new PlayerAdapter();
     }
-
-
-    public void setAllPlayersOfGameReady(List<Player> playerList){
-        _playerList = playerList;
-        for (Player player : playerList) {
-            player.setReady(_ready);
-        }
-    }
+//
+//
+//    public void setAllPlayersOfGameReady(List<Player> playerList){
+//        _playerList = playerList;
+//        for (Player player : playerList) {
+//            player.setReady(_ready);
+//        }
+//    }
 
     public List<String> showAvailablePawns() throws UnirestException {
-        System.out.println("hallo");
-        System.out.println("game show "+_game);
         if(!_game.getPlayers().isEmpty()){
             List<Player> playerList = _game.getPlayers();
             Set<String> playerPawnSet = new HashSet<>();
             System.out.println(playerList);
             for (Player player : playerList) {
-                System.out.println("PLAYERLIST PAWN: " + player.getPawn());
-                System.out.println("PLAYERLIST : " + playerList);
                 playerPawnSet.add(player.getPawn());
-                System.out.println(playerPawnSet);
-                System.out.println(_pawnList.size());
             }
 
             Iterator<String> iterator = _pawnList.iterator();
@@ -72,8 +65,6 @@ public class PlayerLogic {
                 }
             }
         }
-
-        System.out.println("PAWNLIST"+ _pawnList);
         return _pawnList;
     }
 
@@ -96,10 +87,7 @@ public class PlayerLogic {
     }
 
     public void postPlayer() throws UnirestException {
-        System.out.println("before post");
         _playerAdapter.postPlayer( _playerPawn, _game, _user);
-        System.out.println("after post im Submit");
-        System.out.println("get Player: " +  _playerAdapter.getPlayer(_game, _user));
     }
 
     public void closePlayerWindow(){
@@ -107,6 +95,6 @@ public class PlayerLogic {
     }
 
     public Player getPlayer() throws UnirestException {
-       return  _player = _playerAdapter.getPlayer(_game, _user);
+       return  _playerAdapter.getPlayer(_game, _user);
     }
 }

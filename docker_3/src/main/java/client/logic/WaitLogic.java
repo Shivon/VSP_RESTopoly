@@ -3,13 +3,11 @@ package client.logic;
 import client.adapter.BanksAdapter;
 import client.adapter.PlayerAdapter;
 import client.model.Accounts;
-import client.model.Client;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
 import client.model.gameModels.Ready;
 import client.view.TurnToRollWindow;
-import clientUI.StartGameWindowUI;
 import clientUI.WaitWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -21,20 +19,17 @@ import java.awt.*;
 public class WaitLogic {
 
     private WaitWindowUI _waitWindowUI;
-    private TurnToRollWindow _turnToRollWindow;
     private User _user;
     private Game _game;
     private Player _player;
     private PlayerAdapter _playerAdapter;
     private Event _event;
     private BanksAdapter _banksAdapter;
-    private StartGameWindowUI _startGameWindowUI;
 
     public WaitLogic(User user , Game game, PlayerAdapter playerAdapter) throws UnirestException {
         _user = user;
         _game = game;
         _playerAdapter = playerAdapter;
-
 
         _waitWindowUI = new WaitWindowUI();
         showGameHasStarted();
@@ -47,7 +42,7 @@ public class WaitLogic {
         player.setReady(new Ready(false));
         _waitWindowUI.getWaitText().setText(getWindowText() + "Now it´s your turn to roll!");
         _waitWindowUI.getWaitText().setForeground(Color.RED);
-        _turnToRollWindow = new TurnToRollWindow(_game, _user, _waitWindowUI);
+         new TurnToRollWindow(_game, _user, _waitWindowUI);
     }
 
     public void registerAndShowEvent(Event event){

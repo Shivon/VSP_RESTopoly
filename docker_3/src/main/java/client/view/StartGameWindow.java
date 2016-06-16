@@ -2,7 +2,6 @@ package client.view;
 
 import client.adapter.PlayerAdapter;
 import client.logic.GamesLogic;
-import client.model.Client;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.service.ClientService;
@@ -48,7 +47,6 @@ public class StartGameWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    System.out.println(game);
                     _gamesLogic.startGame(game);
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
                     _gamesLogic.startWaitWindow(user, game, _playerAdapter, _clientService);

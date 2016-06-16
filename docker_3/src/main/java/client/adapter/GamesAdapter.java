@@ -1,10 +1,6 @@
 package client.adapter;
 
-import client.model.Bank;
-import client.model.Board;
-import client.model.Dice;
 import client.model.dtos.GameDTO;
-import client.model.dtos.PlayerDTO;
 import client.model.dtos.PlayerURI;
 import client.model.dtos.StatusDTO;
 import client.model.gameModels.Game;
@@ -15,9 +11,7 @@ import com.google.gson.Gson;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static client.model.gameModels.GameStatus.running;
@@ -37,7 +31,6 @@ public class GamesAdapter {
     }
 
     public Game getGame(String gameName) throws UnirestException {
-//        Game game = new Game();
         for (Game game : getGames()) {
             if(game.getName().equals(gameName)){
                 return game;
@@ -47,8 +40,6 @@ public class GamesAdapter {
     }
 
     public Game[] getGames() throws UnirestException {
-//        String games = Unirest.get(_ipAdresses.gamesIP() + "/games")
-//                .asString().getBody();
         String games = Unirest.get(_ipAdresses.gamesIP())
         .asString().getBody();
         System.out.println(games);
@@ -107,25 +98,13 @@ public class GamesAdapter {
 
 
     public void postGames(Game game ) throws UnirestException {
-//        Unirest.post(_ipAdresses.gamesIP() + "/games")
-//                .body(this.gson.toJson(game)).asJson();
          Unirest.post(_ipAdresses.gamesIP())
         .body(this.gson.toJson(game)).asJson().getBody();
     }
 
-//    public void putGameStatusRegistration(Game game) throws UnirestException {
-//        GameStatus gameStatus = GameStatus.registration;
-//        game.setStatus(gameStatus);
-//        Unirest.put(game.getUri() + "/status" ).body(this.gson.toJson(game)).asJson();
-//    }
-
     public GameStatus getGamesStatus(Game game) throws UnirestException {
         String statusString = Unirest.get(_ipAdresses.gamesIP() + game.getUri().replaceFirst("/games", "")
                     + "/status").asString().getBody();
-        System.out.println(_ipAdresses.gamesIP() + game.getUri().replaceFirst("/games", "")
-                + "/status");
-        System.out.println(statusString);
-
         StatusDTO status = gson.fromJson(statusString, StatusDTO.class);
 
         return status.getStatus();
@@ -157,16 +136,7 @@ public class GamesAdapter {
         GameStatus gameStatus = running;
         game.setStatus(gameStatus);
         System.out.println(game.getUri());
-        Unirest.put(_ipAdresses.gamesIP() + game.getUri() + "/status" )
-                .body(this.gson.toJson(game)).asJson();
+        Unirest.put(_ipAdresses.gamesIP() + game.getUri().replaceFirst("/games", "") + "/status" )
+                .body(this.gson.toJson(game)).asJson().getBody();
     }
-
-//    public void setCurrentGame(Game game){
-//
-//    }
-//
-//    public Game getCurrentGame(){
-//        return
-//    }
-
 }

@@ -2,10 +2,6 @@ package client.view;
 
 import client.adapter.UserAdapter;
 import client.logic.UserLogic;
-import client.logic.WaitLogic;
-import client.model.Client;
-import client.model.User;
-import client.service.ClientService;
 import clientUI.UserWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -31,11 +27,9 @@ public class UserWindow {
     }
 
     public void registerSubmitUserName(){
-        System.out.println("hallo");
         _userWindowUI.getLogInSubmit().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("hallo");
                 if(_userLogic.isLoginAreaNotEmpty()){
                     _userName = _userLogic.getUserNameFromLoginArea();
                     try {

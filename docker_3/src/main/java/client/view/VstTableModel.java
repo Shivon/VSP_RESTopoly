@@ -1,6 +1,5 @@
 package client.view;
 
-import client.adapter.GamesAdapter;
 import client.model.gameModels.Game;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -12,20 +11,14 @@ import java.util.List;
  */
 public class VstTableModel  extends AbstractTableModel {
 
-    private GamesAdapter gamesAdapter;
-//    private Game[] _gamesList;
     private List<Game> _gamesList;
 
 
     public VstTableModel(List<Game> gamesList) throws UnirestException {
-        this.gamesAdapter = new GamesAdapter(null);
         this._gamesList = gamesList;
     }
 
     @Override
-//    public int getRowCount() {
-//        return _gamesList.length;
-//    }
     public int getRowCount(){ return _gamesList.size();}
 
     @Override
@@ -37,8 +30,6 @@ public class VstTableModel  extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         Object value = "??";
-
-//         Game game = _gamesList[rowIndex];
         Game game = _gamesList.get(rowIndex);
         switch (columnIndex) {
             case 0:
@@ -54,19 +45,12 @@ public class VstTableModel  extends AbstractTableModel {
                 value = game.getServices();
                 break;
         }
-
         return value;
-
     }
 
-//    public Game getGameAt(int row) {
-//        return _gamesList[row];
-//    }
     public Game getGameAt(int row){
         return _gamesList.get(row);
     }
-
-
 
 
 //    @Override

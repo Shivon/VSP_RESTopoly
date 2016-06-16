@@ -2,13 +2,10 @@ package client.view;
 
 import client.adapter.GamesAdapter;
 import client.adapter.PlayerAdapter;
-import client.adapter.UserAdapter;
 import client.logic.GamesLogic;
-import client.logic.WaitLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Ready;
-import client.service.ClientService;
 import clientUI.GamesWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -56,19 +53,15 @@ public class GamesWindow {
     }
 
     private Game selectRow(){
-        System.out.println("select row");
         _gamesWindowUI.getAllGameTable().addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                System.out.println("maus click");
                 int row = _gamesWindowUI.getAllGameTable().rowAtPoint(evt.getPoint());
-                System.out.println("Zeile: " +row);
                 if (_gamesLogic.checkIfRowIsChosen(row)) {
                    _selectedGame=  _gamesLogic.getSelectedGameFromTable(row);
                 }
             }
         });
-        System.out.println("selected Game"+ _selectedGame);
         return _selectedGame;
     }
 

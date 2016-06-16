@@ -1,15 +1,10 @@
 package client.view;
 
-import client.adapter.BanksAdapter;
 import client.adapter.PlayerAdapter;
 import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
-import client.logic.WaitLogic;
-import client.model.Accounts;
-import client.model.Client;
 import client.model.User;
 import client.model.gameModels.Game;
-import client.model.gameModels.Player;
 import client.service.ClientService;
 import clientUI.PlayerLoginWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -17,7 +12,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 
 /**
  * Created by Jana Mareike on 11.05.2016.
@@ -41,9 +35,7 @@ public class PlayerLogInWindow {
         _playerWindowUI = new PlayerLoginWindowUI();
         _playerAdapter = new PlayerAdapter();
         _playerLogic = new PlayerLogic(_playerWindowUI, _game, _user);
-        System.out.println("constructor playerloginwindow - before showavailablepawns");
         _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.showAvailablePawns().toString());
-        System.out.println("constructor playerloginwindow - after showavailablepawns");
         _playerWindowUI.getPlayerNameFrame().setVisible(true);
         registerSubmitPlayerPawn();
     }

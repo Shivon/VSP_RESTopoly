@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
  */
 public class TurnToRollWindow {
 
-//    soll aufgehen, wenn man an der Reihe ist
     private TurnToRollWindowUI _turnToRollWindowUI;
     private IPAdresses _ipAdresses;
     private Game _game;
@@ -61,8 +60,6 @@ public class TurnToRollWindow {
             public void actionPerformed(ActionEvent e) {
                 if (!_rolled) {
                     try {
-// würfeln und Betrag anzeigen
-//                    2 mal get Dice roll, 1 post board roll mit number?
                         _diceRoll1 = new Roll();
                         _diceRoll2 = new Roll();
                         _diceRoll1Number =  _diceAdapter.getDiceRollNumber();
