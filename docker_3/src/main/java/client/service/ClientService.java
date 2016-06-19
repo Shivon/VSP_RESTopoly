@@ -3,6 +3,8 @@ package client.service;
 import client.adapter.UserAdapter;
 import client.model.gameModels.Player;
 import client.logic.WaitLogic;
+import client.view.TurnToRollWindow;
+import client.view.WaitWindow;
 import com.google.gson.Gson;
 import client.model.Client;
 import client.repo.ClientRepo;
@@ -19,12 +21,18 @@ public class ClientService {
     private ClientRepo clientRepo = new ClientRepo();
     private Client client;
     private WaitLogic _waitLogic;
+    private TurnToRollWindow _turnToRollWindow;
+    private WaitWindow _waitWindow;
 
     public void setWaitLogic(WaitLogic logic) {
         this._waitLogic = logic;
     }
 
-    public ClientService(WaitLogic waitLogic) {
+    public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow, WaitWindow waitWindow) {
+
+        _turnToRollWindow = turnToRollWindow;
+        _waitWindow = waitWindow;
+
 
         get("/client", (request, response) -> {
 //            URl: /client A service which acts as a representant of a player/client.
@@ -54,6 +62,7 @@ public class ClientService {
             // logic.
             Player player = gson.fromJson(request.body(), Player.class);
             _waitLogic.playerTurn(player);
+            _turnToRollWindow.getTurnToRollWindowUI().getDiceFrame().setVisible(true);
 
             return "";
         });
@@ -68,7 +77,7 @@ public class ClientService {
 //           startGameWundow.handleGameStartPost();
 //           close startGameWindow;
 //               }else{
-           _waitLogic.registerAndShowEvent(event);
+           _waitWindow.showEvent(event);
            return "";
        });
     }

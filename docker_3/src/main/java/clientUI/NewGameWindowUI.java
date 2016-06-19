@@ -46,7 +46,7 @@ public class NewGameWindowUI {
         _logInFrame.add(_logInLabel, BorderLayout.NORTH);
         _logInFrame.add(_logInPanel, BorderLayout.CENTER);
         _logInFrame.add(_logInButtonPanel, BorderLayout.SOUTH);
-        _logInFrame.setVisible(true);
+        _logInFrame.setVisible(false);
         _logInFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 

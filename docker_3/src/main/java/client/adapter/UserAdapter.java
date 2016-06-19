@@ -33,8 +33,7 @@ public class UserAdapter {
 
     public User getUser(String userName) throws UnirestException {
         String user = Unirest.get(_ipAdresses.usersIP() + "/"
-                + userName.toLowerCase()).asString().getBody();
-
+                + userName).asString().getBody();
         User userObj = gson.fromJson(user, User.class);
         return userObj;
     }

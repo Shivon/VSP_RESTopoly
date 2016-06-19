@@ -1,11 +1,10 @@
 package client.view;
 
-import client.adapter.PlayerAdapter;
 import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
+import client.logic.UserLogic;
 import client.model.User;
 import client.model.gameModels.Game;
-import client.service.ClientService;
 import clientUI.PlayerLoginWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -19,24 +18,20 @@ import java.awt.event.ActionListener;
 public class PlayerLogInWindow {
 
     private PlayerLoginWindowUI _playerWindowUI;
-    private Game _game;
-    private User _user;
     private PlayerLogic _playerLogic;
+    private StartGameWindow _startGameWindow;
+    private UserLogic _userLogic;
     private GamesLogic _gamesLogic;
-    private PlayerAdapter _playerAdapter;
-    private ClientService _clientService;
 
-    public PlayerLogInWindow(Game selectedGame, User user, GamesLogic gamesLogic) throws UnirestException {
-        this._user = user;
-        this._game = selectedGame;
+    public PlayerLogInWindow( PlayerLoginWindowUI playerLoginWindowUI, UserLogic userLogic, PlayerLogic playerLogic,
+                              StartGameWindow startGameWindow, GamesLogic gamesLogic) throws UnirestException {
+
+        _startGameWindow = startGameWindow;
+        _playerWindowUI = playerLoginWindowUI;
+        _playerLogic = playerLogic;
+        _userLogic = userLogic;
         _gamesLogic = gamesLogic;
-
-        _clientService = new ClientService(null);
-        _playerWindowUI = new PlayerLoginWindowUI();
-        _playerAdapter = new PlayerAdapter();
-        _playerLogic = new PlayerLogic(_playerWindowUI, _game, _user);
-        _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.showAvailablePawns().toString());
-        _playerWindowUI.getPlayerNameFrame().setVisible(true);
+        // _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.getAvailablePawns(gamesLogic.getCurrentGame()).toString());
         registerSubmitPlayerPawn();
     }
 
@@ -44,15 +39,16 @@ public class PlayerLogInWindow {
         _playerWindowUI.getSubmitButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(_playerLogic.checkPlayerPawnEntered()){
+                if(checkPlayerPawnEntered()){
                     try {
-                        if(_playerLogic.checkIfPlayerPawnIsNotAvailable()){
+                        if(checkIfPlayerPawnIsNotAvailable()){
                             JOptionPane.showMessageDialog(null, "pawn not available", "choose an other pawn!",
                                     JOptionPane.ERROR_MESSAGE);
                         }else{
-                            _playerLogic.postPlayer();
-                            _playerLogic.closePlayerWindow();
-                            new StartGameWindow(_user, _game,_playerAdapter,_gamesLogic, _clientService);
+                            String pawn = getPlayerPawn();
+                            _playerLogic.registerPlayer(pawn);
+                            closePlayerWindow();
+                            _startGameWindow.getStartGameWindowUI().getStartGameFrame().setVisible(true);
                         }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
@@ -63,5 +59,29 @@ public class PlayerLogInWindow {
                 }
             }
         });
+    }
+
+    public boolean checkPlayerPawnEntered(){
+        if(!_playerWindowUI.getPlayerPawnArea().getText().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getPlayerPawn(){
+        return  _playerWindowUI.getPlayerPawnArea().getText();
+    }
+
+    public PlayerLoginWindowUI getPlayerLoginWindowUI(){return _playerWindowUI;}
+
+    public void closePlayerWindow(){
+        _playerWindowUI.getPlayerNameFrame().setVisible(false);
+    }
+
+    public boolean checkIfPlayerPawnIsNotAvailable() throws UnirestException {
+        if(!_playerLogic.getAvailablePawns(_gamesLogic.getCurrentGame()).contains(getPlayerPawn())){
+            return true;
+        }
+        return false;
     }
 }

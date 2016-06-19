@@ -1,5 +1,7 @@
 package client.adapter;
 
+import client.logic.GamesLogic;
+import client.logic.UserLogic;
 import client.model.Accounts;
 import client.model.User;
 import client.model.dtos.PlayerDTO;
@@ -26,9 +28,11 @@ public class PlayerAdapter {
     private IPAdresses _ipAdresses;
     private Accounts _account;
     private Ready _ready;
+//    private UserLogic _userLogic;
+//    private GamesLogic _gamesLogic;
 
-    public PlayerAdapter(){
-        _ipAdresses = new IPAdresses();
+    public PlayerAdapter(IPAdresses ipAdresses){
+        _ipAdresses = ipAdresses;
     }
 
     public void postPlayer( String playerPawn, Game game, User user) throws UnirestException {
@@ -44,7 +48,7 @@ public class PlayerAdapter {
 //        _player.setPlayerId("uri the resource");
         _player.setPawn(playerPawn);
         _player.setReady(_ready);
-       _player.setUri(_game.getUri() + "/players/" + _user.getName().toLowerCase());
+        _player.setUri(_game.getUri() + "/players/" + _user.getName().toLowerCase());
         _player.setUser(_user.getName().toLowerCase());
 
         Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
@@ -66,6 +70,7 @@ public class PlayerAdapter {
     public Player getPlayer(Game game, User user) throws UnirestException {
         this._game = game;
         this._user = user;
+
         String userName = _user.getName().toLowerCase();
 
         Player[] playerList = getPlayers(_game);

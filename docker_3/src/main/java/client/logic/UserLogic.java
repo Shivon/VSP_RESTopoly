@@ -4,8 +4,8 @@ import client.adapter.IPAdresses;
 import client.adapter.UserAdapter;
 import client.model.Client;
 import client.model.User;
+import client.model.gameModels.Game;
 import client.view.GamesWindow;
-import clientUI.UserWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -13,25 +13,13 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  */
 public class UserLogic {
 
-    private UserWindowUI _userWindowUI;
     private UserAdapter _userAdapter;
     private IPAdresses _ipAdresses;
+    private User _user;
 
-    public UserLogic(UserWindowUI userWindowUI, UserAdapter userAdapter){
-        _userWindowUI = userWindowUI;
+    public UserLogic(UserAdapter userAdapter, IPAdresses ipAdresses){
         _userAdapter = userAdapter;
-        _ipAdresses = new IPAdresses();
-    }
-
-    public boolean isLoginAreaNotEmpty(){
-        if(! _userWindowUI.getLogInArea().getText().isEmpty()){
-            return true;
-        }
-        return false;
-    }
-
-    public String getUserNameFromLoginArea(){
-        return _userWindowUI.getLogInArea().getText();
+        _ipAdresses = ipAdresses;
     }
 
     public User getUser(String userName) throws UnirestException {
@@ -44,29 +32,22 @@ public class UserLogic {
                 return true;
             }
         }
-//        _user = getUser(userName);
-//        if (_user != null){
-//            return true;
-//        }
         return false;
     }
 
-    public void setUser( String userName) throws UnirestException {
-        User user = new User();
+    public User getCurrentUser() {
+        return _user;
+    }
+
+    public void setCurrentUser(String userName) throws UnirestException {
+//        TODO was mache ich mit dem Client???
         Client client = new Client();
+        _user = new User();
         client.setName(userName);
-        user.setName(userName);
-        user.setId("/users/" + userName.toLowerCase());
+        _user.setName(userName);
+        _user.setId("/users/" + userName.toLowerCase());
         client.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
-        user.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
-        _userAdapter.postUser( user );
-    }
-
-    public void closeUserUI(){
-        _userWindowUI.getLogInFrame().setVisible(false);
-    }
-
-    public void openGamesWindow(User user) throws UnirestException {
-        new GamesWindow(user);
+        _user.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
+        _userAdapter.postUser(_user);
     }
 }

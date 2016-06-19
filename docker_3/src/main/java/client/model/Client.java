@@ -87,7 +87,6 @@ public class Client {
         if (id != null ? !id.equals(client.id) : client.id != null) return false;
         if (!name.equals(client.name)) return false;
         return uri.equals(client.uri);
-
     }
 
     @Override

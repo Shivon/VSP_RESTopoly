@@ -3,11 +3,14 @@ package client.view;
 import client.adapter.GamesAdapter;
 import client.adapter.PlayerAdapter;
 import client.logic.GamesLogic;
+import client.logic.PlayerLogic;
 import client.model.User;
 import client.model.gameModels.Game;
+import client.model.gameModels.Player;
 import client.model.gameModels.Ready;
 import clientUI.GamesWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.h2.util.New;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,36 +23,37 @@ import java.awt.event.ActionListener;
 public class GamesWindow {
 
     private GamesWindowUI _gamesWindowUI;
-    private PlayerAdapter _playerAdapter;
-    private GamesAdapter _gamesAdapter;
     private VstTableModel _gamesTableModel;
     private Game _selectedGame;
-    private User _user;
-    private Ready _ready;
     private GamesLogic _gamesLogic;
+    private NewGameWindow _newGamesWindow;
+    private PlayerLogInWindow _playerLoginWindow;
+    private PlayerLogic _playerLogic;
 
-    public GamesWindow(User user) throws UnirestException {
+    public GamesWindow(GamesWindowUI gamesWindowUI, GamesLogic gamesLogic, NewGameWindow newGameWindow,
+                       PlayerLogInWindow playerLogInWindow, PlayerLogic playerLogic) throws UnirestException {
+        _gamesWindowUI = gamesWindowUI;
+        _gamesLogic = gamesLogic;
+        _newGamesWindow = newGameWindow;
+        _playerLoginWindow = playerLogInWindow;
+        _playerLogic = playerLogic;
 
-        _gamesWindowUI = new GamesWindowUI();
-        this._user = user;
-        _gamesLogic = new GamesLogic(_gamesWindowUI, _user);
-        _playerAdapter = new PlayerAdapter();
-        _gamesAdapter = new GamesAdapter(_playerAdapter);
-        _ready = new Ready(true);
-
-        buildGamesWindowUI();
         registerSubmitJoinTheGame();
         registerNewGame();
         selectRow();
     }
 
-    private void buildGamesWindowUI(){
+    public void buildGamesWindowUI(){
         try {
-            _gamesLogic.gamesWithRegistrationStatusTable();
+            _gamesTableModel =  new VstTableModel(_gamesLogic.getGamesWithStatusRegistration());
+            for (int i = 0; i < _gamesLogic.getGamesWithStatusRegistration().size(); i++ ) {
+                _gamesWindowUI.getTableModel()
+                        .addRow(new java.lang.Object[]{_gamesTableModel.getValueAt(i, 1)});
+            }
         } catch (UnirestException e1) {
             e1.printStackTrace();
         }
-        _gamesLogic.setGamesUIVisible();
+        _gamesWindowUI.getMainFrame().setVisible(true);
     }
 
     private Game selectRow(){
@@ -58,10 +62,11 @@ public class GamesWindow {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = _gamesWindowUI.getAllGameTable().rowAtPoint(evt.getPoint());
                 if (_gamesLogic.checkIfRowIsChosen(row)) {
-                   _selectedGame=  _gamesLogic.getSelectedGameFromTable(row);
+                    _selectedGame = _gamesTableModel.getGameAt(row);
                 }
             }
         });
+        _gamesLogic.setCurrentGame(_selectedGame);
         return _selectedGame;
     }
 
@@ -70,15 +75,16 @@ public class GamesWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(_gamesLogic.checkIfThereAreNoGames()){
-                    new NewGameWindow(_user, _gamesLogic);
-                    _gamesLogic.closeGamesWindowUI();
+                    openNewGameWindow();
                 } else if (isRowSelected()) {
+                    _gamesWindowUI.getMainFrame().setVisible(false);
                     try {
-                        _gamesLogic.closeGamesWindowUI();
-                        new PlayerLogInWindow(_selectedGame, _user, _gamesLogic);
+                        _playerLoginWindow.getPlayerLoginWindowUI().getAvailablePawnsArea().
+                                setText(_playerLogic.getAvailablePawns(_gamesLogic.getCurrentGame()).toString());
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
+                    _playerLoginWindow.getPlayerLoginWindowUI().getPlayerNameFrame().setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "No game selected", "Select Game!",
                             JOptionPane.ERROR_MESSAGE);
@@ -91,10 +97,14 @@ public class GamesWindow {
         _gamesWindowUI.getNewGameButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new NewGameWindow(_user, _gamesLogic);
-                _gamesLogic.closeGamesWindowUI();
+                openNewGameWindow();
             }
         });
+    }
+
+    private void openNewGameWindow(){
+        _newGamesWindow.getNewGamesWindowUI().getLogInFrame().setVisible(true);
+        _gamesWindowUI.getMainFrame().setVisible(false);
     }
 
     private boolean isRowSelected(){
@@ -102,6 +112,10 @@ public class GamesWindow {
             return true;
         }
         return false;
+    }
+
+    public GamesWindowUI getGamesWindowUI(){
+        return _gamesWindowUI;
     }
 
 }

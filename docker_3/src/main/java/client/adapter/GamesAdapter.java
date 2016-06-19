@@ -23,11 +23,9 @@ public class GamesAdapter {
 
     Gson gson = new Gson();
     private IPAdresses _ipAdresses;
-    private PlayerAdapter _playerAdapter;
 
-    public GamesAdapter(PlayerAdapter playerAdapter){
-        _ipAdresses = new IPAdresses();
-        _playerAdapter = playerAdapter;
+    public GamesAdapter( IPAdresses ipAdresses){
+        _ipAdresses = ipAdresses;
     }
 
     public Game getGame(String gameName) throws UnirestException {
@@ -92,7 +90,7 @@ public class GamesAdapter {
     public String makeGetOnGames(String postfix) throws UnirestException {
 
         String gamesIP = _ipAdresses.gamesIP().replaceFirst("/games", "");
-        System.out.println("MAKE GET ON GAMES : " + gamesIP + postfix);
+//        System.out.println("MAKE GET ON GAMES : " + gamesIP + postfix);
         return Unirest.get(gamesIP + postfix).asString().getBody();
     }
 
@@ -135,7 +133,6 @@ public class GamesAdapter {
     public void putGameStatusRunning(Game game) throws UnirestException {
         GameStatus gameStatus = running;
         game.setStatus(gameStatus);
-        System.out.println(game.getUri());
         Unirest.put(_ipAdresses.gamesIP() + game.getUri().replaceFirst("/games", "") + "/status" )
                 .body(this.gson.toJson(game)).asJson().getBody();
     }

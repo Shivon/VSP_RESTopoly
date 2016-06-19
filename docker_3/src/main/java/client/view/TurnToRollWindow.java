@@ -1,7 +1,12 @@
 package client.view;
 
 import client.adapter.*;
+import client.logic.GamesLogic;
+import client.logic.PlayerLogic;
+import client.logic.TurnToRollLogic;
+import client.logic.UserLogic;
 import client.model.*;
+import client.model.Event;
 import client.model.boardModels.Place;
 import client.model.boardModels.Roll;
 import client.model.gameModels.Game;
@@ -22,35 +27,25 @@ import java.awt.event.ActionListener;
 public class TurnToRollWindow {
 
     private TurnToRollWindowUI _turnToRollWindowUI;
-    private IPAdresses _ipAdresses;
-    private Game _game;
-    private User _user;
-    private DiceAdapter _diceAdapter;
+    private GamesLogic _gamesLogic;
+    private UserLogic _userLogic;
     private Player _player;
-    private PlayerAdapter _playerAdapter;
-    private Ready _ready;
+    private PlayerLogic _playerLogic;
     private WaitWindowUI _waitWindowUI;
-    private Roll _diceRoll1;
-    private Roll _diceRoll2;
-    private int _diceRoll1Number;
-    private int _diceRoll2Number;
+    private TurnToRollLogic _turnToRollLogic;
     private boolean _rolled = false;
-    private BoardsAdapter _boardAdapter;
-    private BrokerAdapter _brokerAdapter;
 
-    public TurnToRollWindow(Game game, User user, WaitWindowUI waitWindowUI) throws UnirestException {
-        _turnToRollWindowUI = new TurnToRollWindowUI();
-        _ipAdresses = new IPAdresses();
-        _game = game;
-        _user = user;
-        _diceAdapter = new DiceAdapter();
-        _playerAdapter = new PlayerAdapter();
-        _player = _playerAdapter.getPlayer(_game, _user);
-        _ready = new Ready(true);
-        _turnToRollWindowUI.getDiceFrame().setVisible(true);
+    public TurnToRollWindow(WaitWindowUI waitWindowUI,
+                            TurnToRollWindowUI turnToRollWindowUI, PlayerLogic playerLogic, GamesLogic gamesLogic,
+                            UserLogic userLogic, TurnToRollLogic turnToRollLogic) throws UnirestException {
+        _turnToRollWindowUI = turnToRollWindowUI;
+        _playerLogic = playerLogic;
         _waitWindowUI = waitWindowUI;
-        _boardAdapter = new BoardsAdapter(_game, _user);
-        _brokerAdapter = new BrokerAdapter();
+        _gamesLogic = gamesLogic;
+        _userLogic = userLogic;
+        _turnToRollLogic = turnToRollLogic;
+//        _player = _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+
         registerRoll();
     }
 
@@ -60,25 +55,19 @@ public class TurnToRollWindow {
             public void actionPerformed(ActionEvent e) {
                 if (!_rolled) {
                     try {
-                        _diceRoll1 = new Roll();
-                        _diceRoll2 = new Roll();
-                        _diceRoll1Number =  _diceAdapter.getDiceRollNumber();
-                        _diceRoll1.setNumber(_diceRoll1Number);
-                        _diceRoll2Number = _diceAdapter.getDiceRollNumber();
-                        _diceRoll2.setNumber(_diceRoll2Number);
-                        int number = _diceRoll1Number + _diceRoll2Number;
+                        int number = _turnToRollLogic.getNumberOfRolls();
                         _turnToRollWindowUI.getDiceNumber().setText("" + number);
-                        client.model.Event event = _diceAdapter.postDiceRollOnBoard(_game, _user, _diceRoll1, _diceRoll2);
+                        Event event = _turnToRollLogic.getEventAfterDiceRoll();
                         _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
                                 + "\n" + event.getName() + ": " + event.getReason() );
 
 //                        TODO muss ich mir selber das Feld holen und checken, ob es schon belegt ist
 //                        oder macht das das Events? Bekomme ich vom Events einen Post, dass ich das
 //                        Feld kaufen kann?
-                        Place place = _boardAdapter.getCurrentPlace();
-                        if(_brokerAdapter.getOwner(place) == null){
-                             new BuyPlaceWindow(place, _player, _user, _game);
-                        }
+//                        Place place = _boardAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+//                        if(_brokerAdapter.getOwner(place) == null){
+//                             new BuyPlaceWindow(place, _player, _userLogic.getCurrentUser(), _gamesLogic.getCurrentGame());
+//                        }
 
                         _rolled = true;
                         _turnToRollWindowUI.getDiceButton().setText("Close");
@@ -86,7 +75,7 @@ public class TurnToRollWindow {
                         e1.printStackTrace();
                     }
                     try {
-                        _playerAdapter.putPlayerReady(_game, _player);
+                        _playerLogic.setPlayerToReady();
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -99,4 +88,5 @@ public class TurnToRollWindow {
         });
     }
 
+    public TurnToRollWindowUI getTurnToRollWindowUI(){ return _turnToRollWindowUI; }
 }

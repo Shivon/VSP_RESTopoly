@@ -1,11 +1,7 @@
 package client.view;
 
-import client.adapter.GamesAdapter;
-import client.adapter.UserAdapter;
 import client.logic.GamesLogic;
-import client.model.User;
 import client.model.gameModels.Game;
-import client.model.gameModels.GameStatus;
 import clientUI.NewGameWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -19,17 +15,17 @@ import java.awt.event.ActionListener;
 public class NewGameWindow {
 
     private NewGameWindowUI _newGameWindowUI;
-    private GamesAdapter _gamesAdapter;
     private String _gameName;
-    private User _user;
-    private GamesLogic _gamesLogic;
+    private PlayerLogInWindow _playerLoginWindow;
+    private GamesLogic _gameLogic;
 
-    public NewGameWindow(User user, GamesLogic gamesLogic){
-        _newGameWindowUI = new NewGameWindowUI();
-        _newGameWindowUI.getLogInFrame().setVisible(true);
-        _gamesAdapter = new GamesAdapter(null);
-        _gamesLogic = gamesLogic;
-        _user = user;
+    public NewGameWindow(NewGameWindowUI newGameWindowUI, PlayerLogInWindow playerLoginWindow,
+                         GamesLogic gameLogic){
+
+        _gameLogic = gameLogic;
+        _newGameWindowUI = newGameWindowUI;
+        _playerLoginWindow = playerLoginWindow;
+
         registerSubmitGameName();
     }
 
@@ -40,7 +36,7 @@ public class NewGameWindow {
                 if (!_newGameWindowUI.getLogInArea().getText().isEmpty()) {
                     _gameName = _newGameWindowUI.getLogInArea().getText();
                     try {
-                        for (Game game : _gamesAdapter.getGames()) {
+                        for (Game game : _gameLogic.getGames()) {
                             if (game.getName().equals(_gameName)) {
                                 JOptionPane.showMessageDialog(null, "game name not available", "choose an other name!",
                                         JOptionPane.ERROR_MESSAGE);
@@ -48,13 +44,9 @@ public class NewGameWindow {
                             }
                         }
                         try {
-                            Game newGame = new Game();
-                            newGame.setName(_gameName);
-                            newGame.setStatus(GameStatus.registration);
-                            _gamesAdapter.postGames(newGame);
-                            newGame = _gamesAdapter.getGame(_gameName);
+                            _gameLogic.createNewGame(_gameName);
                             _newGameWindowUI.getLogInFrame().setVisible(false);
-                            new PlayerLogInWindow(newGame, _user, _gamesLogic);
+                            _playerLoginWindow.getPlayerLoginWindowUI().getPlayerNameFrame().setVisible(true);
                         } catch (UnirestException e1) {
                             e1.printStackTrace();
                         }
@@ -68,4 +60,6 @@ public class NewGameWindow {
             }
         });
     }
+
+    public NewGameWindowUI getNewGamesWindowUI(){ return _newGameWindowUI;}
 }

@@ -15,30 +15,21 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  */
 public class BoardsAdapter {
 
-    private Game _game;
-    private User _user;
     private Gson gson;
 
-    public BoardsAdapter(Game game, User user){
-        _game = game;
-        _user = user;
+    public BoardsAdapter(){
+        gson = new Gson();
     }
 
-    public Place getCurrentPlace() throws UnirestException {
-        String pawnDTOString = Unirest.get(_game.getUri() + _game.getComponents().getBoard()
-                + "/pawns/" + _user.getName().toLowerCase())
+    public Place getCurrentPlace(Game game, User user) throws UnirestException {
+        String pawnDTOString = Unirest.get(game.getUri() + game.getComponents().getBoard()
+                + "/pawns/" + user.getName().toLowerCase())
                 .asString().getBody();
-
         PawnDTO pawnDTO = gson.fromJson(pawnDTOString, PawnDTO.class);
-
         Pawn pawn = pawnDTO.toEntity();
-
         String placeString = Unirest.get(pawn.getPlaceURI()).asString().getBody();
-
         Place place = gson.fromJson(placeString, Place.class);
-
         return place;
-
     }
 
 }

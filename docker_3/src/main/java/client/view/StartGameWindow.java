@@ -2,6 +2,8 @@ package client.view;
 
 import client.adapter.PlayerAdapter;
 import client.logic.GamesLogic;
+import client.logic.UserLogic;
+import client.logic.WaitLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import client.service.ClientService;
@@ -17,45 +19,39 @@ import java.awt.event.ActionListener;
 public class StartGameWindow {
 
     private StartGameWindowUI _startGameWindowUI;
-    private User _user;
-    private Game _game;
     private GamesLogic _gamesLogic;
-    private PlayerAdapter _playerAdapter;
-    private ClientService _clientService;
+    private WaitWindow _waitWindow;
 
-    public StartGameWindow(User user, Game game, PlayerAdapter playerAdapter,
-                           GamesLogic gamesLogic, ClientService clientService) throws UnirestException {
-        _user = user;
-        _game = game;
+    public StartGameWindow(GamesLogic gamesLogic, StartGameWindowUI startGameWindowUI, WaitWindow waitWindow) throws UnirestException {
+
         _gamesLogic = gamesLogic;
-        _playerAdapter = playerAdapter;
-        _clientService = clientService;
+        _startGameWindowUI = startGameWindowUI;
+        _waitWindow = waitWindow;
 
-        _startGameWindowUI = new StartGameWindowUI();
-        _startGameWindowUI.getStartGameFrame().setVisible(true);
-        registerStartGame(_user, _game);
-
+        registerStartGame( _gamesLogic.getCurrentGame());
     }
 
-    public void handleGameStartPost() throws UnirestException {
-        _gamesLogic.startWaitWindow(_user, _game, _playerAdapter, _clientService);
+//    if game was started by an other user
+    public void handleGameStartPost(User user, Game game) throws UnirestException {
+        _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
         _startGameWindowUI.getStartGameFrame().setVisible(false);
     }
 
-    public void registerStartGame(User user, Game game){
+    public void registerStartGame(Game game){
         _startGameWindowUI.getStartGameButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     _gamesLogic.startGame(game);
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
-                    _gamesLogic.startWaitWindow(user, game, _playerAdapter, _clientService);
+                    _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
 
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
                 }
             }
         });
-
     }
+
+    public StartGameWindowUI getStartGameWindowUI(){ return _startGameWindowUI; }
 }
