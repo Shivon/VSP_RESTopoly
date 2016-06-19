@@ -28,7 +28,7 @@ public class StartGameWindow {
         _startGameWindowUI = startGameWindowUI;
         _waitWindow = waitWindow;
 
-        registerStartGame( _gamesLogic.getCurrentGame());
+        registerStartGame( );
     }
 
 //    if game was started by an other user
@@ -37,12 +37,12 @@ public class StartGameWindow {
         _startGameWindowUI.getStartGameFrame().setVisible(false);
     }
 
-    public void registerStartGame(Game game){
+    public void registerStartGame(){
         _startGameWindowUI.getStartGameButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    _gamesLogic.startGame(game);
+                    _gamesLogic.startGame(_gamesLogic.getCurrentGame());
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
                     _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
 

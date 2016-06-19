@@ -29,16 +29,19 @@ public class UserWindow {
             public void actionPerformed(ActionEvent e) {
                 if(! _userWindowUI.getLogInArea().getText().isEmpty()){
                     String userName = _userWindowUI.getLogInArea().getText();
+//                    TODO wenn Username schon im Post User gecheckt wird, nur post user -> was kommt zurück?
+//                    try {
+//                        if(_userLogic.checkIfUserAlreadyExists(userName)){
+//                            JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
+//                                        JOptionPane.ERROR_MESSAGE);
+//                        }
+//                    } catch (UnirestException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                    if(_userLogic.setCurrentUser(userName).)
+
                     try {
-                        if(_userLogic.checkIfUserAlreadyExists(userName)){
-                            JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
-                                        JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        _userLogic.setCurrentUser(userName);
+                       _userLogic.setCurrentUser(userName);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

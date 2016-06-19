@@ -3,6 +3,7 @@ package client.adapter;
 import client.logic.GamesLogic;
 import client.logic.UserLogic;
 import client.model.Accounts;
+import client.model.Players;
 import client.model.User;
 import client.model.dtos.PlayerDTO;
 import client.model.dtos.PlayerURI;
@@ -36,6 +37,7 @@ public class PlayerAdapter {
     }
 
     public void postPlayer( String playerPawn, Game game, User user) throws UnirestException {
+        System.out.println(playerPawn + " " + game.getName() + " " + user.getName());
         this._player = new Player();
         this._user = user;
         this._game = game;
@@ -51,9 +53,17 @@ public class PlayerAdapter {
         _player.setUri(_game.getUri() + "/players/" + _user.getName().toLowerCase());
         _player.setUser(_user.getName().toLowerCase());
 
-        Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
-                .body(this.gson.toJson( _player)).asJson().getBody();
+        System.out.println("PLAYER Im POST : " + _player.getPawn());
+
+        if(getPlayers(_game).length == 0){
+            Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
+                    .body(this.gson.toJson( _player));
+        }else {
+            Unirest.post(_ipAdresses.gamesIP() + _game.getUri().replaceFirst("/games", "") + "/players")
+                    .body(this.gson.toJson(_player)).asJson().getBody();
+        }
     }
+
 
     public void putPlayer(User user, Game game, Accounts account, boolean ready) throws UnirestException {
         this._game = game;
@@ -84,12 +94,17 @@ public class PlayerAdapter {
 
     public Player[] getPlayers(Game game) throws UnirestException {
         this._game = game;
-        String players = Unirest.get(_ipAdresses.gamesIP()
-                    + _game.getUri().replaceFirst("/games", "") + "/players")
+        System.out.println("GAME im get players: " + _game);
+        System.out.println(_game.getUri() + "/players");
+        String players = Unirest.get(_game.getUri() + "/players")
                     .asString().getBody();
+
+        System.out.println("IM GET PLAYERS: " + players);
+
         PlayerURI playerUriList = gson.fromJson(players, PlayerURI.class);
 
         List<String> playerFromUriList =  playerUriList.getPlayers();
+
         Player[] playerList = new Player[playerFromUriList.size()+1];
         for(int i = 0; i < playerFromUriList.size(); i++) {
             String playerDTOString = Unirest.get(_ipAdresses.gamesIP()

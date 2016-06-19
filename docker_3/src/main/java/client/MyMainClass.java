@@ -53,7 +53,7 @@ public class MyMainClass {
         StartGameWindow startGameWindow = new StartGameWindow(gamesLogic, startGameWindowUI, waitWindow);
         PlayerLogInWindow playerLogInWindow = new PlayerLogInWindow(playerLoginWindowUI, userLogic,
                 playerLogic, startGameWindow, gamesLogic);
-        NewGameWindow newGameWindow = new NewGameWindow(newGameWindowUI, playerLogInWindow, gamesLogic);
+        NewGameWindow newGameWindow = new NewGameWindow(newGameWindowUI, playerLogInWindow, gamesLogic, playerLogic);
         GamesWindow gamesWindow = new GamesWindow(gamesWindowUI, gamesLogic, newGameWindow, playerLogInWindow, playerLogic);
 //        BuyPlaceWindow buyPlaceWindow = new BuyPlaceWindow();
 

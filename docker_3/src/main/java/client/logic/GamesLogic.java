@@ -64,7 +64,7 @@ public class GamesLogic {
     }
 
     public Game getCurrentGame(){
-        return _game;
+        return _gamesAdapter.getGame(_game.getName());
     }
 
 //    public Game joinGame(Game game) throws UnirestException {
@@ -86,7 +86,12 @@ public class GamesLogic {
         newGame.setName(gameName);
         newGame.setStatus(GameStatus.registration);
         setCurrentGame(newGame);
-        _gamesAdapter.postGames(newGame);
+        _gamesAdapter.postGame(newGame);
+        _game = newGame;
+        System.out.println("asdfaslkfjaskfaslökfjasöldkf\n\n\n");
+        System.out.println(_game.toString());
+        System.out.println(getCurrentGame().toString());
+        System.out.println("asdfaslkfjaskfaslökfjasöldkf");
         return newGame;
     }
 }

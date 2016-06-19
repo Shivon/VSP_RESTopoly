@@ -27,6 +27,7 @@ public class UserLogic {
     }
 
     public boolean checkIfUserAlreadyExists(String userName) throws UnirestException {
+        System.out.println(_userAdapter.getUsers().getUsers());
         for (String user : _userAdapter.getUsers().getUsers()) {
             if(user.equals(_ipAdresses.usersIP() + "/" + userName)){
                 return true;

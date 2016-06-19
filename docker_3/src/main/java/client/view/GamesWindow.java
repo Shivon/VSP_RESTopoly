@@ -79,8 +79,9 @@ public class GamesWindow {
                 } else if (isRowSelected()) {
                     _gamesWindowUI.getMainFrame().setVisible(false);
                     try {
-                        _playerLoginWindow.getPlayerLoginWindowUI().getAvailablePawnsArea().
-                                setText(_playerLogic.getAvailablePawns(_gamesLogic.getCurrentGame()).toString());
+                        System.out.println("PAWNS: " + _playerLogic.getAvailablePawns().toString());
+                        String pawnList = _playerLogic.getAvailablePawns().toString();
+                        _playerLoginWindow.getPlayerLoginWindowUI().getAvailablePawnsArea().setText(pawnList);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

@@ -34,12 +34,12 @@ public class PlayerLogic {
         _userLogic = userLogic;
     }
 
-    public List<String> getAvailablePawns(Game game) throws UnirestException {
+    public List<String> getAvailablePawns() throws UnirestException {
+        Game game = _gamesLogic.getCurrentGame();
         List<Player> players = game.getPlayers();
         if(!players.isEmpty()){
             List<Player> playerList = game.getPlayers();
             Set<String> playerPawnSet = new HashSet<>();
-            System.out.println(playerList);
             for (Player player : playerList) {
                 playerPawnSet.add(player.getPawn());
             }
@@ -74,6 +74,7 @@ public class PlayerLogic {
 //    }
 
     public void registerPlayer(String playerPawn) throws UnirestException {
+        System.out.println("PLAYERPAWN IM REGISTER: " + playerPawn + " "  + _gamesLogic.getCurrentGame().getName() + "  " + _userLogic.getCurrentUser().getName());
         _playerAdapter.postPlayer(playerPawn, _gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
     }
 
