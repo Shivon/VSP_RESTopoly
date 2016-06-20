@@ -1,6 +1,7 @@
 package de.haw.vs.escr.boards.models.entities;
 
 import com.google.gson.annotations.Expose;
+import de.haw.vs.escr.boards.models.dtos.EventDTO;
 
 /**
  * Created by Eric on 10.06.2016.
@@ -10,13 +11,27 @@ public class Event {
     private String action;
     @Expose
     private String uri;
+    @Expose
     private String id;
+    @Expose
     private String game;
+    @Expose
     private String type;
+    @Expose
     private String name;
+    @Expose
     private String reason;
+    @Expose
     private String resource;
 
+    public EventDTO toDTO(){
+        EventDTO dto = new EventDTO();
+        dto.setName(this.name);
+        dto.setReason(this.reason);
+        dto.setAction(this.action);
+        dto.setUri(this.uri);
+        return dto;
+    }
 
 
     public String getId() {

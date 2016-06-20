@@ -5,7 +5,9 @@ import com.jayway.restassured.response.Response;
 import de.haw.vs.escr.boards.models.dtos.*;
 import de.haw.vs.escr.boards.models.entities.*;
 import de.haw.vs.escr.boards.repos.*;
+import de.haw.vs.escr.boards.restmodels.BrokerRestModel;
 import de.haw.vs.escr.boards.restmodels.GameRestModel;
+import de.haw.vs.escr.boards.util.FieldNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +26,12 @@ public class BoardServiceBusinessLogic {
     private ThrowRepo throwRepo;
     private MoveRepo moveRepo;
     private String brokerURI;
-    private final int MAX_FIELDS = 35;
+    private FieldNames fieldNames;
+    private final int MAX_FIELDS;
 
     public BoardServiceBusinessLogic() {
+        this.fieldNames = new FieldNames();
+        this.MAX_FIELDS = fieldNames.getGermanNames().size();
         this.pawnRepo = new PawnRepo();
         this.boardRepo = new BoardRepo();
         this.placeRepo = new PlaceRepo();
@@ -61,15 +66,17 @@ public class BoardServiceBusinessLogic {
     }
 
     private Paths getPathsFromGames(GameRestModel grm) {
-        System.out.println("------- Trying get() on: "+grm.getServicesRoute());
-        Response res = given().get(grm.getServicesRoute());
-        System.out.println("------- Response: "+res.body().asString());
+        System.out.println("------- Trying get() on: " + grm.getComponentsRoute());
+        Response res = given().get(grm.getComponentsRoute());
+        System.out.println("------- Response: " + res.body().asString());
         Paths paths = gson.fromJson(res.body().asString(), Paths.class);
         return paths;
     }
 
     public List<Field> initFields(Board b) {
+        BrokerRestModel brm = new BrokerRestModel(b.getPaths().getBroker());
         List<Field> fieldList = new ArrayList<>();
+        System.out.println("------- Trying to put places to: " + brm.getPlaceRoute());
         for (int i = 0; i < MAX_FIELDS; i++) {
             Field f = new Field();
             f.setFieldId(fieldRepo.getAllFields().size());
@@ -77,14 +84,50 @@ public class BoardServiceBusinessLogic {
             fieldRepo.saveField(f);
             Place place = new Place();
             place.setUri(b.getUri() + "/places/" + (i));
+            place.setName(fieldNames.getGermanNames().get(i));
             place.setBrokerURI(this.brokerURI);
             place.setPlaceId(f.getFieldId());
             placeRepo.savePlace(place);
             f.setPlace(place);
             fieldRepo.saveField(f);
             fieldList.add(f);
+            sendPlaceToBroker(place, brm);
         }
         return fieldList;
+    }
+
+    private void sendPlaceToBroker(Place place, BrokerRestModel brm) {
+        int placeId = place.getPlaceId();
+        BrokerPlaceDTO brokerPlace = new BrokerPlaceDTO();
+        List<Integer> cost = new ArrayList<>();
+        List<Integer> rent = new ArrayList<>();
+        brokerPlace.setValue((int) (220 * (1 + Math.random())));
+        brokerPlace.setPlace(place.getUri());
+        if (fieldNames.getNonBuyablePlaces().contains(placeId)) {
+            if (placeId == 2) {
+                rent.add(200);
+            } else if (placeId == 38) {
+                rent.add(800);
+            }
+        } else if (!fieldNames.getNotUpgradablePlaces().contains(placeId)) {
+            cost.add(100);
+            cost.add(200);
+            cost.add(300);
+            cost.add(500);
+            cost.add(1200);
+        }
+
+        rent.add(12);
+        rent.add(20);
+        rent.add(55);
+        rent.add(76);
+        rent.add(120);
+
+        brokerPlace.setCost(cost);
+        brokerPlace.setPlace(place.getUri());
+        brokerPlace.setRent(rent);
+        brokerPlace.setValue((int) (220.0 * (1.0 + Math.random())));
+        Response res = given().body(place).put(brm.getPlaceRoute() + "" + place.getPlaceId());
     }
 
     public Board findBoardByGameURI(String gameURI) {
@@ -109,11 +152,11 @@ public class BoardServiceBusinessLogic {
     }
 
     public Pawn addPawn(PawnDTO pawn, Board board) {
-        System.out.println("------ Adding Pawn for "+pawn.getPlayer());
+        System.out.println("------ Adding Pawn for " + pawn.getPlayer());
         Pawn p = pawn.toEntity();
         int lastSlash = pawn.getPlayer().lastIndexOf('/');
         String name = pawn.getPlayer().substring(lastSlash + 1);
-        System.out.println("------ Pawn Name: "+name);
+        System.out.println("------ Pawn Name: " + name);
 
         if (pawnRepo.findPawnByPawnName(name) != null) {
             return null;
@@ -126,7 +169,7 @@ public class BoardServiceBusinessLogic {
         p = pawnRepo.savePawn(p);
         Place place = placeRepo.findPlaceByURI(p.getPlaceURI());
         Field f = fieldRepo.addPawn(p, place);
-        System.out.println("Trying to put pawn on field: "+ f.getFieldId() + " id on board: "+p.getIdOnBoard());
+        System.out.println("Trying to put pawn on field: " + f.getFieldId() + " id on board: " + p.getIdOnBoard());
         board.addPawnToPosition(f.getFieldId(), p.getIdOnBoard());
         boardRepo.saveBoard(board);
         return p;
@@ -148,7 +191,7 @@ public class BoardServiceBusinessLogic {
     public Pawn updatePawn(Pawn newPawn, Pawn oldPawn, Board board) {
         Place oldPlace = placeRepo.findPlaceByURI(newPawn.getPlaceURI());
         Place newPlace = placeRepo.findPlaceByURI(oldPawn.getPlaceURI());
-        int id = Integer.parseInt(newPlace.getUri().substring(newPlace.getUri().lastIndexOf("/")+1));
+        int id = Integer.parseInt(newPlace.getUri().substring(newPlace.getUri().lastIndexOf("/") + 1));
         if (oldPawn.getPlayerURI() != null) newPawn.setPlayerURI(oldPawn.getPlayerURI());
         if (oldPawn.getMovesURI() != null) newPawn.setMovesURI(oldPawn.getMovesURI());
         if (oldPawn.getThrowsURI() != null) newPawn.setThrowsURI(oldPawn.getThrowsURI());
@@ -188,11 +231,22 @@ public class BoardServiceBusinessLogic {
         p2.setPlaceURI(newPlace.getUri());
         moveRepo.addMove(pawn.getMovesURI(), move);
         this.updatePawn(pawn, p2, board);
+
+        if (board.getPaths().getBroker() != null) {
+            BrokerRestModel brm = new BrokerRestModel(board.getPaths().getBroker());
+            System.out.println("------- Trying post() on: " + brm.getVisitRoute(newPlaceId) + " with body: " + pawn.getPawnURI());
+            Response res = given().body(pawn.getPawnURI()).post(brm.getVisitRoute(newPlaceId));
+            System.out.println("------- Response from post on Broker: " + res.body().asString());
+            EventsDTO dto = gson.fromJson(res.body().asString(), EventsDTO.class);
+            RollEventsDTO rollEventsDTO = new RollEventsDTO();
+            rollEventsDTO.setEvents(dto.getEventsAsDto());
+            return rollEventsDTO;
+        }
         EventDTO eventDTO = new EventDTO();
-        eventDTO.setName("Test Event");
-        eventDTO.setUri("/test/event");
-        eventDTO.setAction("Testing");
-        eventDTO.setReason("Event created by Boards for testing");
+        eventDTO.setName("Error Event");
+        eventDTO.setUri("/error/event");
+        eventDTO.setAction("error");
+        eventDTO.setReason("Event created by Boards, because Broker URI was not set. Broker URI: " + board.getPaths().getBroker());
         ArrayList<EventDTO> eventDTOs = new ArrayList<>();
         eventDTOs.add(eventDTO);
         RollEventsDTO reDTO = new RollEventsDTO();
@@ -201,7 +255,7 @@ public class BoardServiceBusinessLogic {
     }
 
     public RollEventsDTO movePawn(Pawn pawn, Throw thrw, Board board) {
-        if(turnOfPawn(board, pawn)){
+        if (turnOfPawn(board, pawn)) {
             throwRepo.addThrow(pawn.getThrowsURI(), thrw);
             Move move = new Move();
             move.setNumber(thrw.getRoll1().getNumber() + thrw.getRoll2().getNumber());
@@ -212,11 +266,11 @@ public class BoardServiceBusinessLogic {
 
     private boolean turnOfPawn(Board board, Pawn p) {
         GameRestModel grm = new GameRestModel(board.getPaths().getGame());
-        System.out.println("------- Trying get() on: "+grm.getTurnRoute());
+        System.out.println("------- Trying get() on: " + grm.getTurnRoute());
         Response res = given().get(grm.getTurnRoute());
-        System.out.println("------- Response: "+res.body().asString());
-        PlayerDTO playerDTO = gson.fromJson(res.body().asString(),PlayerDTO.class);
-        if(playerDTO.getPawn().equals(p.getPawnURI())) return true;
+        System.out.println("------- Response: " + res.body().asString());
+        PlayerDTO playerDTO = gson.fromJson(res.body().asString(), PlayerDTO.class);
+        if (playerDTO.getPawn().equals(p.getPawnURI())) return true;
         return false;
     }
 
