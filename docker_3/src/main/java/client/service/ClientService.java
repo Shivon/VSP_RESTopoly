@@ -73,11 +73,13 @@ public class ClientService {
 //           inform a player about a new event
                    Event event = gson.fromJson(request.body(), Event.class);
 
-//           if(event.getName.equals("Game has started"){
+//           if(event.getName().equals("Game has started"){
 //           new WaitLogic;
 //           startGameWundow.handleGameStartPost();
 //           close startGameWindow;
-//               }else{
+//           }else if(event.getName().equals("Place to buy"){
+//           _buyPlaceWindow.getBuyPlaceWindowUI().getMainFrame().setVisible(true);
+//           }else{
            _waitWindow.showEvent(event);
            return "";
        });

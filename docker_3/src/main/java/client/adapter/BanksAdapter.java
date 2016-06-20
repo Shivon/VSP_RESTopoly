@@ -52,8 +52,9 @@ public class BanksAdapter {
     public Accounts getAccount(User user, Game game) throws UnirestException {
         this._user = user;
         this._game = game;
-        System.out.println(_game);
-        System.out.println("" + _game.getComponents().getBank());
+        System.out.println("GAME IM GET ACCOUNT : " + _game);
+        System.out.println("COMPONENTS" + _game.getComponents());
+        System.out.println("BANK: " + _game.getComponents().getBank());
         String bankString = _game.getComponents().getBank();
 
         System.out.println(bankString);

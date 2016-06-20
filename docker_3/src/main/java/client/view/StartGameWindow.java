@@ -21,12 +21,17 @@ public class StartGameWindow {
     private StartGameWindowUI _startGameWindowUI;
     private GamesLogic _gamesLogic;
     private WaitWindow _waitWindow;
+    private WaitLogic _waitLogic;
+    private UserLogic _userLogic;
 
-    public StartGameWindow(GamesLogic gamesLogic, StartGameWindowUI startGameWindowUI, WaitWindow waitWindow) throws UnirestException {
+    public StartGameWindow(GamesLogic gamesLogic, StartGameWindowUI startGameWindowUI,
+                           WaitWindow waitWindow, WaitLogic waitLogic, UserLogic userLogic) throws UnirestException {
 
         _gamesLogic = gamesLogic;
         _startGameWindowUI = startGameWindowUI;
         _waitWindow = waitWindow;
+        _waitLogic = waitLogic;
+        _userLogic = userLogic;
 
         registerStartGame( );
     }
@@ -44,6 +49,8 @@ public class StartGameWindow {
                 try {
                     _gamesLogic.startGame(_gamesLogic.getCurrentGame());
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
+                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                     _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
                 } catch (UnirestException e1) {
                     e1.printStackTrace();

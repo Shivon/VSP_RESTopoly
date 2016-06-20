@@ -85,8 +85,9 @@ public class GamesLogic {
         Game newGame = new Game();
         newGame.setName(gameName);
         newGame.setStatus(GameStatus.registration);
-        setCurrentGame(newGame);
         _gamesAdapter.postGame(newGame);
+        newGame = _gamesAdapter.getGame(gameName);
+        setCurrentGame(newGame);
         _game = newGame;
 
         return newGame;

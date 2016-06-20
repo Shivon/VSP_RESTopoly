@@ -5,6 +5,7 @@ import client.adapter.PlayerAdapter;
 import client.model.Dice;
 import client.model.Event;
 import client.model.boardModels.Roll;
+import com.jayway.restassured.response.Response;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -36,7 +37,7 @@ public class TurnToRollLogic {
         return diceRoll1Number + diceRoll2Number;
     }
 
-    public Event getEventAfterDiceRoll() throws UnirestException {
+    public Response getEventAfterDiceRoll() throws UnirestException {
        return  _diceAdapter.postDiceRollOnBoard(_gamesLogic.getCurrentGame(),
                 _userLogic.getCurrentUser(), _diceRoll1, _diceRoll2);
     }

@@ -50,7 +50,7 @@ public class MyMainClass {
         TurnToRollWindow turnToRollWindow = new TurnToRollWindow(waitWindowUI, turnToRollWindowUI,
                playerLogic, gamesLogic, userLogic, turnToRollLogic);
         WaitWindow waitWindow = new WaitWindow(waitWindowUI, waitLogic, gamesLogic, userLogic);
-        StartGameWindow startGameWindow = new StartGameWindow(gamesLogic, startGameWindowUI, waitWindow);
+        StartGameWindow startGameWindow = new StartGameWindow(gamesLogic, startGameWindowUI, waitWindow, waitLogic, userLogic);
         PlayerLogInWindow playerLogInWindow = new PlayerLogInWindow(playerLoginWindowUI, userLogic,
                 playerLogic, startGameWindow, gamesLogic);
         NewGameWindow newGameWindow = new NewGameWindow(newGameWindowUI, playerLogInWindow, gamesLogic, playerLogic);
@@ -60,8 +60,6 @@ public class MyMainClass {
 
         ClientService clientService = new ClientService(waitLogic, turnToRollWindow, waitWindow);
 
-//        ClientService clientService = new ClientService(null);
-//        clientService.setWaitLogic(waitLogic);
         new UserWindow(userWindowUI, userLogic, gamesWindow);
     }
 }
