@@ -39,6 +39,8 @@ public class BuyPlaceWindow {
         _buyPlaceLogic = buyPlaceLogic;
 
         showPlaceToBuy();
+        registerBuyPlaceButton();
+        registerDontBuyPlaceButton();
     }
 
     public void registerBuyPlaceButton(){
@@ -68,7 +70,8 @@ public class BuyPlaceWindow {
     }
 
     public void showPlaceToBuy(){
-
         _buyPlaceWindowUI.getPlaceToBuyArea().setText("You can buy: " + _place.getName());
     }
+
+    public BuyPlaceWindowUI getBuyPlaceWindowUI(){return _buyPlaceWindowUI;}
 }

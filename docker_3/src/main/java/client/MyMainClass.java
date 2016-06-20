@@ -33,7 +33,7 @@ public class MyMainClass {
 
         WaitLogic waitLogic = new WaitLogic(banksAdapter);
         UserLogic userLogic = new UserLogic(userAdapter, ipAdresses);
-        GamesLogic gamesLogic = new GamesLogic(gamesAdapter, userLogic);
+        GamesLogic gamesLogic = new GamesLogic(gamesAdapter, userLogic, ipAdresses);
         PlayerLogic playerLogic = new PlayerLogic(playerAdapter, gamesLogic, userLogic);
         TurnToRollLogic turnToRollLogic = new TurnToRollLogic(diceAdapter, playerAdapter, gamesLogic, userLogic);
 //        BuyPlaceLogic buyPlaceLogic = new BuyPlaceLogic();

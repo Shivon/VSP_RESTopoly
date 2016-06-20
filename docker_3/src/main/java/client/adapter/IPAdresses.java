@@ -25,5 +25,7 @@ public class IPAdresses {
 
     public String boardsIP() { return yp.findURIByServiceName("fancy_boards");}
 
+    public String brokerIP() { return yp.findURIByServiceName("fancy_broker");}
+
     public String clientIP() { return "192.168.255.38:4567"; }
 }

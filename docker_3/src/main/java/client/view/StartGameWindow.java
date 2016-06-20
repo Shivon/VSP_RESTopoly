@@ -37,9 +37,11 @@ public class StartGameWindow {
     }
 
 //    if game was started by an other user
-    public void handleGameStartPost(User user, Game game) throws UnirestException {
-        _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
+    public void handleGameStartPost() throws UnirestException {
         _startGameWindowUI.getStartGameFrame().setVisible(false);
+        _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+        _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
     }
 
     public void registerStartGame(){

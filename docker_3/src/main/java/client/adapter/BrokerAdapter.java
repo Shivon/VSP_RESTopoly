@@ -28,7 +28,7 @@ public class BrokerAdapter {
 
     public void buyPlace(Place place, Player player) throws UnirestException {
 
-        Unirest.post(place.getBrokerURI() + "/places" + place.getPlaceId() + "/owner")
-                .body(gson.toJson(player)).asJson();
+        Unirest.post(place.getBrokerURI() + "/places/" + place.getPlaceId() + "/owner")
+                .body(gson.toJson(player)).asJson().getBody();
     }
 }
