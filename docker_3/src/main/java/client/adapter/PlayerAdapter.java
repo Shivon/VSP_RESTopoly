@@ -96,7 +96,7 @@ public class PlayerAdapter {
         this._game = game;
         System.out.println("GAME im get players: " + _game);
         System.out.println(_game.getUri() + "/players");
-        String players = Unirest.get(_game.getUri() + "/players")
+        String players = Unirest.get(_ipAdresses.gamesIP()  + _game.getUri().replaceFirst("/games", "") + "/players")
                     .asString().getBody();
 
         System.out.println("IM GET PLAYERS: " + players);

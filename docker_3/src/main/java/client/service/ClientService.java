@@ -24,12 +24,13 @@ public class ClientService {
     private TurnToRollWindow _turnToRollWindow;
     private WaitWindow _waitWindow;
 
-    public void setWaitLogic(WaitLogic logic) {
-        this._waitLogic = logic;
-    }
+//    public void setWaitLogic(WaitLogic logic) {
+//        this._waitLogic = logic;
+//    }
 
     public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow, WaitWindow waitWindow) {
 
+        _waitLogic = waitLogic;
         _turnToRollWindow = turnToRollWindow;
         _waitWindow = waitWindow;
 

@@ -88,10 +88,7 @@ public class GamesLogic {
         setCurrentGame(newGame);
         _gamesAdapter.postGame(newGame);
         _game = newGame;
-        System.out.println("asdfaslkfjaskfaslökfjasöldkf\n\n\n");
-        System.out.println(_game.toString());
-        System.out.println(getCurrentGame().toString());
-        System.out.println("asdfaslkfjaskfaslökfjasöldkf");
+
         return newGame;
     }
 }

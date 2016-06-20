@@ -76,6 +76,7 @@ public class PlayerLogic {
     public void registerPlayer(String playerPawn) throws UnirestException {
         System.out.println("PLAYERPAWN IM REGISTER: " + playerPawn + " "  + _gamesLogic.getCurrentGame().getName() + "  " + _userLogic.getCurrentUser().getName());
         _playerAdapter.postPlayer(playerPawn, _gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+        System.out.println(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 
     public void setPlayerToReady() throws UnirestException {

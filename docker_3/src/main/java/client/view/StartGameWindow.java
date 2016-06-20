@@ -45,7 +45,6 @@ public class StartGameWindow {
                     _gamesLogic.startGame(_gamesLogic.getCurrentGame());
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
                     _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
-
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
                 }
