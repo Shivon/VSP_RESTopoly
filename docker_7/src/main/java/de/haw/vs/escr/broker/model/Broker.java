@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Christian on 13.06.2016.
  */
 public class Broker {
-    private int brokerId;
+    private int gameId;
 
     @Expose
     private String id;
@@ -23,12 +23,12 @@ public class Broker {
     public Broker() {
     }
 
-    public int getBrokerId() {
-        return brokerId;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setBrokerId(int brokerId) {
-        this.brokerId = brokerId;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     public String getId() {

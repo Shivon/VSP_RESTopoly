@@ -19,8 +19,8 @@ public class BrokerRepo {
         return brokerCounter++;
     }
 
-    public Broker findBrokerById(int brokerId) {
-        return this.brokerList.stream().filter(b -> b.getBrokerId() == brokerId).findFirst().get();
+    public Broker findBrokerById(int gameId) {
+        return this.brokerList.stream().filter(b -> b.getGameId() == gameId).findFirst().get();
     }
 
     public List<Broker> getAll() {
@@ -28,19 +28,19 @@ public class BrokerRepo {
     }
 
     public Broker saveBroker(Broker broker) {
-        if (this.brokerList.stream().anyMatch(b -> broker.getBrokerId() == b.getBrokerId())) return this.updateBroker(broker);
-        broker.setBrokerId(this.getBrokerCounter());
+        if (this.brokerList.stream().anyMatch(b -> broker.getGameId() == b.getGameId())) return this.updateBroker(broker);
+        //broker.setBrokerId(this.getBrokerCounter());
         this.brokerList.add(broker);
-        return this.findBrokerById(broker.getBrokerId());
+        return this.findBrokerById(broker.getGameId());
     }
 
     public Broker updateBroker(Broker broker) {
         this.deleteBroker(broker);
         this.brokerList.add(broker);
-        return this.findBrokerById(broker.getBrokerId());
+        return this.findBrokerById(broker.getGameId());
     }
 
     public void deleteBroker(Broker broker) {
-        this.brokerList.removeIf(b -> b.getId() == broker.getId());
+        this.brokerList.removeIf(b -> b.getGameId() == broker.getGameId());
     }
 }

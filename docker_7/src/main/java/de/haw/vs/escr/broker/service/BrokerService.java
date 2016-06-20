@@ -36,14 +36,53 @@ public class BrokerService {
         });
 
         get("/broker/:gameid", (req, res) -> {
-            return null;
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (Exception e) {
+                res.status(401);
+                return null;
+            }
+
+            Broker broker = this.brokerBL.findBroker(gameId);
+
+            return this.gson.toJson(broker);
         });
 
         put("/broker/:gameid", (req, res) -> {
-            return null;
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (Exception e) {
+                res.status(401);
+                return null;
+            }
+
+            Broker brokerToUpdate = this.gson.fromJson(req.body(), Broker.class);
+            Broker broker = this.brokerBL.updateBroker(gameId, brokerToUpdate);
+
+            return broker;
         });
 
         get("/broker/:gameid/places", (req, res) -> {
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (Exception e) {
+                res.status(401);
+                return null;
+            }
+
+
+
+            return null;
+        });
+
+        post("/borker/:gameid/places", (req, res) -> {
+            //
             return null;
         });
 
