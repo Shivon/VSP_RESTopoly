@@ -31,7 +31,7 @@ public class PlayerLogInWindow {
         _playerLogic = playerLogic;
         _userLogic = userLogic;
         _gamesLogic = gamesLogic;
-        // _playerWindowUI.getAvailablePawnsArea().setText(_playerLogic.getAvailablePawns(gamesLogic.getCurrentGame()).toString());
+
         registerSubmitPlayerPawn();
     }
 
@@ -79,7 +79,7 @@ public class PlayerLogInWindow {
     }
 
     public boolean checkIfPlayerPawnIsNotAvailable() throws UnirestException {
-        if(!_playerLogic.getAvailablePawns(_gamesLogic.getCurrentGame()).contains(getPlayerPawn())){
+        if(!_playerLogic.getAvailablePawns().contains(getPlayerPawn())){
             return true;
         }
         return false;

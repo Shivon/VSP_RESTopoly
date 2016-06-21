@@ -29,16 +29,27 @@ public class UserWindow {
             public void actionPerformed(ActionEvent e) {
                 if(! _userWindowUI.getLogInArea().getText().isEmpty()){
                     String userName = _userWindowUI.getLogInArea().getText();
+//                    TODO wenn Username schon im Post vom User gecheckt wird
+//                    try {
+//                        if(_userLogic.checkIfUserAlreadyExists(userName)){
+//                            JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
+//                                        JOptionPane.ERROR_MESSAGE);
+//                        }
+//                    } catch (UnirestException e1) {
+//                        e1.printStackTrace();
+//                    }
+//
+//                    try {
+//                       _userLogic.setCurrentUser(userName);
+//                    } catch (UnirestException e1) {
+//                        e1.printStackTrace();
+//                    }
                     try {
-                        if(_userLogic.checkIfUserAlreadyExists(userName)){
+                        String userReturn = _userLogic.setCurrentUser(userName);
+                        if(userReturn.equals("401")){
                             JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
-                                        JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.ERROR_MESSAGE);
                         }
-                    } catch (UnirestException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        _userLogic.setCurrentUser(userName);
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }

@@ -28,11 +28,15 @@ public class GamesAdapter {
         _ipAdresses = ipAdresses;
     }
 
-    public Game getGame(String gameName) throws UnirestException {
-        for (Game game : getGames()) {
-            if(game.getName().equals(gameName)){
-                return game;
+    public Game getGame(String gameName) {
+        try {
+            for (Game game : getGames()) {
+                if(game.getName().equals(gameName)){
+                    return game;
+                }
             }
+        } catch (UnirestException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -95,9 +99,10 @@ public class GamesAdapter {
     }
 
 
-    public void postGames(Game game ) throws UnirestException {
-         Unirest.post(_ipAdresses.gamesIP())
-        .body(this.gson.toJson(game)).asJson().getBody();
+    public void postGame(Game game) throws UnirestException {
+        game.setUri(_ipAdresses.gamesIP() + "/" + game.getName());
+        System.out.println("IM POST GAME : " + game.getUri());
+        Unirest.post(_ipAdresses.gamesIP()).body(this.gson.toJson(game)).asString().getBody();
     }
 
     public GameStatus getGamesStatus(Game game) throws UnirestException {
@@ -132,8 +137,9 @@ public class GamesAdapter {
 
     public void putGameStatusRunning(Game game) throws UnirestException {
         GameStatus gameStatus = running;
+        System.out.println(game);
         game.setStatus(gameStatus);
         Unirest.put(_ipAdresses.gamesIP() + game.getUri().replaceFirst("/games", "") + "/status" )
-                .body(this.gson.toJson(game)).asJson().getBody();
+                .body(this.gson.toJson(game));
     }
 }

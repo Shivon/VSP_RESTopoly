@@ -15,6 +15,7 @@ import client.model.gameModels.Ready;
 import clientUI.TurnToRollWindowUI;
 //import com.mashape.unirest.http.Unirest;
 import clientUI.WaitWindowUI;
+import com.jayway.restassured.response.Response;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.awt.*;
@@ -57,9 +58,9 @@ public class TurnToRollWindow {
                     try {
                         int number = _turnToRollLogic.getNumberOfRolls();
                         _turnToRollWindowUI.getDiceNumber().setText("" + number);
-                        Event event = _turnToRollLogic.getEventAfterDiceRoll();
-                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
-                                + "\n" + event.getName() + ": " + event.getReason() );
+                        Response event = _turnToRollLogic.getEventAfterDiceRoll();
+//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
+//                                + "\n" + event.getName() + ": " + event.getReason() );
 
 //                        TODO muss ich mir selber das Feld holen und checken, ob es schon belegt ist
 //                        oder macht das das Events? Bekomme ich vom Events einen Post, dass ich das

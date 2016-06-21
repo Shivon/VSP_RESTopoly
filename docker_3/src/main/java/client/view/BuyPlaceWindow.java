@@ -28,18 +28,19 @@ public class BuyPlaceWindow {
     private Game _game;
     private User _user;
 
-    public BuyPlaceWindow(Place place, Player player, User user, Game game){
+    public BuyPlaceWindow(Place place, Player player, User user, Game game, BuyPlaceLogic buyPlaceLogic, BuyPlaceWindowUI buyPlaceWindowUI){
         _place = place;
         _player = player;
         _user = user;
         _game = game;
         _banksAdapter = new BanksAdapter();
 
-        _buyPlaceWindowUI = new BuyPlaceWindowUI();
-        _buyPlaceWindowUI.getMainFrame().setVisible(true);
-        _buyPlaceLogic = new BuyPlaceLogic(_buyPlaceWindowUI);
+        _buyPlaceWindowUI = buyPlaceWindowUI;
+        _buyPlaceLogic = buyPlaceLogic;
 
         showPlaceToBuy();
+        registerBuyPlaceButton();
+        registerDontBuyPlaceButton();
     }
 
     public void registerBuyPlaceButton(){
@@ -69,7 +70,8 @@ public class BuyPlaceWindow {
     }
 
     public void showPlaceToBuy(){
-
         _buyPlaceWindowUI.getPlaceToBuyArea().setText("You can buy: " + _place.getName());
     }
+
+    public BuyPlaceWindowUI getBuyPlaceWindowUI(){return _buyPlaceWindowUI;}
 }

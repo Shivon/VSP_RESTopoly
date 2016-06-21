@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Christian on 13.06.2016.
  */
 public class Broker {
-    private int brokerId;
+    private int gameId;
 
     @Expose
     private String id;
@@ -20,15 +20,18 @@ public class Broker {
     @Expose
     private String estates;
 
+    private List<Place> places;
+
     public Broker() {
+        this.places = new ArrayList<>();
     }
 
-    public int getBrokerId() {
-        return brokerId;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setBrokerId(int brokerId) {
-        this.brokerId = brokerId;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     public String getId() {
@@ -53,5 +56,17 @@ public class Broker {
 
     public void setEstates(String estates) {
         this.estates = estates;
+    }
+
+    public List<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(List<Place> places) {
+        this.places = places;
+    }
+
+    public void addPlace(Place place) {
+        this.places.add(place);
     }
 }

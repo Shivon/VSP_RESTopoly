@@ -6,6 +6,7 @@ import client.model.boardModels.Throw;
 import client.model.dtos.EventDTO;
 import client.model.gameModels.Game;
 import com.google.gson.Gson;
+import com.jayway.restassured.response.Response;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -38,7 +39,7 @@ public class DiceAdapter {
         return  dice.getNumber();
     }
 
-    public client.model.Event postDiceRollOnBoard(Game game, User user, Roll diceRoll1, Roll diceRoll2) throws UnirestException {
+    public Response postDiceRollOnBoard(Game game, User user, Roll diceRoll1, Roll diceRoll2) throws UnirestException {
         _game = game;
         _user = user;
         Throw throwOnBoard = new Throw();
@@ -48,15 +49,12 @@ public class DiceAdapter {
         System.out.println(Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
                 + "/pawns/" + _user.getName().toLowerCase() + "/roll").body(this.gson.toJson(throwOnBoard)).getBody());
 
-//        String eventString = Unirest.post("http://" + _ipAdresses.boardsIP() + "/boards/" + _game.getGameId()
-//                + "/pawns/" + _user.getName().toLowerCase() + "/roll")
-//                .body(this.gson.toJson(throwOnBoard)).asString().getBody();
         String eventString = Unirest.post(_ipAdresses.boardsIP() + "/" + _game.getGameId()
         + "/pawns/" + _user.getName().toLowerCase() + "/roll")
         .body(this.gson.toJson(throwOnBoard)).asString().getBody();
 
-        EventDTO eventDTO = gson.fromJson(eventString, EventDTO.class);
+        Response eventResponse = gson.fromJson(eventString, Response.class);
 
-        return eventDTO.toEntity();
+        return eventResponse;
     }
 }

@@ -24,12 +24,13 @@ public class ClientService {
     private TurnToRollWindow _turnToRollWindow;
     private WaitWindow _waitWindow;
 
-    public void setWaitLogic(WaitLogic logic) {
-        this._waitLogic = logic;
-    }
+//    public void setWaitLogic(WaitLogic logic) {
+//        this._waitLogic = logic;
+//    }
 
     public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow, WaitWindow waitWindow) {
 
+        _waitLogic = waitLogic;
         _turnToRollWindow = turnToRollWindow;
         _waitWindow = waitWindow;
 
@@ -72,11 +73,13 @@ public class ClientService {
 //           inform a player about a new event
                    Event event = gson.fromJson(request.body(), Event.class);
 
-//           if(event.getName.equals("Game has started"){
+//           if(event.getName().equals("Game has started"){
 //           new WaitLogic;
 //           startGameWundow.handleGameStartPost();
 //           close startGameWindow;
-//               }else{
+//           }else if(event.getName().equals("Place to buy"){
+//           _buyPlaceWindow.getBuyPlaceWindowUI().getMainFrame().setVisible(true);
+//           }else{
            _waitWindow.showEvent(event);
            return "";
        });

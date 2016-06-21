@@ -38,8 +38,8 @@ public class UserAdapter {
         return userObj;
     }
 
-    public void postUser(User user) throws UnirestException {
-             Unirest.post(_ipAdresses.usersIP())
-                .body(this.gson.toJson(user)).asJson().getBody();
+    public String postUser(User user) throws UnirestException {
+            return  Unirest.post(_ipAdresses.usersIP())
+                .body(this.gson.toJson(user)).asString().getBody();
     }
 }

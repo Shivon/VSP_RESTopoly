@@ -1,8 +1,10 @@
 package client.logic;
 
 import client.adapter.GamesAdapter;
+import client.adapter.IPAdresses;
 import client.model.gameModels.Game;
 import client.model.gameModels.GameStatus;
+import client.model.gameModels.Paths;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.ArrayList;
@@ -19,10 +21,12 @@ public class GamesLogic {
     private GamesAdapter _gamesAdapter;
     private UserLogic _userLogic;
     private Game _game;
+    private IPAdresses _ipAdresses;
 
-    public GamesLogic(GamesAdapter gamesAdapter, UserLogic userLogic) throws UnirestException {
+    public GamesLogic(GamesAdapter gamesAdapter, UserLogic userLogic, IPAdresses ipAdresses) throws UnirestException {
         _gamesAdapter = gamesAdapter;
         _userLogic = userLogic;
+        _ipAdresses = ipAdresses;
     }
 
     public List<Game> getGamesWithStatusRegistration() throws UnirestException {
@@ -64,7 +68,7 @@ public class GamesLogic {
     }
 
     public Game getCurrentGame(){
-        return _game;
+        return _gamesAdapter.getGame(_game.getName());
     }
 
 //    public Game joinGame(Game game) throws UnirestException {
@@ -85,8 +89,20 @@ public class GamesLogic {
         Game newGame = new Game();
         newGame.setName(gameName);
         newGame.setStatus(GameStatus.registration);
+        Paths services = new Paths();
+        services.setGame(_ipAdresses.gamesIP());
+        services.setEvents(_ipAdresses.eventsIP());
+        services.setBank(_ipAdresses.banksIP());
+        services.setDice(_ipAdresses.diceIP());
+//        services.setDecks();
+        services.setBroker(_ipAdresses.brokerIP());
+        services.setBoard(_ipAdresses.boardsIP());
+        newGame.setServices(services);
+        _gamesAdapter.postGame(newGame);
+        newGame = _gamesAdapter.getGame(gameName);
         setCurrentGame(newGame);
-        _gamesAdapter.postGames(newGame);
+        _game = newGame;
+
         return newGame;
     }
 }

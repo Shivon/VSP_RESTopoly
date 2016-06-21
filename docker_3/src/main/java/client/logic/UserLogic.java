@@ -27,6 +27,7 @@ public class UserLogic {
     }
 
     public boolean checkIfUserAlreadyExists(String userName) throws UnirestException {
+        System.out.println(_userAdapter.getUsers().getUsers());
         for (String user : _userAdapter.getUsers().getUsers()) {
             if(user.equals(_ipAdresses.usersIP() + "/" + userName)){
                 return true;
@@ -39,8 +40,7 @@ public class UserLogic {
         return _user;
     }
 
-    public void setCurrentUser(String userName) throws UnirestException {
-//        TODO was mache ich mit dem Client???
+    public String setCurrentUser(String userName) throws UnirestException {
         Client client = new Client();
         _user = new User();
         client.setName(userName);
@@ -48,6 +48,6 @@ public class UserLogic {
         _user.setId("/users/" + userName.toLowerCase());
         client.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
         _user.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
-        _userAdapter.postUser(_user);
+       return  _userAdapter.postUser(_user);
     }
 }
