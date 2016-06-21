@@ -33,7 +33,7 @@ public class WaitWindowUI {
         _waitTextArea.setCaretPosition(0);
         _waitTextArea.setPreferredSize(new Dimension(400, 500));
         _waitTextArea.setEnabled(false);
-        _waitTextArea.setText("Wait until your turn to roll");
+        _waitTextArea.setText("Waiting for game start");
 
         _saldoPanel.setBorder( new EmptyBorder(2,3,2,3));
         _saldoPanel.setPreferredSize(new Dimension(200, 75));

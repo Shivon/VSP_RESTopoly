@@ -1,15 +1,9 @@
 package client.model.boardModels;
 
-import com.google.gson.annotations.Expose;
-
 /**
- * Created by Eric on 25.05.2016.
+ * Created by Eric on 09.06.2016.
  */
-//@Entity
-//@Table(name = "Roll")
-public class Roll {
-
-    @Expose
+public class Move {
     private int number;
 
     public int getNumber() {

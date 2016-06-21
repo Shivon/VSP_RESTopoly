@@ -1,13 +1,14 @@
 package client.model.boardModels;
 
-
-import client.model.dtos.PawnDTO;
+//import de.haw.vs.escr.boards.models.dtos.PawnDTO;
+//import de.haw.vs.escr.boards.models.dtos.PawnPostDTO;
 
 /**
  * Created by Eric on 25.05.2016.
  */
 public class Pawn {
-    private String id;
+    private int idOnBoard;
+    private String name;
     private String pawnURI;
     private String throwsURI;
     private String movesURI;
@@ -59,14 +60,21 @@ public class Pawn {
         PlaceURI = placeURI;
     }
 
-    public PawnDTO toPawnDTO() {
-        PawnDTO pawnDTO = new PawnDTO();
-        pawnDTO.setPosition(this.position);
-        pawnDTO.setPlace(this.getPlaceURI());
-        pawnDTO.setPawnURI(this.getPawnURI());
-        pawnDTO.setId(this.getId());
-        return pawnDTO;
-    }
+//    public PawnDTO toPawnDTO() {
+//        PawnDTO pawnDTO = new PawnDTO();
+//        pawnDTO.setPosition(this.position);
+//        pawnDTO.setPlace(this.getPlaceURI());
+//        pawnDTO.setPawnURI(this.getPawnURI());
+//        pawnDTO.setId(this.getName());
+//        return pawnDTO;
+//    }
+//
+//    public PawnPostDTO toPawnPostDTO(){
+//        PawnPostDTO ret = new PawnPostDTO();
+//        ret.setName(this.getPlayerURI());
+//        ret.setPlace(this.getPlaceURI());
+//        return ret;
+//    }
 
     public String getPawnURI() {
         return pawnURI;
@@ -76,11 +84,19 @@ public class Pawn {
         this.pawnURI = pawnURI;
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getIdOnBoard() {
+        return idOnBoard;
+    }
+
+    public void setIdOnBoard(int idOnBoard) {
+        this.idOnBoard = idOnBoard;
     }
 }

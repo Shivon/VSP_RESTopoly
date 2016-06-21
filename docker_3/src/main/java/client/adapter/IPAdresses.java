@@ -21,11 +21,14 @@ public class IPAdresses {
 
     public String eventsIP() { return yp.findURIByServiceName("fancy_events");}
 
-    public String banksIP() { return  yp.findURIByServiceName("fancy_banks");}
+//    public String banksIP() { return  yp.findURIByServiceName("fancy_banks");}
+    public String banksIP(){ return "http://172.18.0.41:4567/banks";}
 
     public String boardsIP() { return yp.findURIByServiceName("fancy_boards");}
 
     public String brokerIP() { return yp.findURIByServiceName("fancy_broker");}
 
-    public String clientIP() { return "192.168.255.30:4567"; }
+    public String clientIP() { return "192.168.255.39:4567"; }
+
+//    public String clientIP() { return yp.getOwnURL(); }
 }

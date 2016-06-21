@@ -51,8 +51,8 @@ public class StartGameWindow {
                 try {
                     _gamesLogic.startGame(_gamesLogic.getCurrentGame());
                     _startGameWindowUI.getStartGameFrame().setVisible(false);
-                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
-                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+//                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
+//                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                     _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
                 } catch (UnirestException e1) {
                     e1.printStackTrace();

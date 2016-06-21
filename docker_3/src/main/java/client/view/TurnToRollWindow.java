@@ -1,26 +1,19 @@
 package client.view;
 
-import client.adapter.*;
 import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
 import client.logic.TurnToRollLogic;
 import client.logic.UserLogic;
-import client.model.*;
-import client.model.Event;
-import client.model.boardModels.Place;
-import client.model.boardModels.Roll;
-import client.model.gameModels.Game;
 import client.model.gameModels.Player;
-import client.model.gameModels.Ready;
 import clientUI.TurnToRollWindowUI;
-//import com.mashape.unirest.http.Unirest;
 import clientUI.WaitWindowUI;
-import com.jayway.restassured.response.Response;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+//import com.mashape.unirest.http.Unirest;
 
 /**
  * Created by Jana Mareike on 11.05.2016.
@@ -58,17 +51,20 @@ public class TurnToRollWindow {
                     try {
                         int number = _turnToRollLogic.getNumberOfRolls();
                         _turnToRollWindowUI.getDiceNumber().setText("" + number);
-                        Response event = _turnToRollLogic.getEventAfterDiceRoll();
-//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
-//                                + "\n" + event.getName() + ": " + event.getReason() );
+                        String fieldName = _turnToRollLogic.getFieldAfterDiceRoll().getName();
 
-//                        TODO muss ich mir selber das Feld holen und checken, ob es schon belegt ist
-//                        oder macht das das Events? Bekomme ich vom Events einen Post, dass ich das
-//                        Feld kaufen kann?
+                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
+                                + "\n" + "Now you are on Field: " + fieldName);
+
 //                        Place place = _boardAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
-//                        if(_brokerAdapter.getOwner(place) == null){
-//                             new BuyPlaceWindow(place, _player, _userLogic.getCurrentUser(), _gamesLogic.getCurrentGame());
-//                        }
+//                        if(_buyLogic.checkPlaceIsBuyable()){
+//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
+//                        + "\n" + "You can buy "  + fieldName + " for "_buyLogic.getCost() );
+//                             new BuyPlaceWindow(buyPlaceWindowUI, waitWindow, waitLogic, gamesLogic,userLogic
+//                        , brokerAdapter, buyLogic, playerAdapter);
+//                        }else{
+//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
+//                        + "\n" + "You have to pay "  + _buyLogic.getRent() +" rent for" + fieldName);
 
                         _rolled = true;
                         _turnToRollWindowUI.getDiceButton().setText("Close");

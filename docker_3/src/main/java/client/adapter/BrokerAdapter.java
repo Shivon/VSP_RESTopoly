@@ -19,11 +19,29 @@ public class BrokerAdapter {
     }
 
     public Player getOwner(Place place ) throws UnirestException {
-        String ownerString = Unirest.get(place.getBrokerURI()).asString().getBody();
+        String ownerString = Unirest.get(place.getBrokerURI() + place.getUri() + "/owner").asString().getBody();
 
         Player owner = gson.fromJson(ownerString, Player.class);
 
         return owner;
+    }
+
+    public String getPriceOfPlace(Place place) throws UnirestException {
+        String placeString = Unirest.get(place.getBrokerURI() + place.getUri()).asString().getBody();
+
+        Place placeObj = gson.fromJson(placeString, Place.class);
+// TODO getCost
+//        return placeObj.getCost.toString;
+        return "";
+    }
+
+    public String getRent(Place place) throws UnirestException {
+        String placeString = Unirest.get(place.getBrokerURI() + place.getUri()).asString().getBody();
+
+        Place placeObj = gson.fromJson(placeString, Place.class);
+// TODO getCost
+//        return placeObj.getRent.toString;
+        return "";
     }
 
     public void buyPlace(Place place, Player player) throws UnirestException {

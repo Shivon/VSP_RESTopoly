@@ -2,13 +2,19 @@ package client.view;
 
 import client.adapter.BanksAdapter;
 import client.adapter.BrokerAdapter;
-import client.logic.BuyPlaceLogic;
+
+import client.adapter.PlayerAdapter;
+import client.logic.BuyLogic;
+import client.logic.GamesLogic;
+import client.logic.UserLogic;
+import client.logic.WaitLogic;
 import client.model.User;
 import client.model.boardModels.Place;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
 import clientUI.BuyPlaceWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerBroadcaster;
 
 import java.awt.event.ActionEvent;
@@ -20,25 +26,27 @@ import java.awt.event.ActionListener;
 public class BuyPlaceWindow {
 
     private BuyPlaceWindowUI _buyPlaceWindowUI;
-    private BuyPlaceLogic _buyPlaceLogic;
-    private Place _place;
     private BrokerAdapter _brokerAdapter;
-    private Player _player;
-    private BanksAdapter _banksAdapter;
-    private Game _game;
-    private User _user;
+    private WaitLogic _waitLogic;
+    private WaitWindow _waitWindow;
+    private GamesLogic _gamesLogic;
+    private UserLogic _userLogic;
+    private BuyLogic _buyLogic;
+    private PlayerAdapter _playerAdapter;
 
-    public BuyPlaceWindow(Place place, Player player, User user, Game game, BuyPlaceLogic buyPlaceLogic, BuyPlaceWindowUI buyPlaceWindowUI){
-        _place = place;
-        _player = player;
-        _user = user;
-        _game = game;
-        _banksAdapter = new BanksAdapter();
+    public BuyPlaceWindow(BuyPlaceWindowUI buyPlaceWindowUI,
+                          WaitWindow waitWindow, WaitLogic waitLogic, GamesLogic gamesLogic, UserLogic userLogic
+                            , BrokerAdapter brokerAdapter, BuyLogic buyLogic, PlayerAdapter playerAdapter){
 
+        _waitLogic = waitLogic;
         _buyPlaceWindowUI = buyPlaceWindowUI;
-        _buyPlaceLogic = buyPlaceLogic;
+        _waitWindow = waitWindow;
+        _gamesLogic = gamesLogic;
+        _userLogic = userLogic;
+        _brokerAdapter = brokerAdapter;
+        _buyLogic = buyLogic;
+        _playerAdapter = playerAdapter;
 
-        showPlaceToBuy();
         registerBuyPlaceButton();
         registerDontBuyPlaceButton();
     }
@@ -47,14 +55,22 @@ public class BuyPlaceWindow {
         _buyPlaceWindowUI.getPlaceToBuyButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//      TODO regelt der Broker den Transfer mit der Bank? Woher kenne ich den Preis?
-//                if(_banksAdapter.getAccount(_user, _game).getSaldo() >= Preis)
+//      TODO
+//                if((_banksAdapter.getAccount(_userLogic.getCurrentUser(), _gameLogic.getCurrentGame()).getSaldo()
+//                      -_buyLogic.getCurrentPlace().getCost) < 0){
+//                _waitWindow.getWaitWindowUI().getWaitText().
+//                setText("You have not enough money!");
+                _buyPlaceWindowUI.getMainFrame().setVisible(false);
+//            }else{
                 try {
-                    _brokerAdapter.buyPlace(_place, _player);
+//                    _brokerAdapter.buyPlace(_buyLogic.getCurrentPlace(),
+//                                  _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()) );
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
                 }
-                _buyPlaceLogic.closeBuyPlaceWindow();
+                _buyPlaceWindowUI.getMainFrame().setVisible(false);
             }
         });
     }
@@ -64,13 +80,10 @@ public class BuyPlaceWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
 //      TODO
-                _buyPlaceLogic.closeBuyPlaceWindow();
+                _buyPlaceWindowUI.getMainFrame().setVisible(false);
+
             }
         });
-    }
-
-    public void showPlaceToBuy(){
-        _buyPlaceWindowUI.getPlaceToBuyArea().setText("You can buy: " + _place.getName());
     }
 
     public BuyPlaceWindowUI getBuyPlaceWindowUI(){return _buyPlaceWindowUI;}
