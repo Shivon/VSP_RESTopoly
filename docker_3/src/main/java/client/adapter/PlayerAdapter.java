@@ -55,13 +55,13 @@ public class PlayerAdapter {
 
         System.out.println("PLAYER Im POST : " + _player.getPawn());
 
-        if(getPlayers(_game).length == 0){
+//        if(getPlayers(_game).length == 0){
             Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
-                    .body(this.gson.toJson( _player));
-        }else {
-            Unirest.post(_ipAdresses.gamesIP() + _game.getUri().replaceFirst("/games", "") + "/players")
-                    .body(this.gson.toJson(_player)).asJson().getBody();
-        }
+                    .body(this.gson.toJson( _player)).asString().getBody();
+//        }else {
+//            Unirest.post(_ipAdresses.gamesIP() + _game.getUri().replaceFirst("/games", "") + "/players")
+//                    .body(this.gson.toJson(_player)).asJson().getBody();
+//        }
     }
 
 
@@ -84,11 +84,13 @@ public class PlayerAdapter {
         String userName = _user.getName().toLowerCase();
 
         Player[] playerList = getPlayers(_game);
-        for(Player player : playerList){
-            if(player.getUser().equals(userName)){
-                return player;
+
+            for (Player player : playerList) {
+                if (player.getUser().equals(userName)) {
+                    return player;
+                }
             }
-        }
+
         return null;
     }
 
@@ -102,6 +104,8 @@ public class PlayerAdapter {
         System.out.println("IM GET PLAYERS: " + players);
 
         PlayerURI playerUriList = gson.fromJson(players, PlayerURI.class);
+
+        System.out.println("PLAYER URI LIST : "  + playerUriList);
 
         List<String> playerFromUriList =  playerUriList.getPlayers();
 

@@ -62,7 +62,5 @@ public class BanksAdapter {
 
         Accounts account = gson.fromJson(accountString, Accounts.class);
         return account;
-
     }
-
 }
