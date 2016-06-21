@@ -20,7 +20,10 @@ public class Broker {
     @Expose
     private String estates;
 
+    private List<Place> places;
+
     public Broker() {
+        this.places = new ArrayList<>();
     }
 
     public int getGameId() {
@@ -53,5 +56,17 @@ public class Broker {
 
     public void setEstates(String estates) {
         this.estates = estates;
+    }
+
+    public List<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(List<Place> places) {
+        this.places = places;
+    }
+
+    public void addPlace(Place place) {
+        this.places.add(place);
     }
 }

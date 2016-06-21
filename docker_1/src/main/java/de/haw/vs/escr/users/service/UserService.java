@@ -40,6 +40,12 @@ public class UserService {
                 return "";
             }
 
+            if (this.usersBL.checkForExistingUser(user.getNameId())) {
+                res.status(401);
+                res.type("application/json");
+                return "";
+            }
+
             User savedUser = usersBL.saveUserAndAddId(user);
 
             res.status(201);
@@ -66,6 +72,7 @@ public class UserService {
             String userid = req.params(":userid");
             String name = req.queryParams("name");
             String uri = req.queryParams("uri");
+
             User savedUser = usersBL.putUser(userid, name, uri);
 
             res.status(201);

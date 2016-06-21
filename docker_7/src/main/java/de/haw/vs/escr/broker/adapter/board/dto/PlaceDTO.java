@@ -1,7 +1,6 @@
 package de.haw.vs.escr.broker.adapter.board.dto;
 
 import com.google.gson.annotations.Expose;
-import com.sun.org.apache.xpath.internal.operations.String;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 /**
  * Created by Christian on 20.06.2016.
  */
-public class Place {
+public class PlaceDTO {
     @Expose
     private String place;
 
@@ -22,7 +21,7 @@ public class Place {
     @Expose
     private List<Integer> cost;
 
-    public Place() {
+    public PlaceDTO() {
         this.rent = new ArrayList<>();
         this.cost = new ArrayList<>();
     }

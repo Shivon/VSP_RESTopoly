@@ -48,4 +48,8 @@ public class UsersBusinesslogic {
         if (uri != null) u.setUri(uri);
         return userRepo.saveUser(u);
     }
+
+    public boolean checkForExistingUser(String nameId) {
+        return this.userRepo.userExists(nameId);
+    }
 }
