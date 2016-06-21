@@ -1,18 +1,14 @@
 package banks.service;
 
 import banks.model.Accounts;
-import banks.model.Transaction;
-import banks.model.Transfers;
-import com.google.gson.Gson;
 import banks.model.Bank;
+import banks.model.Transaction;
 import banks.repo.BankRepo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static spark.Spark.*;
 
@@ -68,15 +64,17 @@ public class BankService {
                 return "";
             }
 
-            Map<String, String> url = new HashMap<String, String>();
-            url.put("url", "/banks/" + bank.getId());
-            String urlJson = gson.toJson(url);
+            String uri = "/banks/" + bank.getId();
             JsonObject result = new JsonObject();
+
+            result.addProperty("id", uri);
+            result.addProperty("accounts", bank.getAccounts().toString());
+            result.addProperty("transfers", bank.getTransfers().toString());
 
             response.status(201);
             response.type("application/json");
-            response.body("/banks/" + bank.getId());
-            return gson.toJson(bank);
+//            return gson.toJson(bank);
+            return result;
         });
 
         get("/banks/:bankId", (request, response) -> {
