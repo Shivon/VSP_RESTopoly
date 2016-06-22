@@ -86,7 +86,11 @@ public class EventService {
 //            }
 //            String id = "/events/" + event.getName().toLowerCase();
 //            event.setId(id);
-            EventDTO event = this.gson.fromJson(request.body(), EventDTO.class);
+
+
+
+            // TODO
+//            EventDTO event = this.gson.fromJson(request.body(), EventDTO.class);
 
             String[] requiredParams = {"game", "type", "name", "reason"};
             for (int i = 0; i < requiredParams.length; i++) {

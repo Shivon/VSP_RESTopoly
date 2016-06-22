@@ -35,7 +35,7 @@ public class BankService {
             if (bankList == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("No banks found.");
             }
 
             response.status(200);
@@ -44,19 +44,7 @@ public class BankService {
         });
 
         post("/banks", (request, response) -> {
-//            creates a new bank
-//            String accounts = request.queryParams("accounts");
-//            String transfers = request.queryParams("transfers");
-//
-//            URI accountsUri = null;
-//            URI transfersUri = null;
-//
-//            if (accounts != null) {accountsUri = new URI(accounts);}
-//            if (transfers != null) {transfersUri = new URI(transfers);}
-//
-//            result.addProperty("accounts", bank.getAccounts().toString());
-//            result.addProperty("transfers", bank.getTransfers().toString());
-
+            // creates a new bank
             bank = new Bank();
             System.out.println("im post: " + gson.toJson(bank));
             bank = bankRepo.saveBank(bank);
@@ -97,36 +85,6 @@ public class BankService {
             response.type("application/json");
             return result;
         });
-
-//        put("/banks/:bankId", (request, response) -> {
-////            TODO
-//            String accounts = request.queryParams("accounts");
-//            String transfers = request.queryParams("transfers");
-//
-//            bank = bankRepo.findBank(request.params(":bankId"));
-//
-//            if (bank == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return "";
-//            }
-//
-////             URI accountsUri = null;
-////             URI transfersUri = null;
-//
-//            if(accounts != null) {
-//               URI accountsUri = new URI(accounts);
-//            }
-//
-//            if(transfers != null){
-//                URI transfersUri = new URI(transfers);
-//           }
-//
-//            response.status(201);
-//            response.type("application/json");
-//            return gson.toJson(bank);
-//
-//        });
 
         get("/banks/:bankId/transfers", (request, response) -> {
             // list of transfers
@@ -339,76 +297,6 @@ public class BankService {
 
         });
 
-//        TODO ??? - atm we are not doing this since there is no need due to hibernate
-//        post("/banks/:bankid/transaction", (request, response) -> {
-//          // begins a new transaction  TO DO!!
-//            bank = bankRepo.findBank(request.params(":bankId"));
-//
-//            if (bank == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return "";
-//            }
-//
-//            bankRepo.transactionBegin();
-//
-//            response.status(201);
-//            response.type("application/json");
-//            return gson.toJson("");
-//
-//        });
-//        get("/banks/:bankid/transaction/:tid", (request, response) -> {
-//            // returns the state of the transaction
-//            bank = bankRepo.findBank(request.params(":bankId"));
-//            if (bank == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return gson.toJson("bank not found");
-//            }
-//
-//            Transfer transfer = bankRepo.findTransfer(request.params(":tid"));
-//            if (transfer == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return gson.toJson("transaction not found");
-//            }
-//
-//            bankRepo.transactionBegin();
-//
-//            response.status(201);
-//            response.type("application/json");
-//            return gson.toJson("");
-//        });
-////
-////        put("/banks/:bankid/transaction/:tid", (request, response) -> {
-////// commits/readies the transaction
-////        });
-////
-//        delete("/banks/:bankid/transaction/:tid", (request, response) -> {
-//// abort/rollback an transaction
-//            bank = bankRepo.findBank(request.params(":bankId"));
-//
-//            if (bank == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return "";
-//            }
-//
-//            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
-//
-//            if (transaction == null) {
-//                response.status(404);
-//                response.type("application/json");
-//                return "";
-//            }
-//
-//            bankRepo.deleteTransaction(transaction);
-//
-//            response.status(201);
-//            response.type("application/json");
-//            return gson.toJson("");
-//        });
-
         get("/banks/:bankid/accounts", (request, response) -> {
             // List of available account
             bank = bankRepo.findBank(request.params(":bankId"));
@@ -476,9 +364,16 @@ public class BankService {
                  return gson.toJson("account not found");
              }
 
-            response.status(201);
+            String uriAccount = "/banks/" + bank.getId() + "/accounts/" + account.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriAccount);
+            result.addProperty("player", account.getPlayer());
+            result.addProperty("saldo", account.getSaldo());
+
+            response.status(200);
             response.type("application/json");
-            return gson.toJson(account);
+            return result;
         });
     }
 }
