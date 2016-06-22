@@ -1,9 +1,6 @@
 package banks.repo;
 
-import banks.model.Accounts;
-import banks.model.Bank;
-import banks.model.Transaction;
-import banks.model.Transfers;
+import banks.model.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -69,10 +66,10 @@ public class BankRepo {
         }
     }
 
-    public Transfers findTransfers(String transferId){
+    public TransferBeta findTransferBeta(String transferId) {
         try {
             entityManager.getTransaction().begin();
-            Transfers transfer = entityManager.find(Transfers.class, transferId);
+            TransferBeta transfer = entityManager.find(TransferBeta.class, transferId);
             entityManager.getTransaction().commit();
             return transfer;
         } catch (Exception e) {
@@ -81,10 +78,22 @@ public class BankRepo {
         }
     }
 
-    public Accounts findAccounts(String accountId){
+    public Transfer findTransfers(String transferId){
         try {
             entityManager.getTransaction().begin();
-            Accounts account = entityManager.find(Accounts.class, accountId);
+            Transfer transfer = entityManager.find(Transfer.class, transferId);
+            entityManager.getTransaction().commit();
+            return transfer;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return null;
+        }
+    }
+
+    public Account findAccounts(String accountId){
+        try {
+            entityManager.getTransaction().begin();
+            Account account = entityManager.find(Account.class, accountId);
             entityManager.getTransaction().commit();
             return account;
         } catch (Exception e) {
@@ -93,11 +102,11 @@ public class BankRepo {
         }
     }
 
-    public List<Accounts> allAccounts(){
+    public List<Account> allAccounts(){
         try {
             entityManager.getTransaction().begin();
             @SuppressWarnings("unchecked")
-            List<Accounts> accountsList = entityManager.createQuery("select a from Accounts a").getResultList();
+            List<Account> accountsList = entityManager.createQuery("select a from Account a").getResultList();
             entityManager.getTransaction().commit();
             return accountsList;
         } catch (Exception e) {
@@ -106,42 +115,56 @@ public class BankRepo {
         }
     }
 
-    public void transferFromBankToAccount(Accounts account, int amount){
+    public TransferBeta transferFromBankToAccount(Bank bank, Account account, int amount, String reason){
         try {
             entityManager.getTransaction().begin();
-            if(amount > 0){
-            account.addSaldo(amount);
-            }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-        }
-    }
-
-    public void transferToBankFromAccount(Accounts account, int amount){
-        try {
-            entityManager.getTransaction().begin();
-            if(amount > 0){
-                amount = amount * -1;
+            if (amount > 0) {
                 account.addSaldo(amount);
             }
+            TransferBeta transfer = new TransferBeta(bank.getDummyAccount().getId(), account.getId(), amount, reason);
+            bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
+            return transfer;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+            return null;
         }
     }
 
-    public void transferFromAccountToAccount(Accounts from, Accounts to, int amount){
+    public TransferBeta transferFromAccountToBank(Bank bank, Account account, int amount, String reason){
         try {
             entityManager.getTransaction().begin();
-            if(from.getSaldo() < amount ){
-                amount = from.getSaldo();
+            if (account.getSaldo() < amount ) {
+                amount = account.getSaldo();
             }
-            from.addSaldo(amount * -1);
-            to.addSaldo(amount);
+            if (amount > 0) {
+                account.subtractSaldo(amount);
+            }
+            TransferBeta transfer = new TransferBeta(account.getId(), bank.getDummyAccount().getId(), amount, reason);
+            bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
+            return transfer;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+            return null;
+        }
+    }
+
+    public TransferBeta transferFromAccountToAccount(Bank bank, Account from, Account to, int amount, String reason){
+        try {
+            entityManager.getTransaction().begin();
+            if (from.getSaldo() < amount ) {
+                amount = from.getSaldo();
+            }
+            from.subtractSaldo(amount);
+            to.addSaldo(amount);
+            TransferBeta transfer = new TransferBeta(from.getId(), to.getId(), amount, reason);
+            bank.addTransfer(transfer);
+            entityManager.getTransaction().commit();
+            return transfer;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return null;
         }
     }
 

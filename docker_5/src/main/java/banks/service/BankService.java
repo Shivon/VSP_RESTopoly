@@ -1,14 +1,13 @@
 package banks.service;
 
-import banks.model.Accounts;
-import banks.model.Bank;
-import banks.model.Transaction;
+import banks.model.*;
 import banks.repo.BankRepo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import static spark.Spark.*;
 
@@ -20,12 +19,12 @@ public class BankService {
     private BankRepo bankRepo = new BankRepo();
     private Bank bank;
     private List<Bank> bankList;
+    private Account dummyBankAccount = new Account();
 
     public BankService() {
         System.out.println("hallo2");
         get("/banks", (request, response) -> {
-//            list of availabe banks
-
+            // list of available banks
             bankList = bankRepo.allBanks();
             System.out.println(bankList);
             for (Bank b : bankList) {
@@ -45,16 +44,19 @@ public class BankService {
 
         post("/banks", (request, response) -> {
 //            creates a new bank
-            String accounts = request.queryParams("accounts");
-            String transfers = request.queryParams("transfers");
+//            String accounts = request.queryParams("accounts");
+//            String transfers = request.queryParams("transfers");
+//
+//            URI accountsUri = null;
+//            URI transfersUri = null;
+//
+//            if (accounts != null) {accountsUri = new URI(accounts);}
+//            if (transfers != null) {transfersUri = new URI(transfers);}
+//
+//            result.addProperty("accounts", bank.getAccounts().toString());
+//            result.addProperty("transfers", bank.getTransfers().toString());
 
-            URI accountsUri = null;
-            URI transfersUri = null;
-
-            if (accounts != null) {accountsUri = new URI(accounts);}
-            if (transfers != null) {transfersUri = new URI(transfers);}
-
-            bank = new Bank(accountsUri,transfersUri);
+            bank = new Bank();
             System.out.println("im post: " + gson.toJson(bank).toString());
             bank = bankRepo.saveBank(bank);
 
@@ -68,12 +70,9 @@ public class BankService {
             JsonObject result = new JsonObject();
 
             result.addProperty("id", uri);
-            result.addProperty("accounts", bank.getAccounts().toString());
-            result.addProperty("transfers", bank.getTransfers().toString());
 
             response.status(201);
             response.type("application/json");
-//            return gson.toJson(bank);
             return result;
         });
 
@@ -92,7 +91,7 @@ public class BankService {
         });
 
         put("/banks/:bankId", (request, response) -> {
-//            TO DO
+//            TODO
             String accounts = request.queryParams("accounts");
             String transfers = request.queryParams("transfers");
 
@@ -121,263 +120,361 @@ public class BankService {
 
         });
 
-        get("/banks/:bankId/transfers", (request, response) -> {
-          //list of available transfers
 
+
+
+
+        get("/banks/:bankId/transfers", (request, response) -> {
+            // list of transfers
             bank = bankRepo.findBank(request.params(":bankId"));
 
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("bank not found");
             }
 
-            URI transfers = bank.getTransfers();
+            Set<TransferBeta> transfers = bank.getTransfers();
 
-            System.out.println("" + transfers);
-
+            System.out.println("" + transfers.toString());
 
             response.status(200);
             response.type("application/json");
             return gson.toJson(transfers);
         });
 
-//        get("/banks/:bankId/transfers/:transferId", (request, response) -> {
-//            //Gets a <<resourcePathName>>
-//            String from = request.queryParams("from"); // "uri of player account or \'bank\'
-//            // from where the money comes from"
-//            String to = request.queryParams("to"); //"uri of player account or \'bank\'
-//            // to where the money goes"
-//            String amount = request.queryParams("amount"); // int
-//            String reason = request.queryParams("reason");
-//        });
-
-
-        post("/banks/:bankid/transfer/from/:from/to/:to/:amount", (request, response) -> {
-// creates a new bank transfer from a account id to an other
+        get("/banks/:bankId/transfers/:transferId", (request, response) -> {
+            // Gets a specific transfer
             bank = bankRepo.findBank(request.params(":bankId"));
-
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("bank not found");
             }
 
-            Accounts accountTo = bankRepo.findAccounts(request.params(":to"));
-            Accounts accountFrom = bankRepo.findAccounts(request.params(":from"));
-            int amount = Integer.parseInt(request.params(":amount"));
+            String transferId = request.params(":transferId");
+            Set<TransferBeta> transfers = bank.getTransfers();
+            TransferBeta transfer = null;
+            for (TransferBeta t : transfers) {
+                if (t.getId().toString().equals(transferId)) {
+                    transfer = t;
+                }
+            }
 
-            if(amount <= 0){
-                response.status(406);
+            if (transfer == null) {
+                response.status(404);
                 response.type("application/json");
-                return gson.toJson("negative transfer not possible");
+                return gson.toJson("transfer not found");
             }
 
-            if(accountFrom.equals(accountTo)){
+            String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
+            String uriTo = "/banks/" + bank.getId() + "/accounts/" + transfer.getTo();
+            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + transfer.getFrom();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriTransfer);
+            result.addProperty("from", uriTo);
+            result.addProperty("to", uriFrom);
+            result.addProperty("amount", transfer.getAmount());
+            result.addProperty("reason", transfer.getReason());
+
+            response.status(200);
+            response.type("application/json");
+            return result;
+        });
+
+        post("/banks/:bankid/transfer/from/:from/to/:to/:amount", (request, response) -> {
+            // creates a new bank transfer from an account id to another
+            bank = bankRepo.findBank(request.params(":bankId"));
+            if (bank == null) {
+                response.status(404);
+                response.type("application/json");
+                return gson.toJson("bank not found");
+            }
+
+            Account accountTo = bankRepo.findAccounts(request.params(":to"));
+            Account accountFrom = bankRepo.findAccounts(request.params(":from"));
+            if (accountTo == null || accountFrom == null) {
+                response.status(404);
+                response.type("application/json");
+                return gson.toJson("account not found");
+            }
+            if (accountFrom.equals(accountTo)) {
                 response.status(406);
                 response.type("application/json");
                 return gson.toJson("transfer with yourself not possible");
             }
 
-            bankRepo.transferFromAccountToAccount(accountFrom, accountTo, amount);
+            int amount = Integer.parseInt(request.params(":amount"));
+            if (amount <= 0) {
+                response.status(406);
+                response.type("application/json");
+                return gson.toJson("negative or neutral transfer not possible");
+            }
+
+            String reason = request.queryParams("description");
+            if (reason.length() == 0) {
+                response.status(406);
+                response.type("application/json");
+                return gson.toJson("you need to enter a reason as query param for the transfer");
+            }
+
+            TransferBeta transfer = bankRepo.transferFromAccountToAccount(bank, accountFrom, accountTo, amount, reason);
+
+            String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
+            String uriTo = "/banks/" + bank.getId() + "/accounts/" + accountTo.getId();
+            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + accountFrom.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriTransfer);
+            result.addProperty("from", uriTo);
+            result.addProperty("to", uriFrom);
+            result.addProperty("amount", amount);
+            result.addProperty("reason", reason);
 
             response.status(201);
             response.type("application/json");
-            return gson.toJson("A new bank transfer has been created");
+            return result;
         });
 
         post("/banks/:bankid/transfer/to/:to/:amount", (request, response) -> {
-// creates a new bank transfer from the bank itself
-
+            // creates a new bank transfer from the bank itself to an account
             bank = bankRepo.findBank(request.params(":bankId"));
-
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("bank not found");
             }
 
-            Accounts account = bankRepo.findAccounts(request.params(":to"));
-            int amount = Integer.parseInt(request.params(":amount"));
+            Account account = bankRepo.findAccounts(request.params(":to"));
+            if (account == null) {
+                response.status(404);
+                response.type("application/json");
+                return gson.toJson("account not found");
+            }
 
-            if(amount <= 0){
+            int amount = Integer.parseInt(request.params(":amount"));
+            if (amount <= 0) {
                 response.status(406);
                 response.type("application/json");
-                return gson.toJson("negative transfer not possible");
+                return gson.toJson("negative or neutral transfer not possible");
             }
 
-            bankRepo.transferFromBankToAccount(account, amount);
+            String reason = request.queryParams("description");
+            if (reason.length() == 0) {
+                response.status(406);
+                response.type("application/json");
+                return gson.toJson("you need to enter a reason as query param for the transfer");
+            }
+
+            TransferBeta transfer = bankRepo.transferFromBankToAccount(bank, account, amount, reason);
+
+            String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
+            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + bank.getDummyAccount().getId();
+            String uriTo = "/banks/" + bank.getId() + "/accounts/" + account.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriTransfer);
+            result.addProperty("from", uriTo);
+            result.addProperty("to", uriFrom);
+            result.addProperty("amount", amount);
+            result.addProperty("reason", reason);
 
             response.status(201);
             response.type("application/json");
-            return gson.toJson("A new bank transfer has been created");
+            return result;
 
         });
 
         post("/banks/:bankid/transfer/from/:from/:amount", (request, response) -> {
-// creates a new bank transfer to the bank itself
+            // creates a new bank transfer from the bank itself to an account
             bank = bankRepo.findBank(request.params(":bankId"));
-
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("bank not found");
             }
 
-            Accounts account = bankRepo.findAccounts(request.params(":to"));
+            Account account = bankRepo.findAccounts(request.params(":from"));
+            if (account == null) {
+                response.status(404);
+                response.type("application/json");
+                return gson.toJson("account not found");
+            }
+
             int amount = Integer.parseInt(request.params(":amount"));
-
-            if(amount <= 0){
-                response.status(403);
+            if (amount <= 0) {
+                response.status(406);
                 response.type("application/json");
-                return gson.toJson("insufficient fonds");
+                return gson.toJson("negative or neutral transfer not possible");
             }
 
-            if(account.getSaldo() < amount ){
-                amount = account.getSaldo();
-//               and the player is dead, delete account?
+            String reason = request.queryParams("description");
+            if (reason.length() == 0) {
+                response.status(406);
+                response.type("application/json");
+                return gson.toJson("you need to enter a reason as query param for the transfer");
             }
 
-            bankRepo.transferToBankFromAccount(account, amount);
+            TransferBeta transfer = bankRepo.transferFromAccountToBank(bank, account, amount, reason);
+
+            String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
+            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + account.getId();
+            String uriTo = "/banks/" + bank.getId() + "/accounts/" + bank.getDummyAccount().getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriTransfer);
+            result.addProperty("from", uriTo);
+            result.addProperty("to", uriFrom);
+            result.addProperty("amount", amount);
+            result.addProperty("reason", reason);
 
             response.status(201);
             response.type("application/json");
-            return gson.toJson("A new bank transfer has been created");
+            return result;
 
         });
 
-        post("/banks/:bankid/transaction", (request, response) -> {
-// begins a new transaction  TO DO!!
-            bank = bankRepo.findBank(request.params(":bankId"));
-
-            if (bank == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-            bankRepo.transactionBegin();
-
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson("");
-
-        });
-// TODO ???
-        get("/banks/:bankid/transaction/:tid", (request, response) -> {
-// returns the state of the transaction
-            bank = bankRepo.findBank(request.params(":bankId"));
-
-            if (bank == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
-
-            if (transaction == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-            bankRepo.transactionBegin();
-
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson("");
-        });
+//        TODO ??? - atm we are not doing this since there is no need due to hibernate
+//        post("/banks/:bankid/transaction", (request, response) -> {
+//          // begins a new transaction  TO DO!!
+//            bank = bankRepo.findBank(request.params(":bankId"));
 //
-//        put("/banks/:bankid/transaction/:tid", (request, response) -> {
-//// commits/readies the transaction
+//            if (bank == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return "";
+//            }
+//
+//            bankRepo.transactionBegin();
+//
+//            response.status(201);
+//            response.type("application/json");
+//            return gson.toJson("");
+//
 //        });
+//        get("/banks/:bankid/transaction/:tid", (request, response) -> {
+//            // returns the state of the transaction
+//            bank = bankRepo.findBank(request.params(":bankId"));
+//            if (bank == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return gson.toJson("bank not found");
+//            }
 //
-//        TODO???
-        delete("/banks/:bankid/transaction/:tid", (request, response) -> {
-// abort/rollback an transaction
-            bank = bankRepo.findBank(request.params(":bankId"));
-
-            if (bank == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
-
-            if (transaction == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-            bankRepo.deleteTransaction(transaction);
-
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson("");
-        });
+//            TransferBeta transfer = bankRepo.findTransferBeta(request.params(":tid"));
+//            if (transfer == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return gson.toJson("transaction not found");
+//            }
+//
+//            bankRepo.transactionBegin();
+//
+//            response.status(201);
+//            response.type("application/json");
+//            return gson.toJson("");
+//        });
+////
+////        put("/banks/:bankid/transaction/:tid", (request, response) -> {
+////// commits/readies the transaction
+////        });
+////
+//        delete("/banks/:bankid/transaction/:tid", (request, response) -> {
+//// abort/rollback an transaction
+//            bank = bankRepo.findBank(request.params(":bankId"));
+//
+//            if (bank == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return "";
+//            }
+//
+//            Transaction transaction = bankRepo.findTransaction(request.params(":tid"));
+//
+//            if (transaction == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return "";
+//            }
+//
+//            bankRepo.deleteTransaction(transaction);
+//
+//            response.status(201);
+//            response.type("application/json");
+//            return gson.toJson("");
+//        });
 
         get("/banks/:bankid/accounts", (request, response) -> {
-// List of available account
+            // List of available account
             bank = bankRepo.findBank(request.params(":bankId"));
 
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Bank not found");
             }
 
-            URI account = bank.getAccounts();
-            System.out.println("" + account);
+            Set<Account> accounts = bank.getAccounts();
+            System.out.println("" + accounts);
 
             response.status(200);
             response.type("application/json");
-            return gson.toJson(account);
-
+            return gson.toJson(accounts);
         });
 
         post("/banks/:bankid/accounts", (request, response) -> {
-        // creates a bank account
+            // creates a bank account
             bank = bankRepo.findBank(request.params(":bankId"));
 
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Bank not found");
             }
 
-            String player = request.queryParams("palyer");
+            String playerUri = request.queryParams("player");
             String saldo = request.queryParams("saldo");
 
-            List<Accounts> accountList = bankRepo.allAccounts();
-            for ( Accounts a : accountList) {
-                if (a.getPlayer().toString() == player) {
+            for (Account a : bank.getAccounts()) {
+                if (a.getPlayer().equals(playerUri)) {
                     response.status(409);
                     response.type("application/json");
-                    return "player already got a bank account";
+                    return "player already got a bank account for given bank";
                 }
             }
 
-            Accounts account = null;
-            if(player != null && saldo != null){
-                account = new Accounts();
+            Account account = null;
+            if (playerUri != null && saldo != null) {
+                account = new Account(playerUri, Integer.parseInt(saldo));
+                bank.addAccount(account);
             }
+
+            String uriAccount = "/banks/" + bank.getId() + "/accounts/" + account.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriAccount);
+            result.addProperty("player", playerUri);
+            result.addProperty("saldo", saldo);
+
             response.status(201);
             response.type("application/json");
-            return gson.toJson(account + "bank account has been created");
+            return result;
         });
 
         get("/banks/:bankid/accounts/:accountid", (request, response) -> {
-// returns account the saldo of the player
-            Accounts account = bankRepo.findAccounts(request.params(":accountid"));
+            // returns account for the given bank
+            Account account = bankRepo.findAccounts(request.params(":accountid"));
 
-            int saldo = account.getSaldo();
+             if (account == null) {
+                 response.status(404);
+                 response.type("application/json");
+                 return gson.toJson("account not found");
+             }
+
             response.status(201);
             response.type("application/json");
-            return gson.toJson(saldo);
+            return gson.toJson(account);
         });
-
     }
 }

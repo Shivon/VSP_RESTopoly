@@ -1,9 +1,11 @@
 package banks.model;
 
 import com.google.gson.annotations.Expose;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -16,51 +18,71 @@ public class Bank {
     @Column(name = "id")
     // @Expose on a field you're telling Gson to include that property into your JSON String
     @Expose(serialize = false)
-    private String id;
+    private UUID id;
 
-    // required params
-
-    @Column(name = "accounts")
+    @OneToMany
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JoinColumn(name = "accounts")
     @Expose
-    private URI accounts;
+    private Set<Account> accounts;
 
-    @Column(name = "transfers")
+    @OneToMany
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JoinColumn(name = "transfers")
     @Expose
-    private URI transfers;
+    private Set<TransferBeta> transfers;
 
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JoinColumn(name = "dummyAccount")
+    private Account dummyAccount;
 
     // leerer Konstruktor notwendig, weil gson das braucht, sonst Probleme mit ID
     public Bank(){
+        this.id = UUID.randomUUID();
+        this.accounts = new HashSet<>();
+        this.transfers = new HashSet<>();
+        this.dummyAccount = new Account();
     }
 
-    public Bank(URI accounts, URI transfers) {
-        this.id = UUID.randomUUID().toString();
-        this.accounts = accounts;
-        this.transfers = transfers;
-    }
-
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Account getDummyAccount() {
+        return this.dummyAccount;
     }
 
-    public URI getAccounts() {
+    public Set<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(URI accounts) {
+    public void setAccounts(Set accounts) {
         this.accounts = accounts;
     }
 
-    public URI getTransfers() {
+    public void addAccount(Account account) {
+        this.accounts.add(account);
+    }
+
+    public void deleteAccount(Account account) {
+        this.accounts.remove(account);
+    }
+
+    public Set<TransferBeta> getTransfers() {
         return transfers;
     }
 
-    public void setTransfers(URI transfers) {
+    public void setTransfers(Set transfers) {
         this.transfers = transfers;
+    }
+
+    public void addTransfer(TransferBeta transfer) {
+        this.transfers.add(transfer);
+    }
+
+    public void deleteTransfer(TransferBeta transfer) {
+        this.transfers.remove(transfer);
     }
 
     public boolean equals(Object object) {
