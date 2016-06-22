@@ -50,12 +50,13 @@ public class UserWindow {
                         if(userReturn.equals("")){
                             JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
                                     JOptionPane.ERROR_MESSAGE);
+                        }else{
+                            _userWindowUI.getLogInFrame().setVisible(false);
+                            _gamesWindow.buildGamesWindowUI();
                         }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    _userWindowUI.getLogInFrame().setVisible(false);
-                    _gamesWindow.buildGamesWindowUI();
                 }else {
                     JOptionPane.showMessageDialog(null, "No user name", "no user name",
                             JOptionPane.ERROR_MESSAGE);

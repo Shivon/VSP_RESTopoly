@@ -73,20 +73,24 @@ public class PlayerAdapter {
                 + "&ready=" + _ready);
     }
 
-    public Player getPlayer(Game game, User user) throws UnirestException {
+    public Player findPlayerByUser(Game game, User user) throws UnirestException {
         this._game = game;
         this._user = user;
 
         String userName = _user.getName().toLowerCase();
 
         Player[] playerList = getPlayers(_game);
+        System.out.println("PLAYERLIST: " +playerList.toString());
 
             for (Player player : playerList) {
+                System.out.println("USER: " + player );
+                System.out.println("USER: " + player.getUser() );
                 if (player.getUser().equals(userName)) {
                     return player;
                 }
-            }
-
+        }
+        Object[] array = new Object[3];
+        array[2] = null;
         return null;
     }
 
@@ -105,13 +109,14 @@ public class PlayerAdapter {
 
         List<String> playerFromUriList =  playerUriList.getPlayers();
 
-        Player[] playerList = new Player[playerFromUriList.size()+1];
+        Player[] playerList = new Player[playerFromUriList.size()];
         for(int i = 0; i < playerFromUriList.size(); i++) {
             String playerDTOString = Unirest.get(_ipAdresses.gamesIP()
                     + playerFromUriList.get(i).replaceFirst("/games", "")).asString().getBody();
             Player playerDTO = gson.fromJson(playerDTOString, Player.class);
 
-            playerList[i] = playerDTO;
+                playerList[i] = playerDTO;
+
         }
         return playerList;
     }

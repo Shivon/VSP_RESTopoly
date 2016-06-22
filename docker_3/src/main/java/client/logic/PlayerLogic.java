@@ -35,10 +35,11 @@ public class PlayerLogic {
     public List<String> getAvailablePawns() throws UnirestException {
         Game game = _gamesLogic.getCurrentGame();
         List<Player> players = game.getPlayers();
+        System.out.println("\n PLAYERS IM AVAILABLE PWANS: " + players);
         if(!players.isEmpty()){
-            List<Player> playerList = game.getPlayers();
+//            List<Player> playerList = game.getPlayers();
             Set<String> playerPawnSet = new HashSet<>();
-            for (Player player : playerList) {
+            for (Player player : players) {
                 playerPawnSet.add(player.getPawn());
             }
 
@@ -76,11 +77,11 @@ public class PlayerLogic {
         _playerAdapter.postPlayer(playerPawn, _gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
 //  TODO Events
       new EventSubscriptions(_playerAdapter.getIPAdresses(), _gamesLogic, _userLogic);
-        System.out.println(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+        System.out.println(_playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 
     public void setPlayerToReady() throws UnirestException {
         _playerAdapter.putPlayerReady(_gamesLogic.getCurrentGame(),
-                _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                _playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 }

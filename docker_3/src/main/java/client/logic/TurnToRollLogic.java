@@ -4,7 +4,6 @@ import client.adapter.DiceAdapter;
 import client.adapter.PlayerAdapter;
 import client.model.boardModels.*;
 import client.model.dtos.BoardDTO;
-import client.model.dtos.FieldDTO;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -45,7 +44,7 @@ public class TurnToRollLogic {
                          _userLogic.getCurrentUser(), _diceRoll1, _diceRoll2);
         for(Field field : board.getFields()){
             for(String pawn : field.getPawns()){
-                if(pawn.equals(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getPawn())){
+                if(pawn.equals(_playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getPawn())){
 //                    String placeString = field.getPlace();
                     String placeGetString = Unirest.get(_gamesLogic.getCurrentGame().getServices().getBoard()
 //                    + placeString.replaceFirst("/boards", "")).asString().getBody();
@@ -67,6 +66,6 @@ public class TurnToRollLogic {
 
 //    public void setPlayerToReady() throws UnirestException {
 //        _playerAdapter.putPlayerReady(_gamesLogic.getCurrentGame(), _playerAdapter.
-//                getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+//                findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
 //    }
 }

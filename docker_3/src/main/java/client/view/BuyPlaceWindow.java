@@ -9,14 +9,8 @@ import client.logic.BuyLogic;
 import client.logic.GamesLogic;
 import client.logic.UserLogic;
 import client.logic.WaitLogic;
-import client.model.User;
-import client.model.boardModels.Place;
-import client.model.gameModels.Game;
-import client.model.gameModels.Player;
 import clientUI.BuyPlaceWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.activemq.broker.Broker;
-import org.apache.activemq.broker.BrokerBroadcaster;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,7 +64,7 @@ public class BuyPlaceWindow {
                     } else {
                         try {
                             _brokerAdapter.buyPlace(_boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()),
-                                    _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                                    _playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                             _waitWindow.getWaitWindowUI().getSaldoTextArea().
                                     setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                         } catch (UnirestException e1) {
