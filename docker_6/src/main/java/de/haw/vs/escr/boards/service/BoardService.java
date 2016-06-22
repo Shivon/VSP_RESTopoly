@@ -3,9 +3,18 @@ package de.haw.vs.escr.boards.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.haw.vs.escr.boards.businesslogic.BoardServiceBusinessLogic;
-import de.haw.vs.escr.boards.models.dtos.*;
+import de.haw.vs.escr.boards.models.dtos.BoardDTO;
+import de.haw.vs.escr.boards.models.dtos.BoardsDTO;
+import de.haw.vs.escr.boards.models.dtos.PawnDTO;
+import de.haw.vs.escr.boards.models.dtos.PlacesDTO;
 import de.haw.vs.escr.boards.models.entities.*;
+import de.haw.vs.escr.boards.restmodels.GameRestModel;
+import de.haw.vs.escr.boards.util.yellowpages.YellowPagesService;
+import de.haw.vs.escr.boards.util.yellowpages.model.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.List;
 
 import static spark.Spark.*;
@@ -14,6 +23,7 @@ import static spark.Spark.*;
  * Created by Eric on 03.05.2016.
  */
 public class BoardService {
+    private static final Logger log = LoggerFactory.getLogger(BoardService.class);
     private final Gson gson;
     private final BoardServiceBusinessLogic boardServiceBusinessLogic;
     private GsonBuilder gb;
@@ -26,19 +36,21 @@ public class BoardService {
 
         //<editor-fold desc="/boards/:gameId">
         get("/boards/:gameId", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId");
+            log.info("Received get on /boards/:gameId");
+
             String gameId;
             gameId = "/games/" + req.params(":gameId");
             Board board = this.boardServiceBusinessLogic.findBoardByGameURI(gameId);
             if (board != null) {
                 return gson.toJson(board.toBoardDTO());
             }
+            log.error("Failed to create Board. Board was null");
             res.status(400);
             return null;
         });
 
         put("/boards/:gameId", (request, response) -> {
-            System.out.println("------- Received put on /boards/:gameId");
+            log.info("Received put on /boards/:gameId");
             Board boardByGameId;
             BoardDTO givenBoard;
             String gameURI = "/games/" + request.params(":gameId");
@@ -53,7 +65,7 @@ public class BoardService {
             }
             if (!givenBoard.getId().equals(boardByGameId.getUri())) {
                 response.status(404);
-                System.out.println("wrong boardID");
+                log.error("wrong boardID");
                 return null;
             }
 
@@ -61,22 +73,22 @@ public class BoardService {
         });
 
         delete("/boards/:gameId", (req, res) -> {
-            System.out.println("------- Received delete on /boards/:gameId by "+req.ip());
+            log.info("Received delete on /boards/:gameId by " + req.ip());
             String gameURI = "/games/" + req.params(":gameId");
             Board board = this.boardServiceBusinessLogic.findBoardByGameURI(gameURI);
             boardServiceBusinessLogic.deleteBoard(board);
-            res.status(200);
             return gson.toJson(board.toBoardDTO());
         });
 
         get("/boards/:gameId/paths", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId");
+            log.info("Received get on /boards/:gameId");
             String gameId;
             gameId = "/games/" + req.params(":gameId");
             Board board = this.boardServiceBusinessLogic.findBoardByGameURI(gameId);
             if (board != null) {
                 return gson.toJson(board.getPaths());
             }
+            log.error("Board not found");
             res.status(404);
             return null;
         });
@@ -84,35 +96,72 @@ public class BoardService {
 
         //<editor-fold desc="/boards">
         get("/boards", (req, res) -> {
-            System.out.println("------- Received get on /boards");
             BoardsDTO boards = this.boardServiceBusinessLogic.findAllBoards();
             return gson.toJson(boards);
         });
 
         post("/boards", (req, res) -> {
-            System.out.println("------- Received post on /boards");
+            log.info("Received post on /boards");
             BoardDTO boardDTO;
             Board board;
+            GameRestModel gameRestModel = null;
+
+            YellowPagesService yp = new YellowPagesService();
+            Service games = yp.findServiceByName("fancy_games");
+            try {
+                gameRestModel = new GameRestModel(new URL(games.getUri()).toString());
+            } catch (Exception e) {
+                log.error("Failed to init games IP");
+            }
+
             try {
                 board = gson.fromJson(req.body(), BoardDTO.class).toEntity();
-                if(!(board.getBoardId() > 0)){
+                if (!(board.getBoardId() > 0)) {
+                    log.error("Board Id is < 0");
                     res.status(400);
                     return null;
                 }
             } catch (Exception e) {
+                log.error("Failed to create Board from Body");
                 res.status(400);
                 e.printStackTrace();
                 return null;
             }
 
             Paths p = new Paths();
-            p.setGame("http://"+req.ip()+":4567/games/"+board.getBoardId());
+            p.setGame(gameRestModel.getPath() + "/games/" + board.getBoardId());
             board.setPaths(p);
             Board b = boardServiceBusinessLogic.createBoard(board);
             BoardDTO bDTO = b.toBoardDTO();
             return gson.toJson(bDTO);
         });
         //</editor-fold>
+
+        post("/boards/:gameId/components", (req, res) -> {
+            log.info(" Received POST on /boards/" + req.params(":gameId") + "/components");
+            Paths paths;
+            Board board;
+
+            try {
+                board = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
+            } catch (Exception e) {
+                log.error("Board with id = " + req.params(":gameId") + " not found");
+                res.status(404);
+                e.printStackTrace();
+                return null;
+            }
+
+            try {
+                paths = gson.fromJson(req.body(), Paths.class);
+            } catch (Exception e) {
+                log.error("Failed to get Paths from body. Body: { " + req.body() + " \r\n } Body End");
+                res.status(400);
+                e.printStackTrace();
+                return null;
+            }
+
+            return board.toBoardDTO();
+        });
 
         //<editor-fold desc="/boards/:gameId/pawns/:pawnId">
         get("/test/", (req, res) -> {
@@ -128,7 +177,7 @@ public class BoardService {
         });
 
         post("/boards/:gameid/pawns/:pawnId/roll", (req, res) -> {
-            System.out.println("------- Received post on /boards/:gameId/pawns/:pawnId/roll");
+            log.info("Received post on /boards/:gameId/pawns/:pawnId/roll");
             Throw thrw;
             Board b;
             Pawn p;
@@ -136,6 +185,7 @@ public class BoardService {
             try {
                 thrw = gson.fromJson(req.body(), Throw.class);
             } catch (Exception e) {
+                log.error("Failed to construct Throw from body. Body: { " + req.body() + " } Body End");
                 res.status(400);
                 e.printStackTrace();
                 return null;
@@ -144,22 +194,24 @@ public class BoardService {
                 b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
                 p = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), b);
             } catch (Exception e) {
+                log.error("Failed to find board or pawn");
                 res.status(404);
                 e.printStackTrace();
                 return null;
             }
 
-            RollEventsDTO rollEventsDTO = this.boardServiceBusinessLogic.movePawn(p, thrw, b);
-            if(rollEventsDTO == null){
-                System.out.println("Pawn not allowed to move");
+            Board board = this.boardServiceBusinessLogic.movePawn(p, thrw, b);
+            if (board == null) {
+                log.error("Pawn not allowed to move");
                 res.status(403);
                 return null;
             }
-            return gson.toJson(rollEventsDTO);
+            Board newBoard = this.boardServiceBusinessLogic.findBoardByGameURI(b.getGameURI());
+            return gson.toJson(newBoard.toBoardDTO());
         });
 
         get("/boards/:gameid/pawns/:pawnId/roll", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId/pawns/:pawnId/roll");
+            log.info("Received get on /boards/:gameId/pawns/:pawnId/roll");
             Board b;
             Pawn p;
 
@@ -167,6 +219,7 @@ public class BoardService {
                 b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
                 p = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), b);
             } catch (Exception e) {
+                log.error("Failed to find board or pawn");
                 res.status(404);
                 return null;
             }
@@ -175,13 +228,14 @@ public class BoardService {
         });
 
         post("/boards/:gameid/pawns/:pawnId/move", (req, res) -> {
-            System.out.println("------- Received post on /boards/:gameId/pawns/:pawnId/move");
+            log.info("Received post on /boards/:gameId/pawns/:pawnId/move");
             Move move;
             Board board;
             Pawn pawn;
             try {
                 move = gson.fromJson(req.body(), Move.class);
             } catch (Exception e) {
+                log.error("Failed to build Move out of Body. Body: [ " + req.body() + " ] Body end");
                 res.status(400);
                 e.printStackTrace();
                 return null;
@@ -191,16 +245,17 @@ public class BoardService {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
                 pawn = this.boardServiceBusinessLogic.findPawnByPawnName(req.params(":pawnId"), board);
             } catch (Exception e) {
+                log.error("Failed to find board or pawn");
                 res.status(404);
                 e.printStackTrace();
                 return null;
             }
-            RollEventsDTO rollEventsDTO = this.boardServiceBusinessLogic.movePawn(pawn, move, board);
-            return gson.toJson(rollEventsDTO);
+            Board newBoard = this.boardServiceBusinessLogic.movePawn(pawn, move, board);
+            return gson.toJson(newBoard.toBoardDTO());
         });
 
         get("/boards/:gameid/pawns/:pawnId", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId/pawns/:pawnId");
+            log.info("Received get on /boards/:gameId/pawns/:pawnId");
             String pawnId = req.params(":pawnId");
             String gameURI = "/games/" + req.params("gameId");
             Board board;
@@ -209,6 +264,7 @@ public class BoardService {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI(gameURI);
                 pawn = this.boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
             } catch (Exception e) {
+                log.error("Failed to find board or pawn");
                 res.status(404);
                 e.printStackTrace();
                 return null;
@@ -217,17 +273,26 @@ public class BoardService {
         });
 
         put("/boards/:gameid/pawns/:pawnId", (req, res) -> {
-            System.out.println("------- Received put on /boards/:gameId/pawns/:pawnId");
+            log.info("Received put on /boards/:gameId/pawns/:pawnId");
             String gameURI = "/games/" + req.params(":gameId");
             String pawnId = req.params(":pawnId");
             Board board;
             Pawn givenPawn;
             Pawn pawnByPawnId;
+
+            try {
+                givenPawn = gson.fromJson(req.body(), PawnDTO.class).toEntity();
+            } catch (Exception e) {
+                log.error("Failed to build Pawn out of Body. Body: [ " + req.body() + " ] Body end");
+                res.status(400);
+                return null;
+            }
+
             try {
                 board = boardServiceBusinessLogic.findBoardByGameURI(gameURI);
                 pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
-                givenPawn = gson.fromJson(req.body(), PawnDTO.class).toEntity();
             } catch (Exception e) {
+                log.error("Failed to find Board or Pawn");
                 res.status(404);
                 e.printStackTrace();
                 return null;
@@ -238,7 +303,7 @@ public class BoardService {
         });
 
         delete("/boards/:gameid/pawns/:pawnId", (req, res) -> {
-            System.out.println("------- Received delete on /boards/:gameId/pawns/:pawnId");
+            log.info("Received delete on /boards/:gameId/pawns/:pawnId");
             String gameURI = "/games/" + req.params(":gameId");
             String pawnId = req.params(":pawnId");
             Board board;
@@ -248,8 +313,8 @@ public class BoardService {
                 board = boardServiceBusinessLogic.findBoardByGameURI(gameURI);
                 pawnByPawnId = boardServiceBusinessLogic.findPawnByPawnName(pawnId, board);
             } catch (Exception e) {
+                log.error("Failed to find Board or Pawn");
                 res.status(404);
-                res.body("Pawn not found");
                 e.printStackTrace();
                 return null;
             }
@@ -261,20 +326,21 @@ public class BoardService {
 
         //<editor-fold desc="/boards/:gameId/pawns">
         post("/boards/:gameid/pawns", (req, res) -> {
-            System.out.println("------- Received post on /boards/:gameId/pawns");
+            log.info("Received post on /boards/:gameId/pawns");
             String gameURI = "/games/" + req.params("gameId");
             PawnDTO pawn;
             Board board;
             Pawn p;
-            System.out.println("test");
             try {
                 pawn = gson.fromJson(req.body(), PawnDTO.class);
-                int id = Integer.parseInt(pawn.getPlace().substring(pawn.getPlace().lastIndexOf("/")+1));
-                if (id != pawn.getPosition()){
+                int id = Integer.parseInt(pawn.getPlace().substring(pawn.getPlace().lastIndexOf("/") + 1));
+                if (id != pawn.getPosition()) {
                     res.status(400);
+                    log.error("Pawn place =/= Pawn position. Place: " + id + " Position: " + pawn.getPosition());
                     return null;
                 }
             } catch (Exception e) {
+                log.error("Failed to build pawn from Body. Body: [ " + req.body() + " ] Body end");
                 res.status(400);
                 e.printStackTrace();
                 return null;
@@ -284,25 +350,28 @@ public class BoardService {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI(gameURI);
                 p = this.boardServiceBusinessLogic.addPawn(pawn, board);
             } catch (Exception e) {
+                log.error("Failed to find board or pawn");
                 res.status(404);
                 e.printStackTrace();
                 return null;
             }
 
-            if(p == null){
+            if (p == null) {
                 res.status(400);
+                log.error("Error while adding pawn");
                 return null;
             }
             return gson.toJson(p.toPawnPostDTO());
         });
 
         get("/boards/:gameid/pawns", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId/pawns");
+            log.info(" Received get on /boards/:gameId/pawns");
             String gameURI = "/games/" + req.params("gameId");
             Board board;
             try {
                 board = this.boardServiceBusinessLogic.findBoardByGameURI(gameURI);
             } catch (Exception e) {
+                log.error("Failed to find board");
                 res.status(404);
                 e.printStackTrace();
                 return null;
@@ -314,24 +383,26 @@ public class BoardService {
 
         //<editor-fold desc="/boards/:gameId/places">
         get("/boards/:gameId/places", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId/places");
+            log.info("Received get on /boards/:gameId/places");
             int boardId;
+            PlacesDTO places;
 
             try {
                 boardId = Integer.parseInt(req.params(":gameId"));
+                places = boardServiceBusinessLogic.getPlacesForBoard(boardId);
             } catch (Exception e) {
+                log.error("Failed to get places");
                 res.status(400);
                 e.printStackTrace();
                 return null;
             }
-            PlacesDTO places = boardServiceBusinessLogic.getPlacesForBoard(boardId);
             return gson.toJson(places.getPlaces());
         });
         //</editor-fold>
 
         //<editor-fold desc="/boards/:gameId/places/:placeId">
         get("/boards/:gameId/places/:placeId", (req, res) -> {
-            System.out.println("------- Received get on /boards/:gameId/places/:placeId");
+            log.info("Received get on /boards/:gameId/places/:placeId");
             Board b;
             Place p;
 
@@ -339,6 +410,7 @@ public class BoardService {
                 b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
                 p = this.boardServiceBusinessLogic.findPlaceByPlaceId(req.params(":placeId"), b);
             } catch (Exception e) {
+                log.error("Failed to find board or place");
                 res.status(404);
                 e.printStackTrace();
                 return null;
@@ -347,7 +419,7 @@ public class BoardService {
         });
 
         put("/boards/:gameId/places/:placeId", (req, res) -> {
-            System.out.println("------- Received put on /boards/:gameId/places/:placeId");
+            log.info("Received put on /boards/:gameId/places/:placeId");
             Board b;
             Place p;
             Place bodyPlace;
@@ -355,6 +427,7 @@ public class BoardService {
             try {
                 bodyPlace = gson.fromJson(req.body(), Place.class);
             } catch (Exception e) {
+                log.error("Failed to build Place from Body. Body : [ " + req.body() + " ] Body End");
                 res.status(400);
                 e.printStackTrace();
                 return null;
@@ -364,6 +437,7 @@ public class BoardService {
                 b = this.boardServiceBusinessLogic.findBoardByGameURI("/games/" + req.params(":gameid"));
                 p = this.boardServiceBusinessLogic.findPlaceByPlaceId(req.params(":placeId"), b);
             } catch (Exception e) {
+                log.error("Failed to find board or place");
                 res.status(404);
                 e.printStackTrace();
                 return null;

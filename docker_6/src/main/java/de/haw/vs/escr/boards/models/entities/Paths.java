@@ -11,25 +11,25 @@ public class Paths {
     private String uuid;
 
     @Expose
-    private String game;
+    private String game = null;
 
     @Expose
-    private String dice;
+    private String dice = null;
 
     @Expose
-    private String board;
+    private String board = null;
 
     @Expose
-    private String bank;
+    private String bank = null;
 
     @Expose
-    private String broker;
+    private String broker = null;
 
     @Expose
-    private String decks;
+    private String decks = null;
 
     @Expose
-    private String events;
+    private String events = null;
 
     public Paths() {
         this.uuid = UUID.randomUUID().toString();
