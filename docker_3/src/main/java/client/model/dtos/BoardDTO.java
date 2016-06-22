@@ -5,6 +5,7 @@ import client.model.boardModels.Field;
 import com.google.gson.annotations.Expose;
 
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class BoardDTO {
     private List<Field> fields;
 
     @Expose
-    private int[] positions;
+    private List<Integer> positions;
 
     public BoardDTO(){
         this.fields = new ArrayList<>();
@@ -42,11 +43,11 @@ public class BoardDTO {
         this.id = id;
     }
 
-    public int[] getPositions() {
+    public List<Integer> getPositions() {
         return positions;
     }
 
-    public void setPositions(int[] positions) {
+    public void setPositions(List<Integer> positions) {
         this.positions = positions;
     }
 

@@ -3,6 +3,10 @@ package client.logic;
 import client.adapter.DiceAdapter;
 import client.adapter.PlayerAdapter;
 import client.model.boardModels.*;
+import client.model.dtos.BoardDTO;
+import client.model.dtos.FieldDTO;
+import com.google.gson.Gson;
+import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -10,6 +14,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  */
 public class TurnToRollLogic {
 
+    private Gson gson;
     private DiceAdapter _diceAdapter;
     private GamesLogic _gamesLogic;
     private UserLogic _userLogic;
@@ -18,6 +23,7 @@ public class TurnToRollLogic {
     private PlayerAdapter _playerAdapter;
 
     public TurnToRollLogic(DiceAdapter diceAdapter, PlayerAdapter playerAdapter, GamesLogic gamesLogic, UserLogic userLogic){
+        gson = new Gson();
         _diceAdapter = diceAdapter;
         _playerAdapter = playerAdapter;
         _gamesLogic = gamesLogic;
@@ -35,12 +41,16 @@ public class TurnToRollLogic {
     }
 
     public Place getFieldAfterDiceRoll() throws UnirestException {
-         Board board = _diceAdapter.postDiceRollOnBoard(_gamesLogic.getCurrentGame(),
+         BoardDTO board = _diceAdapter.postDiceRollOnBoard(_gamesLogic.getCurrentGame(),
                          _userLogic.getCurrentUser(), _diceRoll1, _diceRoll2);
         for(Field field : board.getFields()){
             for(String pawn : field.getPawns()){
                 if(pawn.equals(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getPawn())){
-                    return field.getPlace();
+//                    String placeString = field.getPlace();
+                    String placeGetString = Unirest.get(_gamesLogic.getCurrentGame().getServices().getBoard()
+//                    + placeString.replaceFirst("/boards", "")).asString().getBody();
+                            + field.getPlace().getUri().replaceFirst("/boards", "")).asString().getBody();
+                   return gson.fromJson(placeGetString, Place.class);
                 }
             }
         }

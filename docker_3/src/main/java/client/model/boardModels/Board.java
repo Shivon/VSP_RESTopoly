@@ -3,6 +3,9 @@ package client.model.boardModels;
 //import de.haw.vs.escr.boards.models.dtos.BoardDTO;
 //import de.haw.vs.escr.boards.models.dtos.FieldDTO;
 
+import client.model.dtos.FieldDTO;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,20 +16,26 @@ import java.util.stream.Collectors;
 //@Entity
 //@Table(name = "Board")
 public class Board {
-    private int boardId;
-    private String uri;
-    private Paths paths;
-    private String gameURI;
+
+    @Expose
+    private String id;
+//    @Expose
+//    private String uri;
+//    @Expose
+//    private Paths paths;
+    @Expose
+    private String game;
 
     /*
      * spieler (playerList) an der stelle i soll an stelle i in positions stehen
      * players: {A, B, C}
      * positions: [3, 1, 2}
      */
-    private List<String> positions;
-
-    private List<Field> fields;
-
+    @Expose
+    private List<Integer> positions;
+    @Expose
+    private List<FieldDTO> fields;
+    @Expose
     private String playerListURI;
 
     public Board() {
@@ -34,50 +43,50 @@ public class Board {
         this.fields = new ArrayList<>();
     }
 
-    public Board(String uri) {
-        this.uri = uri;
-    }
+//    public Board(String uri) {
+//        this.uri = uri;
+//    }
 
-    public List<String> getPositions() {
+    public List<Integer> getPositions() {
         return positions;
     }
 
-    public void setPositions(List<String> positions) {
+    public void setPositions(List<Integer> positions) {
         this.positions = positions;
     }
 
-    public String getUri() {
-        return uri;
+//    public String getUri() {
+//        return uri;
+//    }
+
+//    public void setUri(String uri) {
+//        this.uri = uri;
+//    }
+
+    public String getBoardId() {
+        return id;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public String getGame() {
+        return game;
     }
 
-    public int getBoardId() {
-        return boardId;
+    public void setGameURI(String game) {
+        this.game = game;
     }
 
-    public String getGameURI() {
-        return gameURI;
-    }
-
-    public void setGameURI(String gameURI) {
-        this.gameURI = gameURI;
-    }
-
-    public List<Field> getFields(){return fields;}
+    public List<FieldDTO> getFields(){return fields;}
 
     public List<String> getAllPawns() {
         List<String> ret = new ArrayList<>();
-        for (Field f : fields) {
+        for (FieldDTO f : fields) {
             ret.addAll(f.getPawns());
         }
         return ret;
     }
 
     public void setBoardId(int boardId) {
-        this.boardId = boardId;
+        this.id = id;
     }
 
 //    public BoardDTO toBoardDTO() {
@@ -91,29 +100,29 @@ public class Board {
 //        return boardDTO;
 //    }
 
-    public String getPlayerListURI() {
-        return playerListURI;
-    }
+//    public String getPlayerListURI() {
+//        return playerListURI;
+//    }
 
-    public void setPlayerListURI(String playerListURI) {
-        this.playerListURI = playerListURI;
-    }
+//    public void setPlayerListURI(String playerListURI) {
+//        this.playerListURI = playerListURI;
+//    }
 
-    public void updateFields(List<Field> fields) {
+    public void updateFields(List<FieldDTO> fields) {
         this.fields = fields;
     }
 
     public void addPawnToPosition(int placeId, int idOnBoard) {
         System.out.println("------ CHECK: "+this.positions.size() +" >= "+ placeId+1);
         if (this.positions.size() >= placeId + 1) this.positions.remove(placeId);
-        this.positions.add(placeId, String.valueOf(idOnBoard));
+        this.positions.add(placeId, Integer.valueOf(idOnBoard));
     }
 
-    public Paths getPaths() {
-        return paths;
-    }
+//    public Paths getPaths() {
+//        return paths;
+//    }
 
-    public void setPaths(Paths paths) {
-        this.paths = paths;
-    }
+//    public void setPaths(Paths paths) {
+//        this.paths = paths;
+//    }
 }

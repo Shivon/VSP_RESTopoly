@@ -19,10 +19,10 @@ public class IPAdresses {
 
     public String usersIP() { return yp.findURIByServiceName("fancy_users");}
 
-    public String eventsIP() { return yp.findURIByServiceName("fancy_events");}
+    public String eventsIP() { return yp.findURIByServiceName("fancy_event");}
 
-//    public String banksIP() { return  yp.findURIByServiceName("fancy_banks");}
-    public String banksIP(){ return "http://172.18.0.23:4567/banks";}
+    public String banksIP() { return  yp.findURIByServiceName("fancy_banks");}
+//    public String banksIP(){ return "http://172.18.0.41:4567/banks";}
 
     public String boardsIP() { return yp.findURIByServiceName("fancy_boards");}
 

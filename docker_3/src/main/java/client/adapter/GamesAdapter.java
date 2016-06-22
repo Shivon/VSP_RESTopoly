@@ -98,7 +98,6 @@ public class GamesAdapter {
         return Unirest.get(gamesIP + postfix).asString().getBody();
     }
 
-
     public void postGame(Game game) throws UnirestException {
         game.setUri(_ipAdresses.gamesIP() + "/" + game.getName());
         System.out.println("IM POST GAME : " + game.getUri());

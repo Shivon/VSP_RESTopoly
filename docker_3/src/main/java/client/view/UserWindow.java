@@ -46,7 +46,8 @@ public class UserWindow {
 //                    }
                     try {
                         String userReturn = _userLogic.setCurrentUser(userName);
-                        if(userReturn.contains("401")){
+                        System.out.println("RETURN VOM USER: " +userReturn);
+                        if(userReturn.equals("")){
                             JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
                                     JOptionPane.ERROR_MESSAGE);
                         }

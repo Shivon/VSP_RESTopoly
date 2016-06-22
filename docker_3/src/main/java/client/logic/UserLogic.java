@@ -46,8 +46,8 @@ public class UserLogic {
         client.setName(userName);
         _user.setName(userName);
         _user.setId("/users/" + userName.toLowerCase());
-        client.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
-        _user.setUri("http://" + _ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
+        client.setUri(_ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
+        _user.setUri(_ipAdresses.clientIP() + "/client/" + userName.toLowerCase());
        return  _userAdapter.postUser(_user);
     }
 }

@@ -21,6 +21,7 @@ public class WaitLogic {
 
     public void playerTurn(Player player) throws UnirestException {
         player.setReady(new Ready(false));
+
     }
 
     public int getSaldo(Game game, User user) throws UnirestException {
