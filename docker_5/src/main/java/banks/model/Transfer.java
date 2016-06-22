@@ -13,8 +13,8 @@ import java.util.UUID;
  * Created by Jana Mareike on 01.05.2016.
  */
 @Entity
-@Table(name = "Transfers")
-public class Transfers {
+@Table(name = "Transfer")
+public class Transfer {
     @Id
     @Column(name = "id")
     // @Expose on a field you're telling Gson to include that property into your JSON String
@@ -38,10 +38,10 @@ public class Transfers {
     private String reason;
 
     // leerer Konstruktor notwendig, weil gson das braucht, sonst Probleme mit ID
-    public Transfers(){
+    public Transfer(){
     }
 
-    public Transfers(URI from, URI to, int amount, String reason) {
+    public Transfer(URI from, URI to, int amount, String reason) {
         this.id = UUID.randomUUID().toString();
         this.from = from;
         this.to = to;
@@ -94,7 +94,7 @@ public class Transfers {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Transfers transfers = (Transfers) o;
+        Transfer transfers = (Transfer) o;
 
         if (amount != transfers.amount) return false;
         if (id != null ? !id.equals(transfers.id) : transfers.id != null) return false;

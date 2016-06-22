@@ -6,21 +6,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.net.URI;
 import java.util.UUID;
 
 /**
  * Created by Jana Mareike on 01.05.2016.
  */
 @Entity
-@Table(name = "Accounts")
-public class Accounts {
+@Table(name = "Account")
+public class Account {
 
     @Id
     @Column(name = "id")
     // @Expose on a field you're telling Gson to include that property into your JSON String
     @Expose(serialize = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "player")
     @Expose
@@ -32,21 +31,17 @@ public class Accounts {
 
 
     // leerer Konstruktor notwendig, weil gson das braucht, sonst Probleme mit ID
-    public Accounts(){
+    public Account(){
     }
 
-    public Accounts(String player, int saldo) {
-        this.id = UUID.randomUUID().toString();
-        this.player = player;
+    public Account(String playerUri, int saldo) {
+        this.id = UUID.randomUUID();
+        this.player = playerUri;
         this.saldo = saldo;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getPlayer() {
@@ -56,6 +51,7 @@ public class Accounts {
     public void addSaldo(int saldo) {
         this.saldo += saldo;
     }
+    public void subtractSaldo(int saldo) { this.saldo -= saldo; }
 
     public void setPlayer(String player) {
         this.player = player;
@@ -74,7 +70,7 @@ public class Accounts {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Accounts accounts = (Accounts) o;
+        Account accounts = (Account) o;
 
         if (saldo != accounts.saldo) return false;
         if (id != null ? !id.equals(accounts.id) : accounts.id != null) return false;
