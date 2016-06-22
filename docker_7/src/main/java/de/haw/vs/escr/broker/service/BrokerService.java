@@ -26,17 +26,9 @@ public class BrokerService {
     private Gson gson;
     private final BrokerRepo brokerREPO;
     private final BrokerBusinesslogic brokerBL;
-    private GameRestModel gameRestModel;
 
     public BrokerService() {
         this.initializeGson();
-        YellowPagesService yp = new YellowPagesService();
-        Service games = yp.findServiceByName("fancy_games");
-        try {
-            gameRestModel = new GameRestModel(new URL(games.getUri()).getAuthority().toString());
-        } catch (Exception e) {
-            System.out.println("Faild to init games IP");
-        }
         this.brokerREPO = new BrokerRepo();
         this.brokerBL = new BrokerBusinesslogic(this.brokerREPO, this.gson);
 
@@ -163,6 +155,7 @@ public class BrokerService {
         });
 
         post("/broker/:gameid/places/:placeid/owner", (req, res) -> {
+            String resource = "/broker/" + req.params("gameid") + "/places/" + req.params("placeid");
             int gameId = this.getNumberFromString(req.params("gameid"));
             int placeid = this.getNumberFromString(req.params("placeid"));
             PlayerUriDTO pu = this.gson.fromJson(req.body(), PlayerUriDTO.class);
@@ -176,9 +169,14 @@ public class BrokerService {
                 return this.brokerBL.findOwner(place);
             }
 
-            PlaceConfirmationDTO pcdto2 = this.brokerBL.buyPlace(gameId, place, pu.getPlayer());
+            PlaceConfirmationDTO pcdto2 = this.brokerBL.buyPlace(gameId, place, pu.getPlayer(), resource);
 
-            return null;
+            if (pcdto2 == null) {
+                res.status(401);
+                return null;
+            }
+
+            return this.gson.toJson(pcdto2);
         });
 
         put("/broker/:gameid/places/:placeid/hypothecarycredit", (req, res) -> {
@@ -190,7 +188,21 @@ public class BrokerService {
         });
 
         post("/broker/:gameid/places/:placeid/visit", (req, res) -> {
-            return null;
+            String resource = "/broker/" + req.params("gameid") + "/places/" + req.params("placeid");
+            int gameId = this.getNumberFromString(req.params("gameid"));
+            int placeid = this.getNumberFromString(req.params("placeid"));
+            PlayerUriDTO pu = this.gson.fromJson(req.body(), PlayerUriDTO.class);
+
+            Place place = this.brokerBL.findPlace(gameId, placeid);
+
+            PlaceConfirmationDTO pcdto = this.brokerBL.visitPlace(gameId, place, pu.getPlayer(), resource);
+
+            if (pcdto == null) {
+                res.status(409);
+                return null;
+            }
+
+            return this.gson.toJson(pcdto);
         });
     }
 

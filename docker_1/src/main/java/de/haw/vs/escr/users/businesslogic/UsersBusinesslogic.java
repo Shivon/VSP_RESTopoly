@@ -33,6 +33,11 @@ public class UsersBusinesslogic {
         return userRepo.saveUser(user);
     }
 
+    public void postUserToGame(User user) {
+        //TODO
+
+    }
+
     public User getUser(String nameId) {
         return userRepo.findUserByNameId(nameId);
     }

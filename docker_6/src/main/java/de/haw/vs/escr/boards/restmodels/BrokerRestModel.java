@@ -15,7 +15,8 @@ public class BrokerRestModel {
         return path + "/places/" + placeId + VISIT;
     }
 
-    public String getPlaceRoute() {
-        return path + "/places";
+    public String getPlaceRoute(int gameId) {
+        return path + "/" + gameId + "/places";
     }
+
 }

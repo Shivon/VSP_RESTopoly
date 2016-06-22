@@ -50,6 +50,15 @@ public class YellowPagesService implements IYellowPages {
         }
     }
 
+    public String getOwnURL() {
+        this.getAndSetOurURL();
+        return ownURL;
+    }
+
+    public void setOwnURL(String ownURL) {
+        this.ownURL = ownURL;
+    }
+
     public String getUri() {
         return uri;
     }

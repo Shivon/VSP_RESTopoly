@@ -1,49 +1,33 @@
-package de.haw.vs.escr.boards.models.entities;
+package de.haw.vs.escr.broker.adapter.games.dto;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.UUID;
-
 /**
- * Created by Christian on 29.04.2016.
+ * Created by Christian on 21.06.2016.
  */
-public class Paths {
-    private String uuid;
+public class PathDTO {
+    @Expose
+    private String game;
 
     @Expose
-    private String game = null;
+    private String dice;
 
     @Expose
-    private String dice = null;
+    private String board;
 
     @Expose
-    private String board = null;
+    private String bank;
 
     @Expose
-    private String bank = null;
+    private String broker;
 
     @Expose
-    private String broker = null;
+    private String decks;
 
     @Expose
-    private String decks = null;
+    private String events;
 
-    @Expose
-    private String events = null;
-
-    public Paths() {
-        this.uuid = UUID.randomUUID().toString();
-    }
-
-    public Paths(String game, String dice, String board, String bank, String broker, String decks, String events) {
-        this.uuid = UUID.randomUUID().toString();
-        this.game = game;
-        this.dice = dice;
-        this.board = board;
-        this.bank = bank;
-        this.broker = broker;
-        this.decks = decks;
-        this.events = events;
+    public PathDTO() {
     }
 
     public String getGame() {
