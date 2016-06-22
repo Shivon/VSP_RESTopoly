@@ -1,6 +1,7 @@
 package client.view;
 
 import client.adapter.BanksAdapter;
+import client.adapter.BoardsAdapter;
 import client.adapter.BrokerAdapter;
 
 import client.adapter.PlayerAdapter;
@@ -33,10 +34,12 @@ public class BuyPlaceWindow {
     private UserLogic _userLogic;
     private BuyLogic _buyLogic;
     private PlayerAdapter _playerAdapter;
+    private BanksAdapter _banksAdapter;
+    private BoardsAdapter _boardsAdapter;
 
-    public BuyPlaceWindow(BuyPlaceWindowUI buyPlaceWindowUI,
-                          WaitWindow waitWindow, WaitLogic waitLogic, GamesLogic gamesLogic, UserLogic userLogic
-                            , BrokerAdapter brokerAdapter, BuyLogic buyLogic, PlayerAdapter playerAdapter){
+    public BuyPlaceWindow(BuyPlaceWindowUI buyPlaceWindowUI, WaitWindow waitWindow, WaitLogic waitLogic,
+                          GamesLogic gamesLogic, UserLogic userLogic, BrokerAdapter brokerAdapter,
+                          BuyLogic buyLogic, PlayerAdapter playerAdapter, BanksAdapter banksAdapter, BoardsAdapter boardsAdapter){
 
         _waitLogic = waitLogic;
         _buyPlaceWindowUI = buyPlaceWindowUI;
@@ -46,6 +49,8 @@ public class BuyPlaceWindow {
         _brokerAdapter = brokerAdapter;
         _buyLogic = buyLogic;
         _playerAdapter = playerAdapter;
+        _banksAdapter = banksAdapter;
+        _boardsAdapter = boardsAdapter;
 
         registerBuyPlaceButton();
         registerDontBuyPlaceButton();
@@ -56,21 +61,26 @@ public class BuyPlaceWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
 //      TODO
-//                if((_banksAdapter.getAccount(_userLogic.getCurrentUser(), _gameLogic.getCurrentGame()).getSaldo()
-//                      -_buyLogic.getCurrentPlace().getCost) < 0){
-//                _waitWindow.getWaitWindowUI().getWaitText().
-//                setText("You have not enough money!");
-                _buyPlaceWindowUI.getMainFrame().setVisible(false);
-//            }else{
                 try {
-//                    _brokerAdapter.buyPlace(_buyLogic.getCurrentPlace(),
-//                                  _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
-                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
-                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()) );
+                    if ((_banksAdapter.getAccount(_userLogic.getCurrentUser(), _gamesLogic.getCurrentGame()).getSaldo()
+                            - _boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getValue()) < 0) {
+                        _waitWindow.getWaitWindowUI().getWaitText().
+                                setText("You have not enough money!");
+                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
+                    } else {
+                        try {
+                            _brokerAdapter.buyPlace(_boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()),
+                                    _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+//                            _waitWindow.getWaitWindowUI().getSaldoTextArea().
+//                                    setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                        } catch (UnirestException e1) {
+                            e1.printStackTrace();
+                        }
+                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
+                    }
                 } catch (UnirestException e1) {
                     e1.printStackTrace();
                 }
-                _buyPlaceWindowUI.getMainFrame().setVisible(false);
             }
         });
     }
@@ -79,7 +89,6 @@ public class BuyPlaceWindow {
         _buyPlaceWindowUI.getDontBuyPlaceButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//      TODO
                 _buyPlaceWindowUI.getMainFrame().setVisible(false);
 
             }

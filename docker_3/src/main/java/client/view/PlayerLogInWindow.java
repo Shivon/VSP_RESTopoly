@@ -4,6 +4,7 @@ import client.EventSubscriptions;
 import client.logic.GamesLogic;
 import client.logic.PlayerLogic;
 import client.logic.UserLogic;
+import client.logic.WaitLogic;
 import client.model.User;
 import client.model.gameModels.Game;
 import clientUI.PlayerLoginWindowUI;
@@ -24,9 +25,10 @@ public class PlayerLogInWindow {
     private UserLogic _userLogic;
     private GamesLogic _gamesLogic;
     private WaitWindow _waitWindow;
+    private WaitLogic _waitLogic;
 
     public PlayerLogInWindow( PlayerLoginWindowUI playerLoginWindowUI, UserLogic userLogic, PlayerLogic playerLogic,
-                              WaitWindow waitWindow, GamesLogic gamesLogic) throws UnirestException {
+                              WaitWindow waitWindow, GamesLogic gamesLogic, WaitLogic waitLogic) throws UnirestException {
 
 //        _startGameWindow = startGameWindow;
         _waitWindow = waitWindow;
@@ -34,6 +36,7 @@ public class PlayerLogInWindow {
         _playerLogic = playerLogic;
         _userLogic = userLogic;
         _gamesLogic = gamesLogic;
+        _waitLogic = waitLogic;
 
         registerSubmitPlayerPawn();
     }
@@ -55,8 +58,8 @@ public class PlayerLogInWindow {
 //                            just 6 players possible, so no start Window
 //                            _startGameWindow.getStartGameWindowUI().getStartGameFrame().setVisible(true);
 //TODO Banks
-//                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
-//                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                    _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                            _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
                         }
                     } catch (UnirestException e1) {

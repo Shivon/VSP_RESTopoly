@@ -49,19 +49,21 @@ public class MyMainClass {
         TurnToRollWindowUI turnToRollWindowUI = new TurnToRollWindowUI();
         BuyPlaceWindowUI buyPlaceWindowUI = new BuyPlaceWindowUI();
 
-        TurnToRollWindow turnToRollWindow = new TurnToRollWindow(waitWindowUI, turnToRollWindowUI,
-               playerLogic, gamesLogic, userLogic, turnToRollLogic);
         WaitWindow waitWindow = new WaitWindow(waitWindowUI, waitLogic, gamesLogic, userLogic);
+        TurnToRollWindow turnToRollWindow = new TurnToRollWindow(turnToRollWindowUI, playerLogic, gamesLogic,
+                 userLogic, turnToRollLogic, boardAdapter, buyLogic, waitWindow, buyPlaceWindowUI,
+                waitLogic, brokerAdapter, playerAdapter, banksAdapter);
         StartGameWindow startGameWindow = new StartGameWindow(gamesLogic, startGameWindowUI, waitWindow, waitLogic, userLogic);
         PlayerLogInWindow playerLogInWindow = new PlayerLogInWindow(playerLoginWindowUI, userLogic,
-                playerLogic, waitWindow, gamesLogic);
+                playerLogic, waitWindow, gamesLogic, waitLogic);
         NewGameWindow newGameWindow = new NewGameWindow(newGameWindowUI, playerLogInWindow, gamesLogic, playerLogic);
         GamesWindow gamesWindow = new GamesWindow(gamesWindowUI, gamesLogic, newGameWindow, playerLogInWindow, playerLogic);
         BuyPlaceWindow buyPlaceWindow = new BuyPlaceWindow(buyPlaceWindowUI, waitWindow, waitLogic, gamesLogic,userLogic
-                , brokerAdapter, buyLogic, playerAdapter);
+                , brokerAdapter, buyLogic, playerAdapter, banksAdapter, boardAdapter);
 
 
-        ClientService clientService = new ClientService(waitLogic, turnToRollWindow, waitWindow, buyPlaceWindow, turnToRollLogic);
+        ClientService clientService = new ClientService(waitLogic, turnToRollWindow, waitWindow, buyPlaceWindow, turnToRollLogic,
+                                        userLogic, gamesLogic);
 
         new UserWindow(userWindowUI, userLogic, gamesWindow);
     }
