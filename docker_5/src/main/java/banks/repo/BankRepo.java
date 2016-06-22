@@ -24,6 +24,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return banks;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -32,10 +33,12 @@ public class BankRepo {
     public Bank findBank(String id) {
         try {
             entityManager.getTransaction().begin();
-            Bank bank = entityManager.find(Bank.class, id);
+            UUID uuid = UUID.fromString(id);
+            Bank bank = entityManager.find(Bank.class, uuid);
             entityManager.getTransaction().commit();
             return bank;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -50,6 +53,7 @@ public class BankRepo {
             System.out.println("Bank wurde gespeichert");
             return bank;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             System.out.println("Bank konnte nicht gespeichert werden");
             return null;
@@ -64,6 +68,7 @@ public class BankRepo {
             System.out.println("repo: bank wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
         }
     }
@@ -71,10 +76,12 @@ public class BankRepo {
     public Transfer findTransfer(String transferId) {
         try {
             entityManager.getTransaction().begin();
-            Transfer transfer = entityManager.find(Transfer.class, transferId);
+            UUID uuid = UUID.fromString(transferId);
+            Transfer transfer = entityManager.find(Transfer.class, uuid);
             entityManager.getTransaction().commit();
             return transfer;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -87,6 +94,7 @@ public class BankRepo {
 //            entityManager.getTransaction().commit();
 //            return transfer;
 //        } catch (Exception e) {
+//    System.out.println(e);
 //            entityManager.getTransaction().rollback();
 //            return null;
 //        }
@@ -95,10 +103,12 @@ public class BankRepo {
     public Account findAccounts(String accountId){
         try {
             entityManager.getTransaction().begin();
-            Account account = entityManager.find(Account.class, accountId);
+            UUID uuid = UUID.fromString(accountId);
+            Account account = entityManager.find(Account.class, uuid);
             entityManager.getTransaction().commit();
             return account;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -112,6 +122,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return accountsList;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -128,6 +139,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return transfer;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -147,6 +159,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return transfer;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -165,6 +178,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return transfer;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -177,6 +191,7 @@ public class BankRepo {
             entityManager.getTransaction().commit();
             return transaction;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -188,6 +203,7 @@ public class BankRepo {
             Transaction transaction = new Transaction();
             entityManager.getTransaction().commit();
         }catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
         }
     }
@@ -201,6 +217,7 @@ public class BankRepo {
             System.out.println("repo: bank wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
         }
     }

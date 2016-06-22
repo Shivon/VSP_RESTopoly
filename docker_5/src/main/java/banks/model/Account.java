@@ -32,6 +32,7 @@ public class Account {
 
     // leerer Konstruktor notwendig, weil gson das braucht, sonst Probleme mit ID
     public Account(){
+        this.id = UUID.randomUUID();
     }
 
     public Account(String playerUri, int saldo) {
