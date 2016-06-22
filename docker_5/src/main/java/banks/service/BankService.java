@@ -1,15 +1,17 @@
 package banks.service;
 
-import banks.model.*;
+import banks.model.Account;
+import banks.model.Bank;
+import banks.model.Transfer;
 import banks.repo.BankRepo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  * Created by jana on 30.04.16.
@@ -62,7 +64,7 @@ public class BankService {
             if (bank == null) {
                 response.status(500);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Bank not created");
             }
 
             String uri = "/banks/" + bank.getId();
@@ -81,47 +83,50 @@ public class BankService {
             if (bank == null) {
                 response.status(404);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Bank not found");
             }
+
+            String uri = "/banks/" + bank.getId();
+            JsonObject result = new JsonObject();
+
+            result.addProperty("id", uri);
+            result.addProperty("accounts", gson.toJson(bank.getAccounts()));
+            result.addProperty("transfers", gson.toJson(bank.getTransfers()));
 
             response.status(200);
             response.type("application/json");
-            return gson.toJson(bank);
+            return result;
         });
 
-        put("/banks/:bankId", (request, response) -> {
-//            TODO
-            String accounts = request.queryParams("accounts");
-            String transfers = request.queryParams("transfers");
-
-            bank = bankRepo.findBank(request.params(":bankId"));
-
-            if (bank == null) {
-                response.status(404);
-                response.type("application/json");
-                return "";
-            }
-
-//             URI accountsUri = null;
-//             URI transfersUri = null;
-
-            if(accounts != null) {
-               URI accountsUri = new URI(accounts);
-            }
-
-            if(transfers != null){
-                URI transfersUri = new URI(transfers);
-           }
-
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson(bank);
-
-        });
-
-
-
-
+//        put("/banks/:bankId", (request, response) -> {
+////            TODO
+//            String accounts = request.queryParams("accounts");
+//            String transfers = request.queryParams("transfers");
+//
+//            bank = bankRepo.findBank(request.params(":bankId"));
+//
+//            if (bank == null) {
+//                response.status(404);
+//                response.type("application/json");
+//                return "";
+//            }
+//
+////             URI accountsUri = null;
+////             URI transfersUri = null;
+//
+//            if(accounts != null) {
+//               URI accountsUri = new URI(accounts);
+//            }
+//
+//            if(transfers != null){
+//                URI transfersUri = new URI(transfers);
+//           }
+//
+//            response.status(201);
+//            response.type("application/json");
+//            return gson.toJson(bank);
+//
+//        });
 
         get("/banks/:bankId/transfers", (request, response) -> {
             // list of transfers
