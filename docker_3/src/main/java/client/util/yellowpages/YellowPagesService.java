@@ -139,4 +139,9 @@ public class YellowPagesService implements IYellowPages {
         sl = this.GSON.fromJson(res.body().asString(), ServiceList.class);
         return sl;
     }
+
+    public String getOwnURL(){
+        this.getAndSetOurURL();
+        return ownURL;
+    }
 }
