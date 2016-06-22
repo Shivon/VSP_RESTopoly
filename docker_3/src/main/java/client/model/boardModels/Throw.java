@@ -13,15 +13,15 @@ public class Throw {
     @Expose
     private Roll roll2;
 
-    private int rollId;
+//    private int rollId;
 
-    public int getRollId() {
-        return rollId;
-    }
+//    public int getRollId() {
+//        return rollId;
+//    }
 
-    public void setRollId(int rollId) {
-        this.rollId = rollId;
-    }
+//    public void setRollId(int rollId) {
+//        this.rollId = rollId;
+//    }
 
     public Roll getRoll1() {
         return roll1;

@@ -71,8 +71,8 @@ public class BuyPlaceWindow {
                         try {
                             _brokerAdapter.buyPlace(_boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()),
                                     _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
-//                            _waitWindow.getWaitWindowUI().getSaldoTextArea().
-//                                    setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                            _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                                    setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                         } catch (UnirestException e1) {
                             e1.printStackTrace();
                         }
