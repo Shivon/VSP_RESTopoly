@@ -23,14 +23,12 @@ public class BuyLogic {
         return false;
     }
 
-//    public String getPrice(){
-////        TODO getCost
-//       return  _brokerAdapter.getPriceOfPlace(_turnToRollLogic.getCurrentField().getCost());
-//    }
+    public String getPrice() throws UnirestException {
+       return  _brokerAdapter.getPriceOfPlace(_turnToRollLogic.getCurrentField());
+    }
 
-//    public String getRent(){
-////        TODO getRent
-//        return  _brokerAdapter.getRent(_turnToRollLogic.getCurrentField().getRent());
-//    }
+    public String getRent() throws UnirestException {
+        return  _brokerAdapter.getRent(_turnToRollLogic.getCurrentField());
+    }
 
 }

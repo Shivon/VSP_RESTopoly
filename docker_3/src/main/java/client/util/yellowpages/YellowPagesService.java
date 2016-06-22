@@ -25,8 +25,8 @@ public class YellowPagesService implements IYellowPages {
     private final String OF_TYPE_URL = SERVICES_URL + "/of/type";
     private final String PORT = "4567";
     private final String PROTOCOL = "http://";
-    private final String USER = "";
-    private final String PW = "";
+    private final String USER = "abq202";
+    private final String PW = "Fwielelix1";
     private final Gson GSON;
     private String ownURL;
     private String uri;
@@ -138,5 +138,10 @@ public class YellowPagesService implements IYellowPages {
 
         sl = this.GSON.fromJson(res.body().asString(), ServiceList.class);
         return sl;
+    }
+
+    public String getOwnURL(){
+        this.getAndSetOurURL();
+        return ownURL;
     }
 }

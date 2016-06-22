@@ -1,10 +1,13 @@
 package client.view;
 
-import client.logic.GamesLogic;
-import client.logic.PlayerLogic;
-import client.logic.TurnToRollLogic;
-import client.logic.UserLogic;
+import client.adapter.BanksAdapter;
+import client.adapter.BoardsAdapter;
+import client.adapter.BrokerAdapter;
+import client.adapter.PlayerAdapter;
+import client.logic.*;
+import client.model.boardModels.Place;
 import client.model.gameModels.Player;
+import clientUI.BuyPlaceWindowUI;
 import clientUI.TurnToRollWindowUI;
 import clientUI.WaitWindowUI;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -25,20 +28,35 @@ public class TurnToRollWindow {
     private UserLogic _userLogic;
     private Player _player;
     private PlayerLogic _playerLogic;
-    private WaitWindowUI _waitWindowUI;
     private TurnToRollLogic _turnToRollLogic;
     private boolean _rolled = false;
+    private BoardsAdapter _boardsAdapter;
+    private BuyLogic _buyLogic;
+    private WaitWindow _waitWindow;
+    private BuyPlaceWindowUI _buyPlaceWindowUI;
+    private WaitLogic _waitLogic;
+    private BrokerAdapter _brokerAdapter;
+    private PlayerAdapter _playerAdapter;
+    private BanksAdapter _banksAdapter;
 
-    public TurnToRollWindow(WaitWindowUI waitWindowUI,
-                            TurnToRollWindowUI turnToRollWindowUI, PlayerLogic playerLogic, GamesLogic gamesLogic,
-                            UserLogic userLogic, TurnToRollLogic turnToRollLogic) throws UnirestException {
+    public TurnToRollWindow(TurnToRollWindowUI turnToRollWindowUI, PlayerLogic playerLogic, GamesLogic gamesLogic,
+                            UserLogic userLogic, TurnToRollLogic turnToRollLogic, BoardsAdapter boardsAdapter,
+                            BuyLogic buyLogic, WaitWindow waitWindow, BuyPlaceWindowUI buyPlaceWindowUI,
+                            WaitLogic waitLogic, BrokerAdapter brokerAdapter, PlayerAdapter playerAdapter,
+                            BanksAdapter banksAdapter) throws UnirestException {
         _turnToRollWindowUI = turnToRollWindowUI;
         _playerLogic = playerLogic;
-        _waitWindowUI = waitWindowUI;
         _gamesLogic = gamesLogic;
         _userLogic = userLogic;
         _turnToRollLogic = turnToRollLogic;
-//        _player = _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+        _boardsAdapter = boardsAdapter;
+        _buyLogic = buyLogic;
+        _waitWindow = waitWindow;
+        _buyPlaceWindowUI = buyPlaceWindowUI;
+        _waitLogic = waitLogic;
+        _brokerAdapter = brokerAdapter;
+        _playerAdapter = playerAdapter;
+        _banksAdapter = banksAdapter;
 
         registerRoll();
     }
@@ -53,21 +71,22 @@ public class TurnToRollWindow {
                         _turnToRollWindowUI.getDiceNumber().setText("" + number);
                         String fieldName = _turnToRollLogic.getFieldAfterDiceRoll().getName();
 
-                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
+                        _waitWindow.getWaitWindowUI().getWaitText().setText(_waitWindow.getWaitWindowUI().getWaitText().getText()
                                 + "\n" + "Now you are on Field: " + fieldName);
 
-//                        Place place = _boardAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
-//                        if(_buyLogic.checkPlaceIsBuyable()){
-//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
-//                        + "\n" + "You can buy "  + fieldName + " for "_buyLogic.getCost() );
-//                             new BuyPlaceWindow(buyPlaceWindowUI, waitWindow, waitLogic, gamesLogic,userLogic
-//                        , brokerAdapter, buyLogic, playerAdapter);
-//                        }else{
-//                        _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText()
-//                        + "\n" + "You have to pay "  + _buyLogic.getRent() +" rent for" + fieldName);
+                        Place place = _boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+                        if(_buyLogic.checkPlaceIsBuyable()){
+                            _waitWindow.getWaitWindowUI().getWaitText().setText(_waitWindow.getWaitWindowUI().getWaitText().getText()
+                        + "\n" + "You can buy "  + fieldName + " for " + _buyLogic.getPrice());
+                             new BuyPlaceWindow(_buyPlaceWindowUI, _waitWindow, _waitLogic, _gamesLogic, _userLogic
+                        , _brokerAdapter, _buyLogic, _playerAdapter, _banksAdapter, _boardsAdapter);
+                        }else {
+                            _waitWindow.getWaitWindowUI().getWaitText().setText(_waitWindow.getWaitWindowUI().getWaitText().getText()
+                                    + "\n" + "You have to pay " + _buyLogic.getRent() + " rent for" + fieldName);
 
-                        _rolled = true;
-                        _turnToRollWindowUI.getDiceButton().setText("Close");
+                            _rolled = true;
+                            _turnToRollWindowUI.getDiceButton().setText("Close");
+                        }
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
@@ -76,8 +95,9 @@ public class TurnToRollWindow {
                     } catch (UnirestException e1) {
                         e1.printStackTrace();
                     }
-                    _waitWindowUI.getWaitText().setText(_waitWindowUI.getWaitText().getText() + "\n Wait until your turn to roll");
-                    _waitWindowUI.getWaitText().setForeground(Color.ORANGE);
+                    _waitWindow.getWaitWindowUI().getWaitText().setText(_waitWindow.getWaitWindowUI().getWaitText().
+                            getText() + "\n Wait until your turn to roll");
+                    _waitWindow.getWaitWindowUI().getWaitText().setForeground(Color.ORANGE);
                 } else {
                     _turnToRollWindowUI.getDiceFrame().setVisible(false);
                 }

@@ -1,6 +1,8 @@
 package client.service;
 
+import client.logic.GamesLogic;
 import client.logic.TurnToRollLogic;
+import client.logic.UserLogic;
 import client.logic.WaitLogic;
 import client.model.Client;
 import client.model.gameModels.Player;
@@ -25,15 +27,20 @@ public class ClientService {
     private WaitWindow _waitWindow;
     private BuyPlaceWindow _buyPlaceWindow;
     private TurnToRollLogic _turnToRollLogic;
+    private UserLogic _userLogic;
+    private GamesLogic _gamesLogic;
 
     public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow,
-                         WaitWindow waitWindow, BuyPlaceWindow buyPlaceWindow, TurnToRollLogic turnToRollLogic) {
+                         WaitWindow waitWindow, BuyPlaceWindow buyPlaceWindow, TurnToRollLogic turnToRollLogic, UserLogic userLogic
+                            , GamesLogic gamesLogic) {
 
         _waitLogic = waitLogic;
         _turnToRollWindow = turnToRollWindow;
         _waitWindow = waitWindow;
         _buyPlaceWindow = buyPlaceWindow;
         _turnToRollLogic = turnToRollLogic;
+        _userLogic = userLogic;
+        _gamesLogic = gamesLogic;
 
         get("/client", (request, response) -> {
 //            URl: /client A service which acts as a representant of a player/client.
@@ -77,14 +84,17 @@ public class ClientService {
            _waitWindow.showGameHasStarted();
            }else if(event.getType().equals("buy")){
                _waitWindow.getWaitWindowUI().getWaitText().
-                       setText(_waitWindow.getWindowText() + "Buy: " + event.getReason());
-               _buyPlaceWindow.getBuyPlaceWindowUI().getMainFrame().setVisible(true);
+                       setText(_waitWindow.getWindowText() + "Buy: " + event.getName() + " " + event.getReason());
+               _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
            }else if(event.getType().equals("rent")){
                _waitWindow.getWaitWindowUI().getWaitText().
-                       setText(_waitWindow.getWindowText() + "Rent: " + event.getReason());
+                       setText(_waitWindow.getWindowText() + "Rent: " + event.getName() + " " + event.getReason());
+               _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
            }else if(event.getType().equals("move")){
                _waitWindow.getWaitWindowUI().getWaitText().
-                       setText(_waitWindow.getWindowText() + "Move: " + event.getReason());
+                       setText(_waitWindow.getWindowText() + "Move: " + event.getName() + " " + event.getReason());
            }
            return "";
        });
