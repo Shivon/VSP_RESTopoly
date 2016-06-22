@@ -167,8 +167,8 @@ public class BankService {
             }
 
             String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
-            String uriTo = "/banks/" + bank.getId() + "/accounts/" + transfer.getTo();
-            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + transfer.getFrom();
+            String uriTo = "/banks/" + bank.getId() + "/accounts/" + transfer.getToAccount();
+            String uriFrom = "/banks/" + bank.getId() + "/accounts/" + transfer.getFromAccount();
 
             JsonObject result = new JsonObject();
             result.addProperty("id", uriTransfer);
@@ -226,8 +226,8 @@ public class BankService {
 
             JsonObject result = new JsonObject();
             result.addProperty("id", uriTransfer);
-            result.addProperty("from", uriTo);
-            result.addProperty("to", uriFrom);
+            result.addProperty("from", uriFrom);
+            result.addProperty("to", uriTo);
             result.addProperty("amount", amount);
             result.addProperty("reason", reason);
 
@@ -361,7 +361,7 @@ public class BankService {
 //                return gson.toJson("bank not found");
 //            }
 //
-//            Transfer transfer = bankRepo.findTransferBeta(request.params(":tid"));
+//            Transfer transfer = bankRepo.findTransfer(request.params(":tid"));
 //            if (transfer == null) {
 //                response.status(404);
 //                response.type("application/json");

@@ -15,6 +15,7 @@ public class BankRepo {
     private EntityManager entityManager = Persistence.createEntityManagerFactory("bank").createEntityManager();
 
 
+
     public List<Bank> allBanks() {
         try {
             entityManager.getTransaction().begin();
@@ -67,7 +68,7 @@ public class BankRepo {
         }
     }
 
-    public Transfer findTransferBeta(String transferId) {
+    public Transfer findTransfer(String transferId) {
         try {
             entityManager.getTransaction().begin();
             Transfer transfer = entityManager.find(Transfer.class, transferId);
@@ -122,7 +123,7 @@ public class BankRepo {
             if (amount > 0) {
                 account.addSaldo(amount);
             }
-            Transfer transfer = new Transfer(bank.getDummyAccount().getId(), account.getId(), amount, reason);
+            Transfer transfer = new Transfer(bank.getDummyAccount().getId().toString(), account.getId().toString(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;
@@ -141,7 +142,7 @@ public class BankRepo {
             if (amount > 0) {
                 account.subtractSaldo(amount);
             }
-            Transfer transfer = new Transfer(account.getId(), bank.getDummyAccount().getId(), amount, reason);
+            Transfer transfer = new Transfer(account.getId().toString(), bank.getDummyAccount().getId().toString(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;
@@ -159,7 +160,7 @@ public class BankRepo {
             }
             from.subtractSaldo(amount);
             to.addSaldo(amount);
-            Transfer transfer = new Transfer(from.getId(), to.getId(), amount, reason);
+            Transfer transfer = new Transfer(from.getId().toString(), to.getId().toString(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;

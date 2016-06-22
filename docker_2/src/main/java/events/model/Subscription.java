@@ -15,9 +15,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "Subscription")
 public class Subscription {
-//    "game":"uri to the game resources this subscription belongs to",
-//    "uri": "the resource interested in the event - will be called with post",
-//    "event": "A sample event, values filled with regex to match. If all match, event matches as a whole"
     @Id
     @Column(name = "id")
     // @Expose on a field you're telling Gson to include that property into your JSON String

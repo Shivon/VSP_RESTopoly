@@ -17,13 +17,13 @@ public class Transfer {
     @Expose(serialize = false)
     private UUID id;
 
-    @Column(name = "from")
+    @Column(name = "fromAccount")
     @Expose
-    private UUID from;
+    private String fromAccount;
 
-    @Column(name = "to")
+    @Column(name = "toAccount")
     @Expose
-    private UUID to;
+    private String toAccount;
 
     @Column(name = "amount")
     @Expose
@@ -37,10 +37,10 @@ public class Transfer {
     public Transfer(){
     }
 
-    public Transfer(UUID from, UUID to, int amount, String reason) {
+    public Transfer(String fromAccount, String toAccount, int amount, String reason) {
         this.id = UUID.randomUUID();
-        this.from = from;
-        this.to = to;
+        this.fromAccount = fromAccount;
+        this.toAccount = toAccount;
         this.amount = amount;
         this.reason = reason;
     }
@@ -49,20 +49,20 @@ public class Transfer {
         return id;
     }
 
-    public UUID getFrom() {
-        return from;
+    public String getFromAccount() {
+        return fromAccount;
     }
 
-    public void setFrom(UUID from) {
-        this.from = from;
+    public void setFromAccount(String from) {
+        this.fromAccount = from;
     }
 
-    public UUID getTo() {
-        return to;
+    public String getToAccount() {
+        return toAccount;
     }
 
-    public void setTo(UUID to) {
-        this.to = to;
+    public void setToAccount(String to) {
+        this.toAccount = to;
     }
 
     public int getAmount() {
@@ -90,8 +90,8 @@ public class Transfer {
 
         if (amount != transfers.amount) return false;
         if (id != null ? !id.equals(transfers.id) : transfers.id != null) return false;
-        if (from != null ? !from.equals(transfers.from) : transfers.from != null) return false;
-        if (to != null ? !to.equals(transfers.to) : transfers.to != null) return false;
+        if (fromAccount != null ? !fromAccount.equals(transfers.fromAccount) : transfers.fromAccount != null) return false;
+        if (toAccount != null ? !toAccount.equals(transfers.toAccount) : transfers.toAccount != null) return false;
         return reason.equals(transfers.reason);
 
     }
@@ -99,8 +99,8 @@ public class Transfer {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (from != null ? from.hashCode() : 0);
-        result = 31 * result + (to != null ? to.hashCode() : 0);
+        result = 31 * result + (fromAccount != null ? fromAccount.hashCode() : 0);
+        result = 31 * result + (toAccount != null ? toAccount.hashCode() : 0);
         result = 31 * result + amount;
         result = 31 * result + reason.hashCode();
         return result;

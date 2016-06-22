@@ -10,6 +10,6 @@ public class MyMainClass {
         System.out.println("hallo");
         new BankService();
         IYellowPages yp = new YellowPagesService();
-        yp.registrateService("/banks", "bank", "bank", "A Fancy Bank Service");
+        yp.registrateService("/banks", "fancy_bank", "fancy_bank", "A Fancy Bank Service");
     }
 }

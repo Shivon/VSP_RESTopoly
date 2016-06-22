@@ -9,6 +9,6 @@ public class MyMainClass {
     public static void main(String[] args) {
         new EventService();
         IYellowPages yp = new YellowPagesService();
-        yp.registrateService("/events", "event", "event", "A Fancy Event Service");
+        yp.registrateService("/events", "fancy_event", "fancy_event", "A Fancy Event Service");
     }
 }
