@@ -6,12 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.net.URI;
 import java.util.UUID;
 
-/**
- * Created by Jana Mareike on 01.05.2016.
- */
 @Entity
 @Table(name = "Transfer")
 public class Transfer {
@@ -19,15 +15,15 @@ public class Transfer {
     @Column(name = "id")
     // @Expose on a field you're telling Gson to include that property into your JSON String
     @Expose(serialize = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "from")
     @Expose
-    private URI from;
+    private UUID from;
 
     @Column(name = "to")
     @Expose
-    private URI to;
+    private UUID to;
 
     @Column(name = "amount")
     @Expose
@@ -41,35 +37,31 @@ public class Transfer {
     public Transfer(){
     }
 
-    public Transfer(URI from, URI to, int amount, String reason) {
-        this.id = UUID.randomUUID().toString();
+    public Transfer(UUID from, UUID to, int amount, String reason) {
+        this.id = UUID.randomUUID();
         this.from = from;
         this.to = to;
         this.amount = amount;
         this.reason = reason;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public URI getFrom() {
+    public UUID getFrom() {
         return from;
     }
 
-    public void setFrom(URI from) {
+    public void setFrom(UUID from) {
         this.from = from;
     }
 
-    public URI getTo() {
+    public UUID getTo() {
         return to;
     }
 
-    public void setTo(URI to) {
+    public void setTo(UUID to) {
         this.to = to;
     }
 

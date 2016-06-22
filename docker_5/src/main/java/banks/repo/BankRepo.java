@@ -44,6 +44,7 @@ public class BankRepo {
         try {
             entityManager.getTransaction().begin();
             bank = entityManager.merge(bank);
+            System.out.println("BankID nach Merge in saveBank" + bank.getId().toString());
             entityManager.getTransaction().commit();
             System.out.println("Bank wurde gespeichert");
             return bank;
@@ -66,19 +67,7 @@ public class BankRepo {
         }
     }
 
-    public TransferBeta findTransferBeta(String transferId) {
-        try {
-            entityManager.getTransaction().begin();
-            TransferBeta transfer = entityManager.find(TransferBeta.class, transferId);
-            entityManager.getTransaction().commit();
-            return transfer;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            return null;
-        }
-    }
-
-    public Transfer findTransfers(String transferId){
+    public Transfer findTransferBeta(String transferId) {
         try {
             entityManager.getTransaction().begin();
             Transfer transfer = entityManager.find(Transfer.class, transferId);
@@ -89,6 +78,18 @@ public class BankRepo {
             return null;
         }
     }
+
+//    public Transfer findTransfers(String transferId){
+//        try {
+//            entityManager.getTransaction().begin();
+//            Transfer transfer = entityManager.find(Transfer.class, transferId);
+//            entityManager.getTransaction().commit();
+//            return transfer;
+//        } catch (Exception e) {
+//            entityManager.getTransaction().rollback();
+//            return null;
+//        }
+//    }
 
     public Account findAccounts(String accountId){
         try {
@@ -115,13 +116,13 @@ public class BankRepo {
         }
     }
 
-    public TransferBeta transferFromBankToAccount(Bank bank, Account account, int amount, String reason){
+    public Transfer transferFromBankToAccount(Bank bank, Account account, int amount, String reason){
         try {
             entityManager.getTransaction().begin();
             if (amount > 0) {
                 account.addSaldo(amount);
             }
-            TransferBeta transfer = new TransferBeta(bank.getDummyAccount().getId(), account.getId(), amount, reason);
+            Transfer transfer = new Transfer(bank.getDummyAccount().getId(), account.getId(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;
@@ -131,7 +132,7 @@ public class BankRepo {
         }
     }
 
-    public TransferBeta transferFromAccountToBank(Bank bank, Account account, int amount, String reason){
+    public Transfer transferFromAccountToBank(Bank bank, Account account, int amount, String reason){
         try {
             entityManager.getTransaction().begin();
             if (account.getSaldo() < amount ) {
@@ -140,7 +141,7 @@ public class BankRepo {
             if (amount > 0) {
                 account.subtractSaldo(amount);
             }
-            TransferBeta transfer = new TransferBeta(account.getId(), bank.getDummyAccount().getId(), amount, reason);
+            Transfer transfer = new Transfer(account.getId(), bank.getDummyAccount().getId(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;
@@ -150,7 +151,7 @@ public class BankRepo {
         }
     }
 
-    public TransferBeta transferFromAccountToAccount(Bank bank, Account from, Account to, int amount, String reason){
+    public Transfer transferFromAccountToAccount(Bank bank, Account from, Account to, int amount, String reason){
         try {
             entityManager.getTransaction().begin();
             if (from.getSaldo() < amount ) {
@@ -158,7 +159,7 @@ public class BankRepo {
             }
             from.subtractSaldo(amount);
             to.addSaldo(amount);
-            TransferBeta transfer = new TransferBeta(from.getId(), to.getId(), amount, reason);
+            Transfer transfer = new Transfer(from.getId(), to.getId(), amount, reason);
             bank.addTransfer(transfer);
             entityManager.getTransaction().commit();
             return transfer;

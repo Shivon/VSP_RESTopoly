@@ -30,7 +30,7 @@ public class Bank {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(name = "transfers")
     @Expose
-    private Set<TransferBeta> transfers;
+    private Set<Transfer> transfers;
 
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -69,7 +69,7 @@ public class Bank {
         this.accounts.remove(account);
     }
 
-    public Set<TransferBeta> getTransfers() {
+    public Set<Transfer> getTransfers() {
         return transfers;
     }
 
@@ -77,11 +77,11 @@ public class Bank {
         this.transfers = transfers;
     }
 
-    public void addTransfer(TransferBeta transfer) {
+    public void addTransfer(Transfer transfer) {
         this.transfers.add(transfer);
     }
 
-    public void deleteTransfer(TransferBeta transfer) {
+    public void deleteTransfer(Transfer transfer) {
         this.transfers.remove(transfer);
     }
 

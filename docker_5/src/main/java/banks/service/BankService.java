@@ -56,7 +56,7 @@ public class BankService {
 //            result.addProperty("transfers", bank.getTransfers().toString());
 
             bank = new Bank();
-            System.out.println("im post: " + gson.toJson(bank).toString());
+            System.out.println("im post: " + gson.toJson(bank));
             bank = bankRepo.saveBank(bank);
 
             if (bank == null) {
@@ -133,7 +133,7 @@ public class BankService {
                 return gson.toJson("bank not found");
             }
 
-            Set<TransferBeta> transfers = bank.getTransfers();
+            Set<Transfer> transfers = bank.getTransfers();
 
             System.out.println("" + transfers.toString());
 
@@ -152,9 +152,9 @@ public class BankService {
             }
 
             String transferId = request.params(":transferId");
-            Set<TransferBeta> transfers = bank.getTransfers();
-            TransferBeta transfer = null;
-            for (TransferBeta t : transfers) {
+            Set<Transfer> transfers = bank.getTransfers();
+            Transfer transfer = null;
+            for (Transfer t : transfers) {
                 if (t.getId().toString().equals(transferId)) {
                     transfer = t;
                 }
@@ -218,7 +218,7 @@ public class BankService {
                 return gson.toJson("you need to enter a reason as query param for the transfer");
             }
 
-            TransferBeta transfer = bankRepo.transferFromAccountToAccount(bank, accountFrom, accountTo, amount, reason);
+            Transfer transfer = bankRepo.transferFromAccountToAccount(bank, accountFrom, accountTo, amount, reason);
 
             String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
             String uriTo = "/banks/" + bank.getId() + "/accounts/" + accountTo.getId();
@@ -266,7 +266,7 @@ public class BankService {
                 return gson.toJson("you need to enter a reason as query param for the transfer");
             }
 
-            TransferBeta transfer = bankRepo.transferFromBankToAccount(bank, account, amount, reason);
+            Transfer transfer = bankRepo.transferFromBankToAccount(bank, account, amount, reason);
 
             String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
             String uriFrom = "/banks/" + bank.getId() + "/accounts/" + bank.getDummyAccount().getId();
@@ -315,7 +315,7 @@ public class BankService {
                 return gson.toJson("you need to enter a reason as query param for the transfer");
             }
 
-            TransferBeta transfer = bankRepo.transferFromAccountToBank(bank, account, amount, reason);
+            Transfer transfer = bankRepo.transferFromAccountToBank(bank, account, amount, reason);
 
             String uriTransfer = "/banks/" + bank.getId() + "/transfers/" + transfer.getId();
             String uriFrom = "/banks/" + bank.getId() + "/accounts/" + account.getId();
@@ -361,7 +361,7 @@ public class BankService {
 //                return gson.toJson("bank not found");
 //            }
 //
-//            TransferBeta transfer = bankRepo.findTransferBeta(request.params(":tid"));
+//            Transfer transfer = bankRepo.findTransferBeta(request.params(":tid"));
 //            if (transfer == null) {
 //                response.status(404);
 //                response.type("application/json");
