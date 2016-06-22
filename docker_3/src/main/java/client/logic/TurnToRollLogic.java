@@ -2,10 +2,7 @@ package client.logic;
 
 import client.adapter.DiceAdapter;
 import client.adapter.PlayerAdapter;
-import client.model.Dice;
-import client.model.Event;
-import client.model.boardModels.Roll;
-import com.jayway.restassured.response.Response;
+import client.model.boardModels.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -37,9 +34,25 @@ public class TurnToRollLogic {
         return diceRoll1Number + diceRoll2Number;
     }
 
-    public Response getEventAfterDiceRoll() throws UnirestException {
-       return  _diceAdapter.postDiceRollOnBoard(_gamesLogic.getCurrentGame(),
-                _userLogic.getCurrentUser(), _diceRoll1, _diceRoll2);
+    public Place getFieldAfterDiceRoll() throws UnirestException {
+         Board board = _diceAdapter.postDiceRollOnBoard(_gamesLogic.getCurrentGame(),
+                         _userLogic.getCurrentUser(), _diceRoll1, _diceRoll2);
+        for(Field field : board.getFields()){
+            for(String pawn : field.getPawns()){
+                if(pawn.equals(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getPawn())){
+                    return field.getPlace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setCurrentField(){
+
+    }
+
+    public Place getCurrentField() throws UnirestException {
+       return getFieldAfterDiceRoll();
     }
 
 //    public void setPlayerToReady() throws UnirestException {

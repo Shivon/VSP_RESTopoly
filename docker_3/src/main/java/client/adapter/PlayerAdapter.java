@@ -1,5 +1,6 @@
 package client.adapter;
 
+import client.EventSubscriptions;
 import client.logic.GamesLogic;
 import client.logic.UserLogic;
 import client.model.Accounts;
@@ -55,13 +56,8 @@ public class PlayerAdapter {
 
         System.out.println("PLAYER Im POST : " + _player.getPawn());
 
-//        if(getPlayers(_game).length == 0){
             Unirest.post(_ipAdresses.gamesIP()+ _game.getUri().replaceFirst("/games" , "") + "/players")
-                    .body(this.gson.toJson( _player)).asString().getBody();
-//        }else {
-//            Unirest.post(_ipAdresses.gamesIP() + _game.getUri().replaceFirst("/games", "") + "/players")
-//                    .body(this.gson.toJson(_player)).asJson().getBody();
-//        }
+                    .body(this.gson.toJson( _player)).asString();
     }
 
 
@@ -179,6 +175,8 @@ public class PlayerAdapter {
     public String makeGetOnPlayers(String postfix) throws UnirestException {
         return Unirest.get(_ipAdresses.gamesIP() + "/players" + postfix).asString().getBody();
     }
+
+    public IPAdresses getIPAdresses(){return _ipAdresses;}
 }
 
 //    public Game[] dtoToEntities(GameDTO[] gameDTOs) throws UnirestException {

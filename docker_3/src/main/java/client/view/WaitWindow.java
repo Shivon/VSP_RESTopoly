@@ -24,7 +24,6 @@ public class WaitWindow {
         _gamesLogic = gamesLogic;
         _userLogic = userLogic;
 //        setSaldo();
-        showGameHasStarted();
     }
 
     public void showEvent(Event event){

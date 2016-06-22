@@ -4,6 +4,8 @@ import client.adapter.*;
 import client.logic.*;
 import client.model.Client;
 import client.model.User;
+import client.model.boardModels.Place;
+import client.model.gameModels.Player;
 import client.service.ClientService;
 import client.view.*;
 import clientUI.*;
@@ -36,7 +38,7 @@ public class MyMainClass {
         GamesLogic gamesLogic = new GamesLogic(gamesAdapter, userLogic, ipAdresses);
         PlayerLogic playerLogic = new PlayerLogic(playerAdapter, gamesLogic, userLogic);
         TurnToRollLogic turnToRollLogic = new TurnToRollLogic(diceAdapter, playerAdapter, gamesLogic, userLogic);
-//        BuyPlaceLogic buyPlaceLogic = new BuyPlaceLogic();
+        BuyLogic buyLogic = new BuyLogic(brokerAdapter, turnToRollLogic);
 
         UserWindowUI userWindowUI = new UserWindowUI();
         GamesWindowUI gamesWindowUI = new GamesWindowUI();
@@ -45,20 +47,21 @@ public class MyMainClass {
         StartGameWindowUI startGameWindowUI = new StartGameWindowUI();
         WaitWindowUI waitWindowUI = new WaitWindowUI();
         TurnToRollWindowUI turnToRollWindowUI = new TurnToRollWindowUI();
-//        BuyPlaceWindowUI buyPlaceWindowUI = new BuyPlaceWindowUI();
+        BuyPlaceWindowUI buyPlaceWindowUI = new BuyPlaceWindowUI();
 
         TurnToRollWindow turnToRollWindow = new TurnToRollWindow(waitWindowUI, turnToRollWindowUI,
                playerLogic, gamesLogic, userLogic, turnToRollLogic);
         WaitWindow waitWindow = new WaitWindow(waitWindowUI, waitLogic, gamesLogic, userLogic);
         StartGameWindow startGameWindow = new StartGameWindow(gamesLogic, startGameWindowUI, waitWindow, waitLogic, userLogic);
         PlayerLogInWindow playerLogInWindow = new PlayerLogInWindow(playerLoginWindowUI, userLogic,
-                playerLogic, startGameWindow, gamesLogic);
+                playerLogic, waitWindow, gamesLogic);
         NewGameWindow newGameWindow = new NewGameWindow(newGameWindowUI, playerLogInWindow, gamesLogic, playerLogic);
         GamesWindow gamesWindow = new GamesWindow(gamesWindowUI, gamesLogic, newGameWindow, playerLogInWindow, playerLogic);
-//        BuyPlaceWindow buyPlaceWindow = new BuyPlaceWindow();
+        BuyPlaceWindow buyPlaceWindow = new BuyPlaceWindow(buyPlaceWindowUI, waitWindow, waitLogic, gamesLogic,userLogic
+                , brokerAdapter, buyLogic, playerAdapter);
 
 
-        ClientService clientService = new ClientService(waitLogic, turnToRollWindow, waitWindow);
+        ClientService clientService = new ClientService(waitLogic, turnToRollWindow, waitWindow, buyPlaceWindow, turnToRollLogic);
 
         new UserWindow(userWindowUI, userLogic, gamesWindow);
     }

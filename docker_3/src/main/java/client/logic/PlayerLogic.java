@@ -1,7 +1,6 @@
 package client.logic;
 
 import client.adapter.PlayerAdapter;
-import client.model.User;
 import client.model.gameModels.Game;
 import client.model.gameModels.Player;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -15,11 +14,9 @@ import java.util.*;
 public class PlayerLogic {
 
     private List<String> _pawnList;
-//    private String _playerPawn;
     private PlayerAdapter _playerAdapter;
     private GamesLogic _gamesLogic;
     private UserLogic _userLogic;
-    private Player _player;
 
     public PlayerLogic(PlayerAdapter playerAdapter, GamesLogic gamesLogic, UserLogic userLogic ){
         _pawnList = new ArrayList<>();
@@ -76,10 +73,13 @@ public class PlayerLogic {
     public void registerPlayer(String playerPawn) throws UnirestException {
         System.out.println("PLAYERPAWN IM REGISTER: " + playerPawn + " "  + _gamesLogic.getCurrentGame().getName() + "  " + _userLogic.getCurrentUser().getName());
         _playerAdapter.postPlayer(playerPawn, _gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
+//  TODO Events
+//      new EventSubscriptions(_playerAdapter.getIPAdresses(), _gamesLogic, _userLogic);
         System.out.println(_playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 
     public void setPlayerToReady() throws UnirestException {
-        _playerAdapter.putPlayerReady(_gamesLogic.getCurrentGame(), _player);
+        _playerAdapter.putPlayerReady(_gamesLogic.getCurrentGame(),
+                _playerAdapter.getPlayer(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 }

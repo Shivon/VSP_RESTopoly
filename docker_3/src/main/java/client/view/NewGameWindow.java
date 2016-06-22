@@ -38,15 +38,14 @@ public class NewGameWindow {
             public void actionPerformed(ActionEvent e) {
                 if (!_newGameWindowUI.getLogInArea().getText().isEmpty()) {
                     _gameName = _newGameWindowUI.getLogInArea().getText();
-//                    try {
-//                        for (Game game : _gameLogic.getGames()) {
-//                            if (game.getName().equals(_gameName)) {
-//                                JOptionPane.showMessageDialog(null, "game name not available", "choose an other name!",
-//                                        JOptionPane.ERROR_MESSAGE);
-//                                return;
-//                            }
-//                        }
-//                    TODO Gamenames werden i Games gecheckt, was kommt zurück?
+                    try {
+                        for (Game game : _gameLogic.getGames()) {
+                            if (game.getName().equals(_gameName)) {
+                                JOptionPane.showMessageDialog(null, "game name not available", "choose an other name!",
+                                        JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        }
                         try {
                             _gameLogic.createNewGame(_gameName);
                             _newGameWindowUI.getLogInFrame().setVisible(false);
@@ -56,9 +55,9 @@ public class NewGameWindow {
                         } catch (UnirestException e1) {
                             e1.printStackTrace();
                         }
-//                    } catch (UnirestException e1) {
-//                        e1.printStackTrace();
-//                    }
+                    } catch (UnirestException e1) {
+                        e1.printStackTrace();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "No game name", "no game name",
                             JOptionPane.ERROR_MESSAGE);

@@ -1,20 +1,20 @@
 package client.service;
 
-import client.adapter.UserAdapter;
-import client.model.gameModels.Player;
+import client.logic.TurnToRollLogic;
 import client.logic.WaitLogic;
+import client.model.Client;
+import client.model.gameModels.Player;
+import client.repo.ClientRepo;
+import client.view.BuyPlaceWindow;
 import client.view.TurnToRollWindow;
 import client.view.WaitWindow;
 import com.google.gson.Gson;
-import client.model.Client;
-import client.repo.ClientRepo;
 
-import java.awt.*;
-
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
- * Created by jana on 030.04.16.
+ * Created by jana on 30.04.16.
  */
 public class ClientService {
     private Gson gson = new Gson();
@@ -23,17 +23,17 @@ public class ClientService {
     private WaitLogic _waitLogic;
     private TurnToRollWindow _turnToRollWindow;
     private WaitWindow _waitWindow;
+    private BuyPlaceWindow _buyPlaceWindow;
+    private TurnToRollLogic _turnToRollLogic;
 
-//    public void setWaitLogic(WaitLogic logic) {
-//        this._waitLogic = logic;
-//    }
-
-    public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow, WaitWindow waitWindow) {
+    public ClientService(WaitLogic waitLogic, TurnToRollWindow turnToRollWindow,
+                         WaitWindow waitWindow, BuyPlaceWindow buyPlaceWindow, TurnToRollLogic turnToRollLogic) {
 
         _waitLogic = waitLogic;
         _turnToRollWindow = turnToRollWindow;
         _waitWindow = waitWindow;
-
+        _buyPlaceWindow = buyPlaceWindow;
+        _turnToRollLogic = turnToRollLogic;
 
         get("/client", (request, response) -> {
 //            URl: /client A service which acts as a representant of a player/client.
@@ -69,18 +69,23 @@ public class ClientService {
         });
 
        post("/client/event", (request, response) -> {
-//           TODO
+//           TODO checken, ob es geht
 //           inform a player about a new event
-                   Event event = gson.fromJson(request.body(), Event.class);
+           client.model.boardModels.Event event = gson.fromJson(request.body(), client.model.boardModels.Event.class);
 
-//           if(event.getName().equals("Game has started"){
-//           new WaitLogic;
-//           startGameWundow.handleGameStartPost();
-//           close startGameWindow;
-//           }else if(event.getName().equals("Place to buy"){
-//           _buyPlaceWindow.getBuyPlaceWindowUI().getMainFrame().setVisible(true);
-//           }else{
-           _waitWindow.showEvent(event);
+           if(event.getType().equals("start")){
+           _waitWindow.showGameHasStarted();
+           }else if(event.getType().equals("buy")){
+               _waitWindow.getWaitWindowUI().getWaitText().
+                       setText(_waitWindow.getWindowText() + "Buy: " + event.getReason());
+               _buyPlaceWindow.getBuyPlaceWindowUI().getMainFrame().setVisible(true);
+           }else if(event.getType().equals("rent")){
+               _waitWindow.getWaitWindowUI().getWaitText().
+                       setText(_waitWindow.getWindowText() + "Rent: " + event.getReason());
+           }else if(event.getType().equals("move")){
+               _waitWindow.getWaitWindowUI().getWaitText().
+                       setText(_waitWindow.getWindowText() + "Move: " + event.getReason());
+           }
            return "";
        });
     }
