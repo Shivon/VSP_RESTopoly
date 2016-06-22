@@ -19,7 +19,6 @@ public class BankService {
     private BankRepo bankRepo = new BankRepo();
     private Bank bank;
     private List<Bank> bankList;
-    private Account dummyBankAccount = new Account();
 
     public BankService() {
         System.out.println("hallo2");
