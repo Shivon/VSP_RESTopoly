@@ -40,7 +40,7 @@ public class UserService {
                 return "";
             }
 
-            if (this.usersBL.checkForExistingUser(user.getNameId())) {
+            if (this.usersBL.checkForExistingUser(user.getName())) {
                 res.status(401);
                 res.type("application/json");
                 return "";

@@ -38,7 +38,7 @@ public class UserRepo {
     }
 
     public boolean userExists(String nameId) {
-        return this.userList.stream().anyMatch(u -> u.getNameId().equals(nameId));
+        return this.userList.stream().anyMatch(u -> u.getName().equals(nameId));
     }
 
     /*private EntityManager entityManager = PersistenceService.getEntityManager();
