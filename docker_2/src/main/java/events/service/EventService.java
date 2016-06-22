@@ -1,13 +1,19 @@
 package events.service;
 
 import com.google.gson.Gson;
+import com.jayway.restassured.response.Response;
 import events.model.Event;
+import events.model.Subscription;
 import events.repo.EventRepo;
 
 import java.net.URI;
 import java.util.List;
 
+import static com.jayway.restassured.RestAssured.given;
 import static spark.Spark.*;
+
+//import com.mashape.unirest.http.Unirest;
+//import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
  * Created by marjan on 07.04.16.
@@ -105,16 +111,25 @@ public class EventService {
             if (player != null) { playerUri = new URI(player); }
 
             event = new Event(gameUri, type, name, reason, resourceUri, playerUri);
-            System.out.println(gson.toJson(event).toString());
+            System.out.println(gson.toJson(event));
             event = eventRepo.saveEvent(event);
 
             if (event == null) {
                 response.status(500);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Event not saved");
             }
 
             response.status(201);
+
+            List<Subscription> subscriptions = eventRepo.findSubscriptionsFor(event);
+            for (Subscription subscription : subscriptions) {
+                Response res = sendEventToSubscriber(subscription.getInterestedResource(), event);
+                if (res.getStatusCode() != 201 || res.getStatusCode() != 200) {
+                    response.status(500);
+                }
+            }
+
             response.type("application/json");
             return gson.toJson(event);
         });
@@ -135,5 +150,38 @@ public class EventService {
             response.status(200);
             return gson.toJson("wurde gelöscht");
         });
+
+        post("/events/subscriptions", (request, response) -> {
+            URI gameUri = new URI(request.queryParams("game"));
+            URI resourceUri = new URI(request.queryParams("uri"));
+            String eventType = request.queryParams("event").toLowerCase();
+
+            Subscription subscription = new Subscription(gameUri, resourceUri, eventType);
+            subscription = eventRepo.saveSubscription(subscription);
+
+            if (subscription == null) {
+                response.status(500);
+                response.type("application/json");
+                return gson.toJson("Subscription not saved");
+            }
+
+            response.status(201);
+            response.type("application/json");
+            return gson.toJson(subscription);
+        });
+    }
+
+    private Response sendEventToSubscriber(URI subscriber, Event event) {
+        return
+                given().
+                        queryParam("id", "/events/" + event.getId()).
+                        queryParam("game", event.getGame().toString()).
+                        queryParam("type", event.getType()).
+                        queryParam("name", event.getName()).
+                        queryParam("reason", event.getReason()).
+                        queryParam("resource", event.getResource().toString()).
+                        queryParam("player", event.getPlayer().toString()).
+                when().
+                        post(subscriber);
     }
 }

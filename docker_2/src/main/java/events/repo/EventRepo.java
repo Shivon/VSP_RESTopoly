@@ -1,11 +1,14 @@
 package events.repo;
 
 import events.model.Event;
+import events.model.Subscription;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by marjan on 07.04.16.
  */
@@ -32,12 +35,37 @@ public class EventRepo {
         }
     }
 
+    public List<Subscription> allSubscriptions() {
+        try {
+            entityManager.getTransaction().begin();
+            @SuppressWarnings("unchecked")
+            List<Subscription> subscriptions = entityManager.createQuery("select s from Subscription s").getResultList();
+            entityManager.getTransaction().commit();
+            return subscriptions;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return null;
+        }
+    }
+
     public Event findEvent(String id) {
         try {
             entityManager.getTransaction().begin();
             Event event = entityManager.find(Event.class, id);
             entityManager.getTransaction().commit();
             return event;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return null;
+        }
+    }
+
+    public List<Subscription> findSubscriptionsFor(Event event) {
+        try {
+            entityManager.getTransaction().begin();
+            List<Subscription> matchingSubscriptions = this.allSubscriptions().stream().filter(subscription -> subscription.getEventType().equals(event.getType())).collect(Collectors.toList());
+            entityManager.getTransaction().commit();
+            return matchingSubscriptions;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             return null;
@@ -91,6 +119,19 @@ public class EventRepo {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        }
+    }
+
+    public Subscription saveSubscription(Subscription subscription) {
+        try {
+            entityManager.getTransaction().begin();
+            subscription = entityManager.merge(subscription);
+            entityManager.getTransaction().commit();
+            return subscription;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            System.out.println("Subscription konnte nicht gespeichert werden");
+            return null;
         }
     }
 }

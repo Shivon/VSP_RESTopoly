@@ -28,7 +28,6 @@ public class Event {
     private String type;
 
     @Column(name = "name")
-
     @Expose
     private String name;
 
