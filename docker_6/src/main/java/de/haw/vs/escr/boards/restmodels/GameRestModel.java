@@ -17,8 +17,8 @@ public class GameRestModel {
         return String.format("%s/%s", this.path, this.COMPONENTS);
     }
 
-    public String getTurnRoute() {
-        return String.format("%s/%s", this.path, this.TURN);
+    public String getTurnRoute(int gameId) {
+        return String.format("%s/%s/%s", this.path, gameId, this.TURN);
     }
 
     public String getServicesRoute() {

@@ -76,6 +76,14 @@ public class BoardServiceBusinessLogic {
         return paths;
     }
 
+    private Paths getComponentsFromGames(GameRestModel grm) {
+        log.info(" Trying get() on: " + grm.getServicesRoute());
+        Response res = given().get(grm.getComponentsRoute());
+        log.info(" Response: " + res.body().asString());
+        Paths paths = gson.fromJson(res.body().asString(), Paths.class);
+        return paths;
+    }
+
     public List<Field> initFields(Board b) {
         BrokerRestModel brm = null;
         if(b.getPaths() != null && b.getPaths().getBroker() != null){
@@ -92,10 +100,10 @@ public class BoardServiceBusinessLogic {
 
             //create new place
             Place place = new Place();
-            place.setUri(b.getUri() + "/places/" + f.getFieldId());
+            place.setUri(b.getUri() + "/places/" + i);
             place.setName(fieldNames.getGermanNames().get(i));
             place.setBrokerURI(this.brokerURI);
-            place.setPlaceId(f.getFieldId());
+            place.setPlaceId(i);
             placeRepo.savePlace(place);
 
             //set place on field
@@ -246,6 +254,8 @@ public class BoardServiceBusinessLogic {
         this.pawnRepo.deletePawn(pawn);
     }
 
+
+    //Returns the board, because the client gets the events from event manager
     public Board movePawn(Pawn pawn, Move move, Board board) {
         Place currPlace = this.getPlaceByPlaceURI(pawn.getPlaceURI());
         int newPlaceId = (currPlace.getPlaceId() + move.getNumber()) % MAX_FIELDS;
@@ -261,20 +271,8 @@ public class BoardServiceBusinessLogic {
             log.info(" Trying post() on: " + brm.getVisitRoute(newPlaceId) + " with body: " + pawn.getPawnURI());
             Response res = given().body(pawn.getPawnURI()).post(brm.getVisitRoute(newPlaceId));
             log.info(" Response from post on Broker: " + res.body().asString());
-            //EventsDTO dto = gson.fromJson(res.body().asString(), EventsDTO.class);
-            //RollEventsDTO rollEventsDTO = new RollEventsDTO();
-            //rollEventsDTO.setEvents(dto.getEventsAsDto());
         }
         return this.findBoardByGameURI(board.getGameURI());
-/*        EventDTO eventDTO = new EventDTO();
-        eventDTO.setName("Error Event");
-        eventDTO.setUri("/error/event");
-        eventDTO.setAction("error");
-        eventDTO.setReason("Event created by Boards, because Broker URI was not set. Broker URI: " + board.getPaths().getBroker());
-        ArrayList<EventDTO> eventDTOs = new ArrayList<>();
-        eventDTOs.add(eventDTO);
-        RollEventsDTO reDTO = new RollEventsDTO();
-        reDTO.setEvents(eventDTOs);*/
     }
 
     public Board movePawn(Pawn pawn, Throw thrw, Board board) {
@@ -289,12 +287,17 @@ public class BoardServiceBusinessLogic {
 
     private boolean turnOfPawn(Board board, Pawn p) {
         GameRestModel grm = new GameRestModel(board.getPaths().getGame());
-        log.info(" Trying get() on: " + grm.getTurnRoute());
-        Response res = given().get(grm.getTurnRoute());
-        log.info(" Response: " + res.body().asString());
-        PlayerDTO playerDTO = gson.fromJson(res.body().asString(), PlayerDTO.class);
-        if (playerDTO.getPawn().equals(p.getPawnURI())) return true;
-        return false;
+        log.info("Trying get() on: " + grm.getTurnRoute(board.getBoardId()));
+        Response res = given().get(grm.getTurnRoute(board.getBoardId()));
+        log.info("Response: " + res.body().asString());
+        try {
+            PlayerDTO playerDTO = gson.fromJson(res.body().asString(), PlayerDTO.class);
+            if (playerDTO.getPawn().equals(p.getPawnURI())) return true;
+            return false;
+        } catch (Exception e) {
+            log.info("player does not hold mutex");
+            return false;
+        }
     }
 
     public Place findPlaceByPlaceId(String placeId, Board b) {

@@ -109,7 +109,7 @@ public class BoardService {
             YellowPagesService yp = new YellowPagesService();
             Service games = yp.findServiceByName("fancy_games");
             try {
-                gameRestModel = new GameRestModel(new URL(games.getUri()).toString());
+                gameRestModel = new GameRestModel("http://" + new URL(games.getUri()).getAuthority().toString());
             } catch (Exception e) {
                 log.error("Failed to init games IP");
             }
@@ -160,7 +160,7 @@ public class BoardService {
                 return null;
             }
 
-            return board.toBoardDTO();
+            return gson.toJson(board.toBoardDTO());
         });
 
         //<editor-fold desc="/boards/:gameId/pawns/:pawnId">
