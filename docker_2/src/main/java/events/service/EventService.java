@@ -1,6 +1,7 @@
 package events.service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jayway.restassured.response.Response;
 import events.model.Event;
 import events.model.Subscription;
@@ -39,12 +40,24 @@ public class EventService {
             if (event == null) {
                 response.status(500);
                 response.type("application/json");
-                return "";
+                return gson.toJson("Event not found");
             }
+
+            String uriEvent = "/events/" + event.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriEvent);
+
+            result.addProperty("game", event.getGame().toString());
+            result.addProperty("type", event.getType());
+            result.addProperty("name", event.getName());
+            result.addProperty("reason", event.getReason());
+            result.addProperty("resource", event.getResource().toString());
+            result.addProperty("player", event.getPlayer().toString());
 
             response.status(200);
             response.type("application/json");
-            return gson.toJson(event);
+            return result;
         });
 
         get("/events", (request, response) -> {
@@ -86,37 +99,35 @@ public class EventService {
 //            }
 //            String id = "/events/" + event.getName().toLowerCase();
 //            event.setId(id);
+//
+//            String[] requiredParams = {"game", "type", "name", "reason"};
+//            for (int i = 0; i < requiredParams.length; i++) {
+//                if (request.queryParams(requiredParams[i]) == null) {
+//                    response.status(422);
+//                    response.type("application/json");
+//                    return gson.toJson("Param(s) missing, require \"game\", \"type\", \"name\", \"reason\"");
+//                }
+//            }
+//            String game = request.queryParams("game");
+//            String type = request.queryParams("type").toLowerCase();
+//            String name = request.queryParams("name").toLowerCase();
+//            String reason = request.queryParams("reason").toLowerCase();
+//
+//            URI gameUri = new URI(game);
+//
+//            // Optional params
+//            String resource = request.queryParams("resource");
+//            String player = request.queryParams("player");
+//            URI resourceUri = null;
+//            URI playerUri = null;
+//
+//            if (resource != null) { resourceUri = new URI(resource); }
+//            if (player != null) { playerUri = new URI(player); }
+//
+//            event = new Event(gameUri, type, name, reason, resourceUri, playerUri);
 
+            Event event = this.gson.fromJson(request.body(), Event.class);
 
-
-            // TODO
-//            EventDTO event = this.gson.fromJson(request.body(), EventDTO.class);
-
-            String[] requiredParams = {"game", "type", "name", "reason"};
-            for (int i = 0; i < requiredParams.length; i++) {
-                if (request.queryParams(requiredParams[i]) == null) {
-                    response.status(422);
-                    response.type("application/json");
-                    return gson.toJson("Param(s) missing, require \"game\", \"type\", \"name\", \"reason\"");
-                }
-            }
-            String game = request.queryParams("game");
-            String type = request.queryParams("type").toLowerCase();
-            String name = request.queryParams("name").toLowerCase();
-            String reason = request.queryParams("reason").toLowerCase();
-
-            URI gameUri = new URI(game);
-
-            // Optional params
-            String resource = request.queryParams("resource");
-            String player = request.queryParams("player");
-            URI resourceUri = null;
-            URI playerUri = null;
-
-            if (resource != null) { resourceUri = new URI(resource); }
-            if (player != null) { playerUri = new URI(player); }
-
-            event = new Event(gameUri, type, name, reason, resourceUri, playerUri);
             System.out.println(gson.toJson(event));
             event = eventRepo.saveEvent(event);
 
@@ -136,8 +147,20 @@ public class EventService {
                 }
             }
 
+            String uriEvent = "/events/" + event.getId();
+
+            JsonObject result = new JsonObject();
+            result.addProperty("id", uriEvent);
+
+            result.addProperty("game", event.getGame().toString());
+            result.addProperty("type", event.getType());
+            result.addProperty("name", event.getName());
+            result.addProperty("reason", event.getReason());
+            result.addProperty("resource", event.getResource().toString());
+            result.addProperty("player", event.getPlayer().toString());
+
             response.type("application/json");
-            return gson.toJson(event);
+            return result;
         });
 
         delete("/events", (request, response) -> {
