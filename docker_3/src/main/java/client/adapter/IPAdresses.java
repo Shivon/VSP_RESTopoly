@@ -21,7 +21,7 @@ public class IPAdresses {
 
     public String eventsIP() { return yp.findURIByServiceName("fancy_event");}
 
-    public String banksIP() { return  yp.findURIByServiceName("fancy_banks");}
+    public String banksIP() { return  yp.findURIByServiceName("fancy_bank");}
 //    public String banksIP(){ return "http://172.18.0.41:4567/banks";}
 
     public String boardsIP() { return yp.findURIByServiceName("fancy_boards");}

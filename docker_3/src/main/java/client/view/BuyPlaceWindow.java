@@ -55,26 +55,26 @@ public class BuyPlaceWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
 //      TODO
-                try {
-                    if ((_banksAdapter.getAccount(_userLogic.getCurrentUser(), _gamesLogic.getCurrentGame()).getSaldo()
-                            - _boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getValue()) < 0) {
-                        _waitWindow.getWaitWindowUI().getWaitText().
-                                setText("You have not enough money!");
-                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
-                    } else {
-                        try {
-                            _brokerAdapter.buyPlace(_boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()),
-                                    _playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
-                            _waitWindow.getWaitWindowUI().getSaldoTextArea().
-                                    setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
-                        } catch (UnirestException e1) {
-                            e1.printStackTrace();
-                        }
-                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
-                    }
-                } catch (UnirestException e1) {
-                    e1.printStackTrace();
-                }
+//                try {
+//                    if ((_banksAdapter.getAccount(_userLogic.getCurrentUser(), _gamesLogic.getCurrentGame()).getSaldo()
+//                            - _boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()).getValue()) < 0) {
+//                        _waitWindow.getWaitWindowUI().getWaitText().
+//                                setText("You have not enough money!");
+//                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
+//                    } else {
+//                        try {
+//                            _brokerAdapter.buyPlace(_boardsAdapter.getCurrentPlace(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()),
+//                                    _playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+//                            _waitWindow.getWaitWindowUI().getSaldoTextArea().
+//                                    setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+//                        } catch (UnirestException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                        _buyPlaceWindowUI.getMainFrame().setVisible(false);
+//                    }
+//                } catch (UnirestException e1) {
+//                    e1.printStackTrace();
+//                }
             }
         });
     }

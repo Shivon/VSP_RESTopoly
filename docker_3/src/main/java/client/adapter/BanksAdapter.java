@@ -58,6 +58,7 @@ public class BanksAdapter {
         String bankString = _game.getComponents().getBank();
 
         System.out.println(bankString);
+        System.out.println("PLAYER ACCOUNT: " + _player.getAccount());
         String accountString = Unirest.get(bankString + _player.getAccount()).asString().getBody();
 
         Accounts account = gson.fromJson(accountString, Accounts.class);
