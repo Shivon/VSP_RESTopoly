@@ -76,8 +76,8 @@ public class PlayerLogic {
         System.out.println("PLAYERPAWN IM REGISTER: " + playerPawn + " "  + _gamesLogic.getCurrentGame().getName() + "  " + _userLogic.getCurrentUser().getName());
         _playerAdapter.postPlayer(playerPawn, _gamesLogic.getCurrentGame(), _userLogic.getCurrentUser());
 //  TODO Events
-//      new EventSubscriptions(_playerAdapter.getIPAdresses(), _gamesLogic, _userLogic);
-//        System.out.println(_playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+      new EventSubscriptions(_playerAdapter.getIPAdresses(), _gamesLogic, _userLogic);
+        System.out.println(_playerAdapter.findPlayerByUser(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
     }
 
     public void setPlayerToReady() throws UnirestException {

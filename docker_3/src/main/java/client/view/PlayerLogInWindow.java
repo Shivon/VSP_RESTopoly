@@ -58,8 +58,8 @@ public class PlayerLogInWindow {
 //                            just 6 players possible, so no start Window
 //                            _startGameWindow.getStartGameWindowUI().getStartGameFrame().setVisible(true);
 //TODO Banks
-//                           _waitWindow.getWaitWindowUI().getSaldoTextArea().
-//                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+                           _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                            setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
                            _waitWindow.getWaitWindowUI().getWaitFrame().setVisible(true);
                         }
                     } catch (UnirestException e1) {

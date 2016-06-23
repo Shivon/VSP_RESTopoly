@@ -85,13 +85,13 @@ public class ClientService {
            }else if(event.getType().equals("buy")){
                _waitWindow.getWaitWindowUI().getWaitText().
                        setText(_waitWindow.getWindowText() + "Buy: " + event.getName() + " " + event.getReason());
-//               _waitWindow.getWaitWindowUI().getSaldoTextArea().
-//                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+               _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
            }else if(event.getType().equals("rent")){
                _waitWindow.getWaitWindowUI().getWaitText().
                        setText(_waitWindow.getWindowText() + "Rent: " + event.getName() + " " + event.getReason());
-//               _waitWindow.getWaitWindowUI().getSaldoTextArea().
-//                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
+               _waitWindow.getWaitWindowUI().getSaldoTextArea().
+                       setText("" + _waitLogic.getSaldo(_gamesLogic.getCurrentGame(), _userLogic.getCurrentUser()));
            }else if(event.getType().equals("move")){
                _waitWindow.getWaitWindowUI().getWaitText().
                        setText(_waitWindow.getWindowText() + "Move: " + event.getName() + " " + event.getReason());
