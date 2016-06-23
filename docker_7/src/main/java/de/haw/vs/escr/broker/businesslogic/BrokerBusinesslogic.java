@@ -138,13 +138,15 @@ public class BrokerBusinesslogic {
             PlayerDTO playerDto = this.getPlayer(player);
 
             //Start Bank Transaction
-            TransactionDTO transDto = this.startNewBankTransaction(pDto.getBank());
+            //TransactionDTO transDto = this.startNewBankTransaction(pDto.getBank());
 
             //Pay or dont
             BankRestModel brm = new BankRestModel(pDto.getBank());
             logger.info("POST '" + brm.getFromRoute(gameId, player, place.getValue()) + "'");
-            Response res = given().queryParam("transaction", transDto.getId()).post(brm.getFromRoute(gameId, player, place.getValue()));
+            Response res = given().post(brm.getFromRoute(gameId, playerDto.getAccount(), place.getValue()));
             logger.info("Response was: " + res.body().asString());
+            logger.info("Response status: " + res.getStatusCode());
+            if (res.getStatusCode() != 201) return null;
 
             EventDTO eDto = new EventDTO();
             eDto.setGame("/games/" + gameId);
@@ -231,13 +233,16 @@ public class BrokerBusinesslogic {
         
         if (this.hasOwner(place)) {
             if (place.getOwner() != player) {
-                TransactionDTO transDto = this.startNewBankTransaction(pDto.getBank());
+                //TransactionDTO transDto = this.startNewBankTransaction(pDto.getBank());
+                PlayerDTO playerOwner = this.getPlayer(place.getOwner());
 
                 //Transfer Money
                 BankRestModel brm = new BankRestModel(pDto.getBank());
-                logger.info("POST '" + brm.getFromToAmountRoute(gameId, place.getOwner(), player, place.getRent().get(0)) + "' (transaction: " + transDto.getId() + ")");
-                Response res = given().queryParam("transaction", transDto.getId()).post(brm.getFromToAmountRoute(gameId, place.getOwner(), player, place.getRent().get(0)));
+                logger.info("POST '" + brm.getFromToAmountRoute(gameId, playerOwner.getAccount(), playerDto.getAccount(), place.getRent().get(0)));
+                Response res = given().post(brm.getFromToAmountRoute(gameId, playerOwner.getAccount(), playerDto.getAccount(), place.getRent().get(0)));
                 logger.info("Response was: " + res.body().asString());
+                logger.info("Response status: " + res.getStatusCode());
+                if (res.getStatusCode() != 201) return null;
 
                 EventDTO rentEvent = this.postRentEvent(gameId, place, playerDto, resource, pDto);
 

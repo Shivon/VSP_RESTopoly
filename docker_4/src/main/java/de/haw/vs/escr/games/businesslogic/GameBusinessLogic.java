@@ -3,6 +3,8 @@ package de.haw.vs.escr.games.businesslogic;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jayway.restassured.response.Response;
+import de.haw.vs.escr.games.adapter.events.dto.EventDTO;
+import de.haw.vs.escr.games.adapter.users.dto.UserDTO;
 import de.haw.vs.escr.games.dtos.*;
 import de.haw.vs.escr.games.models.*;
 import de.haw.vs.escr.games.repos.GameRepo;
@@ -10,10 +12,12 @@ import de.haw.vs.escr.games.repos.PlayerRepo;
 import de.haw.vs.escr.games.restmodel.BankRestModel;
 import de.haw.vs.escr.games.restmodel.BoardRESTModel;
 import de.haw.vs.escr.games.util.URLBuilder.URLBuilder;
+import de.haw.vs.escr.games.util.yellowpages.IYellowPages;
+import de.haw.vs.escr.games.util.yellowpages.YellowPagesService;
+import de.haw.vs.escr.games.util.yellowpages.model.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -86,7 +90,7 @@ public class GameBusinessLogic {
 
     public Player createPlayer(int gameId, Player player) {
         Player savedPlayer = this.playerRepo.savePlayer(player);
-        savedPlayer.setUri("/games/" + gameId + "/players/" + savedPlayer.getUser().toLowerCase());
+        savedPlayer.setUri("/games/" + gameId + "/players/" + savedPlayer.getPlayerId());
         Player updatedPlayer = this.playerRepo.savePlayer(savedPlayer);
         return updatedPlayer;
     }
@@ -106,8 +110,8 @@ public class GameBusinessLogic {
             if (g.getComponents().getBank() != null) {
                 // Set bank account
                 BankRestModel bankRest = new BankRestModel(g.getComponents().getBank(), g.getServices().getBank());
-                BankAccountDTO bad = this.postAccountToBankService(bankRest, savedPlayer.getUri());
-                savedPlayer.setAccount(bad.getId());
+                BankAccountIdDTO bad = this.postAccountToBankService(bankRest, savedPlayer.getUri());
+                if (bad != null) savedPlayer.setAccount(bad.getId());
             }
         }
 
@@ -116,15 +120,23 @@ public class GameBusinessLogic {
         return savedPlayer;
     }
 
-    private BankAccountDTO postAccountToBankService(BankRestModel bankRest, String playerURI) {
+    private BankAccountIdDTO postAccountToBankService(BankRestModel bankRest, String playerURI) {
         BankAccountDTO bad = new BankAccountDTO();
         bad.setPlayer(playerURI);
         bad.setSaldo(4000);
         logger.info("POST to Board Service with Route '" + bankRest.getAccountComponentRoute() + "': " + this.gson.toJson(bad).toString());
-        Response res = given().body(this.gson.toJson(bad)).post(bankRest.getAccountComponentRoute());
+        Response res = given().queryParam("player", bad.getPlayer()).queryParam("saldo", bad.getSaldo()).post(bankRest.getAccountComponentRoute());
         logger.info("Response was: "+ res.body().asString());
-        bad = this.gson.fromJson(res.body().asString(), BankAccountDTO.class);
-        return bad;
+        logger.info("Status was: " + res.statusCode());
+        try {
+
+            BankAccountIdDTO baid = this.gson.fromJson(res.body().asString(), BankAccountIdDTO.class);
+            return baid;
+        }
+        catch (Exception e) {
+            logger.info("Something went wrong with bank account");
+        }
+        return null;
     }
 
     private BoardPawnDTO postPawnToBoardService(BoardRESTModel brm, String playerURI) {
@@ -183,6 +195,7 @@ public class GameBusinessLogic {
                 if (p.getUri() == uri) {
                     PlayerDetailDTO pd = new PlayerDetailDTO(p, true, true);
                     pd.getPlayer().setTurn(true);
+                    pd.getPlayer().setReady(new Ready(false));
                     pd.setPlayer(this.updatePlayer(pd.getPlayer()));
                     return pd;
                 }
@@ -193,6 +206,7 @@ public class GameBusinessLogic {
                 if (p.getUri() == uri) {
                     PlayerDetailDTO pd = new PlayerDetailDTO(p, false, true);
                     pd.getPlayer().setTurn(true);
+                    pd.getPlayer().setReady(new Ready(false));
                     pd.setPlayer(this.updatePlayer(pd.getPlayer()));
                     return pd;
                 }
@@ -230,8 +244,8 @@ public class GameBusinessLogic {
         if (services.getBank() != null) components.setBank(this.initializeBankService(services.getBank(), game));
         if (services.getBroker() != null) components.setBroker(this.initializeBrokerService(services.getBroker(), game));
         if (services.getDecks() != null) components.setBroker(this.initializeDecksService(services.getDecks(), game));
-        if (services.getBoard() != null) components.setBoard(this.initializeBoardService(services.getBoard(), game));
         if (services.getEvents() != null) components.setEvents(services.getEvents());
+        if (services.getBoard() != null) components.setBoard(this.initializeBoardService(services.getBoard(), game));
         game.setComponents(components);
         return game;
     }
@@ -298,13 +312,110 @@ public class GameBusinessLogic {
 
     public void checkGameStatus(int gameId) {
         Game g = this.findGame(gameId);
-        int maxPlayerCount = 6;
+        int maxPlayerCount = 2;
         if (g.getPlayers().size() == maxPlayerCount) {
             g.setStatus(GameStatus.running);
             for (Player p : g.getPlayers()) {
                 p.setReady(new Ready(true));
+                p.setTurn(false);
             }
+            g.getPlayers().get(0).setTurn(true);
+            g.getPlayers().get(0).setReady(new Ready(false));
             this.updateGame(g);
+
+            //Send Event
+            this.postStartEvent(g);
+
+            //POST turn to client
+            //Get user
+            IYellowPages yp = new YellowPagesService();
+            Service s = yp.findServiceByName("fancy_users");
+            String uri = s.getUri();
+            UserDTO uDto = this.findUser(g.getPlayers().get(0), uri);
+
+            //POST Client
+            this.postTurnToClient(uDto, g.getPlayers().get(0));
         }
+    }
+
+    private void postTurnToClient(UserDTO uDto, Player player) {
+        String turn = "/turn";
+        String uri = uDto.getUri().substring(0, uDto.getUri().lastIndexOf("/"));
+        uri = uri + turn;
+        logger.info("POST '" + uri + "': " + this.gson.toJson(player));
+        Response res = given().body(player).post(uri);
+        logger.info("Reponse was: " + res.body().asString());
+    }
+
+    private UserDTO findUser(Player p, String uri) {
+        uri = uri + "/" + p.getUser();
+        logger.info("GET " + uri);
+        Response res = given().get(uri);
+        logger.info("Response was: " + res.body().asString());
+        try {
+            return this.gson.fromJson(res.body().asString(), UserDTO.class);
+        }
+        catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    private EventDTO postStartEvent(Game g) {
+        EventDTO eDto = new EventDTO();
+        eDto.setGame("/games/" + g.getGameId());
+        eDto.setType("start");
+        eDto.setName("Game started");
+        eDto.setPlayer(g.getPlayers().get(0).getUri());
+        eDto.setReason("Six Players added");
+        eDto.setResource("/games/" + g.getGameId());
+        //Make event
+        EventDTO event = this.postEvent(eDto, g.getServices().getEvents());
+        return event;
+    }
+
+    private EventDTO postEvent(EventDTO eDto, String eventPath) {
+        logger.info("POST '" + eventPath + "': " + this.gson.toJson(eDto));
+        Response res = given().body(this.gson.toJson(eDto)).post(eventPath);
+        logger.info("Response was: " + res.body().asString());
+        try {
+            EventDTO e = this.gson.fromJson(res.body().asString(), EventDTO.class);
+            return e;
+        } catch (Exception e) {
+            logger.info("Could not convert response to EventDTO");
+        }
+        return null;
+    }
+
+    public void setNextTurn(Game g) {
+        Player player = null;
+        boolean setted = false;
+        for (Player p : g.getPlayers()) {
+            boolean now = false;
+            if (p.isTurn()) {
+                now = true;
+                setted = true;
+                p.setTurn(false);
+            }
+            if (setted && !now) {
+                p.setTurn(true);
+                setted = false;
+                player = p;
+            }
+        }
+        if (setted) {
+            g.getPlayers().get(0).setTurn(true);
+            player = g.getPlayers().get(0);
+        }
+
+        //POST turn to client
+        //Get user
+        IYellowPages yp = new YellowPagesService();
+        Service s = yp.findServiceByName("fancy_users");
+        String uri = s.getUri();
+        UserDTO uDto = this.findUser(player, uri);
+
+        //POST Client
+        this.postTurnToClient(uDto, player);
     }
 }
