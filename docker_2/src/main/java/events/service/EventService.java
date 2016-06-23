@@ -13,8 +13,6 @@ import java.util.List;
 import static com.jayway.restassured.RestAssured.given;
 import static spark.Spark.*;
 
-//import com.mashape.unirest.http.Unirest;
-//import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
  * Created by marjan on 07.04.16.
@@ -26,14 +24,6 @@ public class EventService {
     private List<Event> eventList;
 
     public EventService() {
-        // "id": { "type":"string", "required":true, "description":"the url to the event on the event server"},
-        // "game": {"type":"string", "required":true, "description":"the uri of the game this event belongs to"},
-        // "type": { "type": "string", "required": true , "description":"internal type of the event (e.g bank transfer, rent, got to jail, estate transfer)" },
-        // "name": { "type": "string", "required": true, "description":"human readable name for this event"  },
-        // "reason": { "type": "string", "required": true, "description":"a description why this event occured"  },
-        // "resource": {"type": "string", "description": "the uri of the resource related to this event where more information may be found (e.g. an uri to a transfer or similar)" },
-        // "player": { "type": "string", "description": "The uri of the player having triggered the event" }
-
         get("/events/:eventId", (request, response) -> {
             event = eventRepo.findEvent(request.params(":eventId"));
 
@@ -73,8 +63,6 @@ public class EventService {
 
             System.out.println("event bei get ............." + eventList.get(0).getGame());
             System.out.println("events bei get" + eventList);
-            // list = repo.findEventsByGame(game);
-            //
 
             if(eventList.isEmpty()){
                 response.status(500);
@@ -87,44 +75,7 @@ public class EventService {
         });
 
         post("/events", (request, response) -> {
-            System.out.println("post");
-
-//            Event event = this.gson.fromJson(request.body().toString(), Event.class);
-//
-//            if(event.getGame().equals("") || event.getName().equals("") ||
-//                    event.getType().equals("") || event.getReason().equals("")){
-//                response.status(500);
-//                response.type("application/json");
-//                return "Param(s) missing, require \"game\", \"type\", \"name\", \"reason\"";
-//            }
-//            String id = "/events/" + event.getName().toLowerCase();
-//            event.setId(id);
-//
-//            String[] requiredParams = {"game", "type", "name", "reason"};
-//            for (int i = 0; i < requiredParams.length; i++) {
-//                if (request.queryParams(requiredParams[i]) == null) {
-//                    response.status(422);
-//                    response.type("application/json");
-//                    return gson.toJson("Param(s) missing, require \"game\", \"type\", \"name\", \"reason\"");
-//                }
-//            }
-//            String game = request.queryParams("game");
-//            String type = request.queryParams("type").toLowerCase();
-//            String name = request.queryParams("name").toLowerCase();
-//            String reason = request.queryParams("reason").toLowerCase();
-//
-//            URI gameUri = new URI(game);
-//
-//            // Optional params
-//            String resource = request.queryParams("resource");
-//            String player = request.queryParams("player");
-//            URI resourceUri = null;
-//            URI playerUri = null;
-//
-//            if (resource != null) { resourceUri = new URI(resource); }
-//            if (player != null) { playerUri = new URI(player); }
-//
-//            event = new Event(gameUri, type, name, reason, resourceUri, playerUri);
+            System.out.println("post /events");
 
             Event event = this.gson.fromJson(request.body(), Event.class);
 
@@ -181,11 +132,6 @@ public class EventService {
         });
 
         post("/events/subscriptions", (request, response) -> {
-//            URI gameUri = new URI(request.queryParams("game"));
-//            URI resourceUri = new URI(request.queryParams("uri"));
-//            String eventType = request.queryParams("event").toLowerCase();
-//            Subscription subscription = new Subscription(gameUri, resourceUri, eventType);
-
             Subscription subscription = gson.fromJson(request.body(), Subscription.class);
 
             subscription = eventRepo.saveSubscription(subscription);

@@ -16,11 +16,6 @@ import java.util.stream.Collectors;
 public class EventRepo {
    private EntityManager entityManager = Persistence.createEntityManagerFactory("event").createEntityManager();
 
-    // get /events => find by attribute
-    // get /event/:id => find by id
-    // post /event => save
-    // delete /event => delete
-
     public List<Event> allEvents() {
         try {
             entityManager.getTransaction().begin();
@@ -30,6 +25,7 @@ public class EventRepo {
             System.out.println("events bei allEvents"+events.get(0).getReason());
             return events;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -43,6 +39,7 @@ public class EventRepo {
             entityManager.getTransaction().commit();
             return subscriptions;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -55,6 +52,7 @@ public class EventRepo {
             entityManager.getTransaction().commit();
             return event;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -67,6 +65,7 @@ public class EventRepo {
             entityManager.getTransaction().commit();
             return matchingSubscriptions;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -75,8 +74,7 @@ public class EventRepo {
     public List<Event> findEventByAttributes(String gameRegex, String typeRegex, String nameRegex,
                                              String reasonRegex, String resourceRegex, String playerRegex){
         System.out.println("findEventsBy.. " + this.allEvents().get(0).getReason());
-//        List<Event> allEvents = this.allEvents();
-        try {
+       try {
             List<Event> allEvents = this.allEvents();
             List<Event> eventsWithRequestedAttributes= new ArrayList();
             System.out.println("events bei findEventList" + allEvents.get(0).getReason());
@@ -91,7 +89,8 @@ public class EventRepo {
                     eventsWithRequestedAttributes.add(e);
                 }
             return eventsWithRequestedAttributes;
-        }catch (Exception e) {
+        } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -104,6 +103,7 @@ public class EventRepo {
             System.out.println("Event wurde gespeichert");
             return event;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             System.out.println("Event konnte nicht gespeichert werden");
             return null;
@@ -118,6 +118,7 @@ public class EventRepo {
             System.out.println("repo: event wurde gelöscht");
             entityManager.getTransaction().commit();
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
         }
     }
@@ -129,6 +130,7 @@ public class EventRepo {
             entityManager.getTransaction().commit();
             return subscription;
         } catch (Exception e) {
+            System.out.println(e);
             entityManager.getTransaction().rollback();
             System.out.println("Subscription konnte nicht gespeichert werden");
             return null;

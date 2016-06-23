@@ -83,10 +83,6 @@ public class Event {
         return player;
     }
 
-//    public void setId(String id) {
-//        this.id = id;
-//    }
-
     public void setGame(URI game) {
         this.game = game;
     }

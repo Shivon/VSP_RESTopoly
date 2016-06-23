@@ -87,19 +87,6 @@ public class BankRepo {
         }
     }
 
-//    public Transfer findTransfers(String transferId){
-//        try {
-//            entityManager.getTransaction().begin();
-//            Transfer transfer = entityManager.find(Transfer.class, transferId);
-//            entityManager.getTransaction().commit();
-//            return transfer;
-//        } catch (Exception e) {
-//    System.out.println(e);
-//            entityManager.getTransaction().rollback();
-//            return null;
-//        }
-//    }
-
     public Account findAccounts(String accountId){
         try {
             entityManager.getTransaction().begin();
