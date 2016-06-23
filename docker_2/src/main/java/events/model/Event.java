@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 
 import javax.persistence.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
@@ -82,32 +83,41 @@ public class Event {
         return player;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public void setGame(URI game) {
         this.game = game;
     }
+    public void setGame(String game) throws URISyntaxException {
+        this.game = new URI(game);
+    }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = type.toLowerCase();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public void setReason(String reason) {
-        this.reason = reason;
+        this.reason = reason.toLowerCase();
     }
 
     public void setResource(URI resource) {
         this.resource = resource;
     }
+    public void setResource(String resource) throws URISyntaxException {
+        this.resource = new URI(resource);
+    }
 
     public void setPlayer(URI player) {
         this.player = player;
+    }
+    public void setPlayer(String player) throws URISyntaxException {
+        this.player = new URI(player);
     }
 
     @Override
