@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
@@ -53,6 +54,9 @@ public class Subscription {
     public void setGame(URI game) {
         this.game = game;
     }
+    public void setGame(String game) throws URISyntaxException {
+        this.game = new URI(game);
+    }
 
     public URI getInterestedResource() {
         return interestedResource;
@@ -61,13 +65,17 @@ public class Subscription {
     public void setInterestedResource(URI interestedResource) {
         this.interestedResource = interestedResource;
     }
+    public void setInterestedResource(String interestedResource) throws URISyntaxException {
+        this.interestedResource = new URI(interestedResource);
+    }
+
 
     public String getEventType() {
         return eventType;
     }
 
     public void setEventType(String eventType) {
-        this.eventType = eventType;
+        this.eventType = eventType.toLowerCase();
     }
 
     @Override

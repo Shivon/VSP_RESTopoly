@@ -181,11 +181,13 @@ public class EventService {
         });
 
         post("/events/subscriptions", (request, response) -> {
-            URI gameUri = new URI(request.queryParams("game"));
-            URI resourceUri = new URI(request.queryParams("uri"));
-            String eventType = request.queryParams("event").toLowerCase();
+//            URI gameUri = new URI(request.queryParams("game"));
+//            URI resourceUri = new URI(request.queryParams("uri"));
+//            String eventType = request.queryParams("event").toLowerCase();
+//            Subscription subscription = new Subscription(gameUri, resourceUri, eventType);
 
-            Subscription subscription = new Subscription(gameUri, resourceUri, eventType);
+            Subscription subscription = gson.fromJson(request.body(), Subscription.class);
+
             subscription = eventRepo.saveSubscription(subscription);
 
             if (subscription == null) {
@@ -201,16 +203,18 @@ public class EventService {
     }
 
     private Response sendEventToSubscriber(URI subscriber, Event event) {
-        return
-                given().
-                        queryParam("id", "/events/" + event.getId()).
-                        queryParam("game", event.getGame().toString()).
-                        queryParam("type", event.getType()).
-                        queryParam("name", event.getName()).
-                        queryParam("reason", event.getReason()).
-                        queryParam("resource", event.getResource().toString()).
-                        queryParam("player", event.getPlayer().toString()).
-                when().
-                        post(subscriber);
+        String uriEvent = "/events/" + event.getId();
+
+        JsonObject result = new JsonObject();
+        result.addProperty("id", uriEvent);
+
+        result.addProperty("game", event.getGame().toString());
+        result.addProperty("type", event.getType());
+        result.addProperty("name", event.getName());
+        result.addProperty("reason", event.getReason());
+        result.addProperty("resource", event.getResource().toString());
+        result.addProperty("player", event.getPlayer().toString());
+
+        return given().body(result).post(subscriber);
     }
 }
