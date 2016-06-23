@@ -29,7 +29,7 @@ public class UserWindow {
             public void actionPerformed(ActionEvent e) {
                 if(! _userWindowUI.getLogInArea().getText().isEmpty()){
                     String userName = _userWindowUI.getLogInArea().getText();
-//                    TODO wenn Username schon im Post vom User gecheckt wird
+//                    wenn Username schon im Post vom User gecheckt wird
 //                    try {
 //                        if(_userLogic.checkIfUserAlreadyExists(userName)){
 //                            JOptionPane.showMessageDialog(null, "user name not available", "choose an other name!",
