@@ -13,6 +13,8 @@ import de.haw.vs.escr.games.models.Player;
 import de.haw.vs.escr.games.models.Ready;
 import de.haw.vs.escr.games.repos.GameRepo;
 import de.haw.vs.escr.games.repos.PlayerRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
@@ -29,12 +31,54 @@ public class GameService {
     private GameRepo gameRepo;
     private PlayerRepo playerRepo;
     private GameBusinessLogic gameBL;
+    private static Logger logger = LoggerFactory.getLogger(GameService.class);
 
     public GameService() {
         this.initializeGson();
         this.gameRepo = new GameRepo();
         this.playerRepo = new PlayerRepo();
         this.gameBL = new GameBusinessLogic(gameRepo, playerRepo);
+
+        get("/games/:gameid/players/:playerid", (req, res) -> {
+            logger.info("In get playerid");
+            if (req.params(":playerid").equals("turn")) return this.getTurn(req, res);
+            if (req.params(":playerid").equals("current")) return this.getCurrent(req, res);
+
+            int gameId;
+            try {
+                gameId = Integer.parseInt(req.params(":gameid"));
+            }
+            catch (NumberFormatException e) {
+                res.status(401);
+                return null;
+            }
+
+            String playerId = req.params(":playerid");
+            int playerNum = Integer.parseInt(playerId);
+
+            logger.info("gameid: " + gameId);
+            logger.info("playerid" + playerId);
+            Game g = this.gameBL.findGame(gameId);
+            logger.info("Game: " + this.gson.toJson(g));
+
+            Player p = null;
+            for (Player pf : g.getPlayers()) {
+                logger.info("Look for Player " + pf.getPlayerId());
+                if (pf.getPlayerId() == playerNum) {
+                    p = pf;
+                    logger.info("Found player: " + p.getPlayerId());
+                }
+            }
+
+            if (p == null) {
+                res.status(401);
+                return null;
+            }
+
+            logger.info("Player is: " + gson.toJson(p));
+            return gson.toJson(p);
+            //return "GET /games/" + req.params(":gameid") + "/players/" + req.params(":playerid");
+        });
 
         get("/games", (req, res) -> {
             List<Game> games = this.gameBL.findAllGames();
@@ -225,36 +269,6 @@ public class GameService {
             //return "POST /games/" + req.params(":gameid") + "/players";
         });
 
-        get("/games/:gameid/players/:playerid", (req, res) -> {
-            if (req.params("playerid").equals("turn")) return this.getTurn(req, res);
-
-            int gameId;
-            try {
-                gameId = Integer.parseInt(req.params(":gameid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
-
-            String playerId = req.params(":playerid");
-
-            Game g = this.gameBL.findGame(gameId);
-
-            Player p = null;
-            for (Player pf : g.getPlayers()) {
-                if (pf.getUser().equals(playerId)) p = pf;
-            }
-
-            if (p == null) {
-                res.status(401);
-                return null;
-            }
-
-            return gson.toJson(p);
-            //return "GET /games/" + req.params(":gameid") + "/players/" + req.params(":playerid");
-        });
-
         put("/games/:gameid/players/:playerid", (req, res) -> {
             int gameId;
             try {
@@ -264,7 +278,7 @@ public class GameService {
                 res.status(401);
                 return null;
             }
-
+            if (req.params(":playerid").equals("turn")) return this.putTurn(req, res);
             String playerId = req.params(":playerid");
 
             Game g = this.gameBL.findGame(gameId);
@@ -368,79 +382,10 @@ public class GameService {
             Ready r = this.gson.fromJson(req.body(), Ready.class);
 
             Ready updatedReady = this.gameBL.updateReady(p, r);
+            this.gameBL.setNextTurn(g);
 
             return this.gson.toJson(updatedReady);
             //return "PUT /games/" + req.params(":gameid") + "/players/" + req.params(":playerid") + "/ready";
-        });
-
-        get("/games/:gameid/players/current", (req, res) -> {
-            int gameId;
-            try {
-                gameId = Integer.parseInt(req.params(":gameid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
-
-            Game g = this.gameBL.findGame(gameId);
-
-            Player p = this.gameBL.findPlayerHoldingTurn(g.getPlayers());
-
-            if (p == null) {
-                res.status(401);
-                return null;
-            }
-
-            return this.gson.toJson(p);
-            //return "GET /games/" + req.params(":gameid") + "/players/current";
-        });
-
-        put("/games/:gameid/players/turn", (req, res) -> {
-            int gameId;
-            try {
-                gameId = Integer.parseInt(req.params(":gameid"));
-            }
-            catch (NumberFormatException e) {
-                res.status(401);
-                return null;
-            }
-
-            java.lang.String uriB = this.gson.fromJson(req.body(), java.lang.String.class);
-            java.lang.String uriQ = req.queryParams("id");
-
-            if (uriQ == null && uriB == null) {
-                res.status(404);
-                return null;
-            }
-
-            java.lang.String uri = "";
-            if (uriQ != null) uri = uriQ;
-            else uri = uriB;
-
-            Game g = this.gameBL.findGame(gameId);
-
-            PlayerDetailDTO pd = this.gameBL.tryAchieveTurn(g.getPlayers(), uri);
-
-            if (pd == null) {
-                res.status(401);
-                return null;
-            }
-
-            if (pd.isHasAlreadyTurn() && pd.isHasTurnNow()) {
-                res.status(200);
-            }
-
-            if (pd.isHasTurnNow() && !pd.isHasAlreadyTurn()) {
-                res.status(201);
-            }
-
-            if (!pd.isHasAlreadyTurn() && !pd.isHasTurnNow()) {
-                res.status(409);
-            }
-
-            return this.gson.toJson(pd.getPlayer());
-            //return "PUT /games/" + req.params(":gameid") + "/players/turn";
         });
 
         delete("/games/:gameid/players/turn", (req, res) -> {
@@ -462,6 +407,76 @@ public class GameService {
         });
     }
 
+    private Object getCurrent(Request req, Response res) {
+        int gameId;
+        try {
+            gameId = Integer.parseInt(req.params(":gameid"));
+        }
+        catch (NumberFormatException e) {
+            res.status(401);
+            return null;
+        }
+
+        Game g = this.gameBL.findGame(gameId);
+
+        Player p = this.gameBL.findPlayerHoldingTurn(g.getPlayers());
+
+        if (p == null) {
+            res.status(401);
+            return null;
+        }
+
+        return this.gson.toJson(p);
+        //return "GET /games/" + req.params(":gameid") + "/players/current";
+    }
+
+    private String putTurn(Request req, Response res) {
+        int gameId;
+        try {
+            gameId = Integer.parseInt(req.params(":gameid"));
+        }
+        catch (NumberFormatException e) {
+            res.status(401);
+            return null;
+        }
+
+        java.lang.String uriB = this.gson.fromJson(req.body(), java.lang.String.class);
+        java.lang.String uriQ = req.queryParams("id");
+
+        if (uriQ == null && uriB == null) {
+            res.status(404);
+            return null;
+        }
+
+        java.lang.String uri = "";
+        if (uriQ != null) uri = uriQ;
+        else uri = uriB;
+
+        Game g = this.gameBL.findGame(gameId);
+
+        PlayerDetailDTO pd = this.gameBL.tryAchieveTurn(g.getPlayers(), uri);
+
+        if (pd == null) {
+            res.status(401);
+            return null;
+        }
+
+        if (pd.isHasAlreadyTurn() && pd.isHasTurnNow()) {
+            res.status(200);
+        }
+
+        if (pd.isHasTurnNow() && !pd.isHasAlreadyTurn()) {
+            res.status(201);
+        }
+
+        if (!pd.isHasAlreadyTurn() && !pd.isHasTurnNow()) {
+            res.status(409);
+        }
+
+        return this.gson.toJson(pd.getPlayer());
+        //return "PUT /games/" + req.params(":gameid") + "/players/turn";
+    }
+
     private java.lang.String getTurn(Request req, Response res) {
         int gameId;
         try {
@@ -471,6 +486,8 @@ public class GameService {
             res.status(401);
             return null;
         }
+        logger.info("In turn");
+        logger.info("Game param: " + req.params(":gameid"));
 
         Game g = this.gameBL.findGame(gameId);
 
